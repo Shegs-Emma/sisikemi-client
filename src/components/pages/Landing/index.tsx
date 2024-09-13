@@ -35,7 +35,7 @@ const Landing = () => {
           />
           <Image
             src="/images/section1.svg"
-            alt="section_img"
+            alt="section_img_1"
             width={280}
             height={406}
             className=""
