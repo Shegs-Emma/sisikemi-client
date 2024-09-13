@@ -1,8 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { Montserrat } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import Head from "next/head";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -13,12 +13,6 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
-});
-
-// Load Montserrat with specific weights and subsets
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"], // Customize as needed
 });
 
 export const metadata: Metadata = {
@@ -40,8 +34,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet"
+        ></link>
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${montserrat.className} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Toaster position="top-right" />
         <>
