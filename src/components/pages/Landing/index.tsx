@@ -1,4 +1,5 @@
 import Slider from "@/components/reusebles/slider";
+import SliderMobile from "@/components/reusebles/sliderMobile";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import React from "react";
@@ -8,6 +9,10 @@ const Landing = () => {
     <div className="w-full flex flex-col p-0 md:pt-[7rem]">
       <div className="hidden md:block md:w-full">
         <Slider />
+      </div>
+
+      <div className="block mt-[6rem] md:hidden w-full">
+        <SliderMobile />
       </div>
 
       <div className="w-full flex flex-col">
@@ -73,9 +78,9 @@ const Landing = () => {
               alt="section_img"
               width={420}
               height={580}
-              className=""
+              className="ml-[15%] md:ml-0"
             />
-            <div className="relative flex flex-col -top-[15rem] md:-top-[17rem] -left-[1rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
+            <div className="relative flex flex-col -top-[20rem] md:-top-[17rem] -left-[2rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
               <Button
                 className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
                 variant="yellow"
@@ -92,9 +97,9 @@ const Landing = () => {
               alt="section_img"
               width={420}
               height={580}
-              className=""
+              className="ml-[15%] md:ml-0"
             />
-            <div className="relative flex flex-col -top-[15rem] md:-top-[17rem] -left-[1rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
+            <div className="relative flex flex-col -top-[20rem] md:-top-[17rem] -left-[2rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
               <Button
                 className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
                 variant="yellow"
@@ -111,9 +116,9 @@ const Landing = () => {
               alt="section_img"
               width={420}
               height={580}
-              className=""
+              className="ml-[15%] md:ml-0"
             />
-            <div className="relative flex flex-col -top-[15rem] md:-top-[17rem] -left-[1rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
+            <div className="relative flex flex-col -top-[20rem] md:-top-[17rem] -left-[2rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
               <Button
                 className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
                 variant="yellow"

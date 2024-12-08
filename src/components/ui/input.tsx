@@ -1,4 +1,6 @@
-import * as React from "react";
+"use client";
+
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -10,11 +12,11 @@ export interface InputProps
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
-    { className, type, numberOnly, benefits, value, onChange, ...props },
+    { className, type, numberOnly, benefits, value, name, onChange, ...props },
     ref
   ) => {
-    const [isPasswordVisible, setIsPasswordVisible] = React.useState(false);
-    const [inputValue, setInputValue] = React.useState<string>(
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [inputValue, setInputValue] = useState<string>(
       (value as string) || ""
     );
 
@@ -46,7 +48,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       if (onChange) {
         const event = {
           ...e,
-          target: { ...e.target, value: formattedValue },
+          target: { ...e.target, value: formattedValue, name: name },
         };
         onChange(event as React.ChangeEvent<HTMLInputElement>);
       }
@@ -65,6 +67,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           ref={ref}
           type={isPasswordVisible ? "text" : type}
           value={inputValue}
+          name={name}
           onChange={handleChange}
           className={cn(
             "input-base-class",
