@@ -7,14 +7,11 @@ import { Eye, EyeOff } from "lucide-react";
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   numberOnly?: boolean;
-  benefits?: boolean;
+  // benefits?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    { className, type, numberOnly, benefits, value, name, onChange, ...props },
-    ref
-  ) => {
+  ({ className, type, numberOnly, value, name, onChange, ...props }, ref) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [inputValue, setInputValue] = useState<string>(
       (value as string) || ""

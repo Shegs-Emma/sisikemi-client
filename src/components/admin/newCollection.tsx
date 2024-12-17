@@ -28,8 +28,10 @@ const NewCollection = () => {
   const [headerFile, setHeaderFile] = useState<File[] | null>([]);
   const [isShowingHeaderFileOption, setIsShowingHeaderFileOption] =
     useState<boolean>(false);
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const [thumbnailFileBase64, setThumbnailFileBase64] = useState<any>("");
   const [headerFileBase64, setHeaderFileBase64] = useState<any>("");
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   const [formValues, setFormValues] = useState({
     collection_name: "",
     collection_description: "",
@@ -43,6 +45,7 @@ const NewCollection = () => {
     header_image: false,
   });
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   // Drag n Drop code ========================================================================================================================
   const onDropFirst = useCallback((acceptedFiles: any) => {
     const mappedFiles = acceptedFiles.map((file: any) =>
@@ -71,6 +74,7 @@ const NewCollection = () => {
     getRootProps: getRootPropsSecond,
     getInputProps: getInputPropsSecond,
   } = useDropzone({ onDrop: onDropSecond });
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // Handle change code ========================================================================================================================
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,6 +112,7 @@ const NewCollection = () => {
     handleConvertToBase64();
   }, [thumbnailFile, headerFile]);
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   // Handle submission code ===========================================================================================================================
   const { createMedia } = useMediaStore(
     (state: any) => ({
@@ -124,6 +129,8 @@ const NewCollection = () => {
     shallow
   );
 
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
   // Handle submission code ===========================================================================================================================
   const handleFileUpload = async (
     selectedFile: string,
@@ -139,6 +146,7 @@ const NewCollection = () => {
         if (response?.media) {
           return response?.media;
         }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         return err;
       }
@@ -397,20 +405,28 @@ const NewCollection = () => {
               </p>
             </div>
 
-            <div
-              onClick={() => handleSubmit()}
-              className="flex w-[180px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] bg-[#4f4f4f] ml-6 cursor-pointer"
-            >
-              <Image
-                src="/assets/save.svg"
-                alt="avatar_img"
-                width={20}
-                height={22}
-              />
-              <p className="font-lato font-normal text-sm text-[#ffffff] ml-2">
-                Save new collection
-              </p>
-            </div>
+            {isPending ? (
+              <div className="flex w-[180px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] bg-[#4f4f4f] ml-6 cursor-pointer">
+                <p className="font-lato font-normal text-sm text-[#ffffff] ml-2">
+                  Loading...
+                </p>
+              </div>
+            ) : (
+              <div
+                onClick={() => handleSubmit()}
+                className="flex w-[180px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] bg-[#4f4f4f] ml-6 cursor-pointer"
+              >
+                <Image
+                  src="/assets/save.svg"
+                  alt="avatar_img"
+                  width={20}
+                  height={22}
+                />
+                <p className="font-lato font-normal text-sm text-[#ffffff] ml-2">
+                  Save new collection
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

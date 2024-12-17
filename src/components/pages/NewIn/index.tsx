@@ -25,19 +25,21 @@ import { useRouter } from "next/navigation";
 const NewIn: FC = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [fetchedProducts, setFetchedProducts] =
     useState<ProductResponseInterface>();
   const [selectedSize, setSelectedSize] = useState<string>("");
 
   const ITEMS_PER_PAGE = 10;
-  const { fetchProducts, products } = useProductStore(
+  const currentPage = 1;
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const { fetchProducts } = useProductStore(
     (state: any) => ({
       fetchProducts: state.fetchProducts,
-      products: state.products,
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   useEffect(() => {
     handleProductsFetch();
@@ -127,35 +129,39 @@ const NewIn: FC = () => {
         </Select>
       </div>
 
-      <div className="flex flex-col w-full border-b-[0.5px] border-b-[#4f4f4f] pb-[7rem]">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-14 px-[1.5rem] py-0">
-          {fetchedProducts?.product?.length
-            ? fetchedProducts?.product?.map((product, idx) => (
-                <div
-                  onClick={() => router.push(`/new-in/${product?.id}`)}
-                  key={idx}
-                  className="flex flex-col cursor-pointer"
-                >
-                  <Image
-                    src={product?.product_image_main?.media_id?.url}
-                    alt="section_img"
-                    width={280}
-                    height={506}
-                    // className="min-h-[506px]"
-                  />
-                  <div className="flex flex-col text-center">
-                    <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
-                      {product?.product_name.toUpperCase()}
-                    </p>
-                    <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
-                      {`₦${Number(product?.price).toLocaleString()}`}
-                    </p>
+      {isPending ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="flex flex-col w-full border-b-[0.5px] border-b-[#4f4f4f] pb-[7rem]">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-14 px-[1.5rem] py-0">
+            {fetchedProducts?.product?.length
+              ? fetchedProducts?.product?.map((product, idx) => (
+                  <div
+                    onClick={() => router.push(`/new-in/${product?.id}`)}
+                    key={idx}
+                    className="flex flex-col cursor-pointer"
+                  >
+                    <Image
+                      src={product?.product_image_main?.media_id?.url}
+                      alt="section_img"
+                      width={280}
+                      height={506}
+                      // className="min-h-[506px]"
+                    />
+                    <div className="flex flex-col text-center">
+                      <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
+                        {product?.product_name.toUpperCase()}
+                      </p>
+                      <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
+                        {`₦${Number(product?.price).toLocaleString()}`}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
-            : null}
+                ))
+              : null}
+          </div>
         </div>
-      </div>
+      )}
 
       <RecentlyViewed title="RECENTLY VIEWED" />
     </div>

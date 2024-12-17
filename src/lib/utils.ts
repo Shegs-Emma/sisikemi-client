@@ -6,7 +6,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const onSubmitError = (errors: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getFirstErrorMessage: any = (errorObject: any) => {
     const firstErrorKey = Object.keys(errorObject)[0];
     const firstErrorValue = errorObject[firstErrorKey];
@@ -24,7 +26,7 @@ export const onSubmitError = (errors: any) => {
     }
   };
   const firstError = getFirstErrorMessage(errors);
-  const firstErrorKey = Object.keys(errors)?.[0];
+  // const firstErrorKey = Object.keys(errors)?.[0];
 
   toast.error(` ${firstError.message}`);
 };

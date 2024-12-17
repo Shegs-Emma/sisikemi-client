@@ -199,7 +199,11 @@ const AdminNavbar = () => {
             <DialogHeader>
               <DialogTitle></DialogTitle>
               <DialogDescription>
-                <LogoutPopup logout={logout} setIsOpen={setIsOpen} />
+                <LogoutPopup
+                  logout={logout}
+                  isLoading={isLoading}
+                  setIsOpen={setIsOpen}
+                />
               </DialogDescription>
             </DialogHeader>
           </DialogContent>

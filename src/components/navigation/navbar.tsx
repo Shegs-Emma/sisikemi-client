@@ -48,6 +48,7 @@ const Navbar = () => {
     }
   }, []);
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { offlineCart } = useOfflineCartStore(
     (state: any) => ({
       offlineCart: state.offlineCart,
@@ -62,6 +63,7 @@ const Navbar = () => {
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   const handleCartFetch = async () => {
     try {
@@ -273,7 +275,11 @@ const Navbar = () => {
             <DialogHeader>
               <DialogTitle></DialogTitle>
               <DialogDescription>
-                <LogoutPopup logout={logout} setIsOpen={setIsOpen} />
+                <LogoutPopup
+                  logout={logout}
+                  isLoading={isLoading}
+                  setIsOpen={setIsOpen}
+                />
               </DialogDescription>
             </DialogHeader>
           </DialogContent>

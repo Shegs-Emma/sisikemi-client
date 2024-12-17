@@ -19,9 +19,11 @@ const RTW: FC = () => {
   const [fetchedProducts, setFetchedProducts] = useState<ProductInterface[]>(
     []
   );
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const ITEMS_PER_PAGE = 10;
 
+  const currentPage = 1;
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { fetchProducts, products } = useProductStore(
     (state: any) => ({
       fetchProducts: state.fetchProducts,
@@ -29,6 +31,7 @@ const RTW: FC = () => {
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   useEffect(() => {
     handleProductsFetch();

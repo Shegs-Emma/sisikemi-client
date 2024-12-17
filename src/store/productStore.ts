@@ -10,7 +10,7 @@ import ProductService from "@/api/products/product";
 
 export const useProductStore = createWithEqualityFn(
   devtools(
-    (set, get) => ({
+    (set) => ({
       products: [],
       product: {},
       updatedProduct: {},
@@ -28,6 +28,8 @@ export const useProductStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {
@@ -50,6 +52,8 @@ export const useProductStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {
@@ -69,6 +73,8 @@ export const useProductStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {
@@ -88,6 +94,8 @@ export const useProductStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {
@@ -104,6 +112,8 @@ export const useProductStore = createWithEqualityFn(
             return response?.data?.message;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {

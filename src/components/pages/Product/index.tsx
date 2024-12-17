@@ -4,7 +4,6 @@ import React, { FC, useEffect, useState, useTransition } from "react";
 import RecentlyViewed from "@/components/reusebles/recentlyViewed";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { BiChevronRight } from "react-icons/bi";
 import { BsChevronRight } from "react-icons/bs";
@@ -24,7 +23,6 @@ interface ProductProps {
 }
 
 const Product: FC<ProductProps> = ({ id }) => {
-  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isViewing, setIsViewing] = useState<string>("");
   const [currentImg, setCurrentImg] = useState<string>("");
@@ -37,6 +35,7 @@ const Product: FC<ProductProps> = ({ id }) => {
 
   const token = !!getCookie("accessToken");
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { getProduct } = useProductStore(
     (state: any) => ({
       getProduct: state.getProduct,
@@ -60,6 +59,7 @@ const Product: FC<ProductProps> = ({ id }) => {
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   useEffect(() => {
     if (id) {
@@ -218,249 +218,253 @@ const Product: FC<ProductProps> = ({ id }) => {
         </h3>
       </div>
 
-      <div className="w-full px-[2rem] pb-[15rem] flex justify-between border-b-[0.5px] border-b-[#4f4f4f]">
-        <div className="w-[47%] flex justify-between">
-          <div className="flex flex-col w-[15%]">
-            <div className="mb-[0.9rem]">
+      {isPending ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="w-full px-[2rem] pb-[15rem] flex justify-between border-b-[0.5px] border-b-[#4f4f4f]">
+          <div className="w-[47%] flex justify-between">
+            <div className="flex flex-col w-[15%]">
+              <div className="mb-[0.9rem]">
+                <Image
+                  src={
+                    fetchedProduct &&
+                    fetchedProduct?.product_image_main?.media_id?.url
+                      ? fetchedProduct?.product_image_main?.media_id?.url
+                      : ""
+                  }
+                  alt="section_img"
+                  className="cursor-pointer"
+                  width={60}
+                  height={86}
+                  onClick={() =>
+                    handleCurrentView(
+                      fetchedProduct?.product_image_main?.media_id?.url
+                        ? fetchedProduct?.product_image_main?.media_id?.url
+                        : ""
+                    )
+                  }
+                />
+              </div>
+              <div className="mb-[0.9rem]">
+                <Image
+                  src={
+                    fetchedProduct &&
+                    fetchedProduct?.product_image_other_1?.media_id?.url
+                      ? fetchedProduct?.product_image_other_1?.media_id?.url
+                      : ""
+                  }
+                  alt="section_img"
+                  className="cursor-pointer"
+                  width={60}
+                  height={86}
+                  onClick={() =>
+                    handleCurrentView(
+                      fetchedProduct?.product_image_other_1?.media_id?.url
+                        ? fetchedProduct?.product_image_other_1?.media_id?.url
+                        : ""
+                    )
+                  }
+                />
+              </div>
+              <div className="mb-[0.9rem]">
+                <Image
+                  src={
+                    fetchedProduct &&
+                    fetchedProduct?.product_image_other_2?.media_id?.url
+                      ? fetchedProduct?.product_image_other_2?.media_id?.url
+                      : ""
+                  }
+                  alt="section_img"
+                  className="cursor-pointer"
+                  width={60}
+                  height={86}
+                  onClick={() =>
+                    handleCurrentView(
+                      fetchedProduct?.product_image_other_2?.media_id?.url
+                        ? fetchedProduct?.product_image_other_2?.media_id?.url
+                        : ""
+                    )
+                  }
+                />
+              </div>
+              <div className="mb-[0.9rem]">
+                <Image
+                  src={
+                    fetchedProduct &&
+                    fetchedProduct?.product_image_other_3?.media_id?.url
+                      ? fetchedProduct?.product_image_other_3?.media_id?.url
+                      : ""
+                  }
+                  alt="section_img"
+                  className="cursor-pointer"
+                  width={60}
+                  height={86}
+                  onClick={() =>
+                    handleCurrentView(
+                      fetchedProduct?.product_image_other_3?.media_id?.url
+                        ? fetchedProduct?.product_image_other_3?.media_id?.url
+                        : ""
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col w-[80%]">
               <Image
                 src={
-                  fetchedProduct &&
-                  fetchedProduct?.product_image_main?.media_id?.url
+                  currentImg
+                    ? currentImg
+                    : fetchedProduct?.product_image_main?.media_id?.url
                     ? fetchedProduct?.product_image_main?.media_id?.url
                     : ""
                 }
                 alt="section_img"
-                className="cursor-pointer"
-                width={60}
-                height={86}
-                onClick={() =>
-                  handleCurrentView(
-                    fetchedProduct?.product_image_main?.media_id?.url
-                      ? fetchedProduct?.product_image_main?.media_id?.url
-                      : ""
-                  )
-                }
-              />
-            </div>
-            <div className="mb-[0.9rem]">
-              <Image
-                src={
-                  fetchedProduct &&
-                  fetchedProduct?.product_image_other_1?.media_id?.url
-                    ? fetchedProduct?.product_image_other_1?.media_id?.url
-                    : ""
-                }
-                alt="section_img"
-                className="cursor-pointer"
-                width={60}
-                height={86}
-                onClick={() =>
-                  handleCurrentView(
-                    fetchedProduct?.product_image_other_1?.media_id?.url
-                      ? fetchedProduct?.product_image_other_1?.media_id?.url
-                      : ""
-                  )
-                }
-              />
-            </div>
-            <div className="mb-[0.9rem]">
-              <Image
-                src={
-                  fetchedProduct &&
-                  fetchedProduct?.product_image_other_2?.media_id?.url
-                    ? fetchedProduct?.product_image_other_2?.media_id?.url
-                    : ""
-                }
-                alt="section_img"
-                className="cursor-pointer"
-                width={60}
-                height={86}
-                onClick={() =>
-                  handleCurrentView(
-                    fetchedProduct?.product_image_other_2?.media_id?.url
-                      ? fetchedProduct?.product_image_other_2?.media_id?.url
-                      : ""
-                  )
-                }
-              />
-            </div>
-            <div className="mb-[0.9rem]">
-              <Image
-                src={
-                  fetchedProduct &&
-                  fetchedProduct?.product_image_other_3?.media_id?.url
-                    ? fetchedProduct?.product_image_other_3?.media_id?.url
-                    : ""
-                }
-                alt="section_img"
-                className="cursor-pointer"
-                width={60}
-                height={86}
-                onClick={() =>
-                  handleCurrentView(
-                    fetchedProduct?.product_image_other_3?.media_id?.url
-                      ? fetchedProduct?.product_image_other_3?.media_id?.url
-                      : ""
-                  )
-                }
+                width={560}
+                height={810}
               />
             </div>
           </div>
-          <div className="flex flex-col w-[80%]">
-            <Image
-              src={
-                currentImg
-                  ? currentImg
-                  : fetchedProduct?.product_image_main?.media_id?.url
-                  ? fetchedProduct?.product_image_main?.media_id?.url
-                  : ""
-              }
-              alt="section_img"
-              width={560}
-              height={810}
-            />
+
+          <div className="w-[47%] flex flex-col">
+            <div className="w-full flex flex-col">
+              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] mb-[0.4rem]">
+                SISI KEMI
+              </p>
+              <h3 className="font-montserrat font-semibold text-xs sm:text-lg text-[#4f4f4f] m-0 p-0 ">
+                {fetchedProduct && fetchedProduct?.product_name
+                  ? fetchedProduct?.product_name?.toUpperCase()
+                  : ""}
+              </h3>
+              <h3 className="font-montserrat font-medium text-xs sm:text-lg text-[#4f4f4f] my-[0.4rem] p-0 ">
+                {fetchedProduct && fetchedProduct?.price
+                  ? `₦ ${Number(fetchedProduct?.price).toLocaleString()}`
+                  : ""}
+              </h3>
+            </div>
+
+            <div className="w-full flex flex-col">
+              <div className="w-[7.875rem] border-[0.4px] border-[#828282] rounded pt-[10px] px-[12px] pb-[5px] flex justify-between my-[0.5rem] ml-auto">
+                <TbHanger color="#4F4F4F" size={20} />
+                <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-center pb-[0.5rem]">
+                  Size Guide
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col">
+              <div className="w-full flex flex-col my-[0.45rem]">
+                <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
+                  Size
+                </span>
+
+                <div className="w-[60%] flex">
+                  {fetchedProduct && fetchedProduct?.size?.length
+                    ? fetchedProduct?.size.map((size, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => setSelectedSizeId(idx)}
+                          className={`py-[14px] w-[3rem] border-[0.4px] mr-2 border-[#828282] rounded font-montserrat font-medium text-sm text-center cursor-pointer ${
+                            selectedSizeId === idx
+                              ? "bg-[#828282] text-[#F2F2F2]"
+                              : "text-[#4f4f4f]"
+                          }`}
+                        >
+                          {size}
+                        </div>
+                      ))
+                    : null}
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col">
+              <div className="w-full flex flex-col my-[0.45rem]">
+                <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
+                  Color
+                </span>
+
+                <div className="w-[70%] flex">
+                  {fetchedProduct && fetchedProduct?.color?.length
+                    ? fetchedProduct?.color?.map((colr, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => setSelectedColorId(idx)}
+                          className={`py-[14px] w-[5.375rem] mr-2 border-[0.4px] border-[#828282] rounded font-montserrat font-medium text-sm text-center cursor-pointer ${
+                            selectedColorId === idx
+                              ? "bg-[#828282] text-[#F2F2F2]"
+                              : "text-[#4f4f4f]"
+                          }`}
+                        >
+                          {colr}
+                        </div>
+                      ))
+                    : null}
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col">
+              <div className="w-full flex flex-col my-[0.45rem]">
+                <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
+                  Quantity
+                </span>
+                <div className="py-[12px] px-[20px] gap-[10px] w-[107px] border-[0.4px] border-[#828282] rounded box-border font-montserrat font-medium text-sm text-[#4f4f4f] flex justify-between">
+                  <AiOutlineMinus
+                    onClick={() => decrement(setQuantity)}
+                    color="#4F4F4F"
+                    className="cursor-pointer mt-1"
+                  />
+                  {quantity}
+                  <AiOutlinePlus
+                    onClick={() => increment(setQuantity)}
+                    color="#4F4F4F"
+                    className="cursor-pointer mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full flex flex-col">
+              {!isAddedToCart ? (
+                <Button
+                  className="w-[8px] sm:w-full h-[43px] px-[24px] py-[8px] border-0 rounded font-semibold text-xs text-[#F2F2F2] font-montserrat bg-[#363435] outline-0 cursor-pointer my-[1rem] mx-auto"
+                  type="submit"
+                  onClick={() => (!token ? handleAddToCart() : handleCart())}
+                >
+                  ADD TO CART
+                </Button>
+              ) : (
+                <Button
+                  className="w-[8px] sm:w-full h-[43px] px-[24px] py-[8px] border-0 rounded font-semibold text-xs text-[#F2F2F2] font-montserrat bg-[#363435] outline-0 cursor-pointer my-[1rem] mx-auto"
+                  type="submit"
+                  onClick={() => handleRemoveFromCart()}
+                >
+                  REMOVE FROM CART
+                </Button>
+              )}
+            </div>
+
+            <div className="w-full flex flex-col">
+              <h3 className="font-montserrat font-semibold text-sm sm:text-base text-[#333333] mb-[0.5rem] p-0 ">
+                Description
+              </h3>
+              <h3 className="font-montserrat font-normal text-sm sm:text-base text-[#4f4f4f] mb-[0.5rem] p-0 ">
+                {fetchedProduct && fetchedProduct?.product_description
+                  ? fetchedProduct?.product_description
+                  : ""}
+              </h3>
+            </div>
+
+            <div className="mt-[1.5rem] w-full flex justify-between box-border rounded pt-[10px] px-[16px] border-[0.8px] border-[#c4c4c4]">
+              <h3 className="font-montserrat font-normal text-sm sm:text-base text-[#4f4f4f] mb-[0.5rem] p-0 ">
+                MORE INFORMATION
+              </h3>
+
+              <BsChevronRight color="#4F4F4F" />
+            </div>
           </div>
         </div>
-
-        <div className="w-[47%] flex flex-col">
-          <div className="w-full flex flex-col">
-            <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] mb-[0.4rem]">
-              SISI KEMI
-            </p>
-            <h3 className="font-montserrat font-semibold text-xs sm:text-lg text-[#4f4f4f] m-0 p-0 ">
-              {fetchedProduct && fetchedProduct?.product_name
-                ? fetchedProduct?.product_name?.toUpperCase()
-                : ""}
-            </h3>
-            <h3 className="font-montserrat font-medium text-xs sm:text-lg text-[#4f4f4f] my-[0.4rem] p-0 ">
-              {fetchedProduct && fetchedProduct?.price
-                ? `₦ ${Number(fetchedProduct?.price).toLocaleString()}`
-                : ""}
-            </h3>
-          </div>
-
-          <div className="w-full flex flex-col">
-            <div className="w-[7.875rem] border-[0.4px] border-[#828282] rounded pt-[10px] px-[12px] pb-[5px] flex justify-between my-[0.5rem] ml-auto">
-              <TbHanger color="#4F4F4F" size={20} />
-              <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-center pb-[0.5rem]">
-                Size Guide
-              </span>
-            </div>
-          </div>
-
-          <div className="w-full flex flex-col">
-            <div className="w-full flex flex-col my-[0.45rem]">
-              <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
-                Size
-              </span>
-
-              <div className="w-[60%] flex">
-                {fetchedProduct && fetchedProduct?.size?.length
-                  ? fetchedProduct?.size.map((size, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => setSelectedSizeId(idx)}
-                        className={`py-[14px] w-[3rem] border-[0.4px] mr-2 border-[#828282] rounded font-montserrat font-medium text-sm text-center cursor-pointer ${
-                          selectedSizeId === idx
-                            ? "bg-[#828282] text-[#F2F2F2]"
-                            : "text-[#4f4f4f]"
-                        }`}
-                      >
-                        {size}
-                      </div>
-                    ))
-                  : null}
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full flex flex-col">
-            <div className="w-full flex flex-col my-[0.45rem]">
-              <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
-                Color
-              </span>
-
-              <div className="w-[70%] flex">
-                {fetchedProduct && fetchedProduct?.color?.length
-                  ? fetchedProduct?.color?.map((colr, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => setSelectedColorId(idx)}
-                        className={`py-[14px] w-[5.375rem] mr-2 border-[0.4px] border-[#828282] rounded font-montserrat font-medium text-sm text-center cursor-pointer ${
-                          selectedColorId === idx
-                            ? "bg-[#828282] text-[#F2F2F2]"
-                            : "text-[#4f4f4f]"
-                        }`}
-                      >
-                        {colr}
-                      </div>
-                    ))
-                  : null}
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full flex flex-col">
-            <div className="w-full flex flex-col my-[0.45rem]">
-              <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
-                Quantity
-              </span>
-              <div className="py-[12px] px-[20px] gap-[10px] w-[107px] border-[0.4px] border-[#828282] rounded box-border font-montserrat font-medium text-sm text-[#4f4f4f] flex justify-between">
-                <AiOutlineMinus
-                  onClick={() => decrement(setQuantity)}
-                  color="#4F4F4F"
-                  className="cursor-pointer mt-1"
-                />
-                {quantity}
-                <AiOutlinePlus
-                  onClick={() => increment(setQuantity)}
-                  color="#4F4F4F"
-                  className="cursor-pointer mt-1"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="w-full flex flex-col">
-            {!isAddedToCart ? (
-              <Button
-                className="w-[8px] sm:w-full h-[43px] px-[24px] py-[8px] border-0 rounded font-semibold text-xs text-[#F2F2F2] font-montserrat bg-[#363435] outline-0 cursor-pointer my-[1rem] mx-auto"
-                type="submit"
-                onClick={() => (!token ? handleAddToCart() : handleCart())}
-              >
-                ADD TO CART
-              </Button>
-            ) : (
-              <Button
-                className="w-[8px] sm:w-full h-[43px] px-[24px] py-[8px] border-0 rounded font-semibold text-xs text-[#F2F2F2] font-montserrat bg-[#363435] outline-0 cursor-pointer my-[1rem] mx-auto"
-                type="submit"
-                onClick={() => handleRemoveFromCart()}
-              >
-                REMOVE FROM CART
-              </Button>
-            )}
-          </div>
-
-          <div className="w-full flex flex-col">
-            <h3 className="font-montserrat font-semibold text-sm sm:text-base text-[#333333] mb-[0.5rem] p-0 ">
-              Description
-            </h3>
-            <h3 className="font-montserrat font-normal text-sm sm:text-base text-[#4f4f4f] mb-[0.5rem] p-0 ">
-              {fetchedProduct && fetchedProduct?.product_description
-                ? fetchedProduct?.product_description
-                : ""}
-            </h3>
-          </div>
-
-          <div className="mt-[1.5rem] w-full flex justify-between box-border rounded pt-[10px] px-[16px] border-[0.8px] border-[#c4c4c4]">
-            <h3 className="font-montserrat font-normal text-sm sm:text-base text-[#4f4f4f] mb-[0.5rem] p-0 ">
-              MORE INFORMATION
-            </h3>
-
-            <BsChevronRight color="#4F4F4F" />
-          </div>
-        </div>
-      </div>
+      )}
 
       <RecentlyViewed title="YOU MAY ALSO LIKE" />
 

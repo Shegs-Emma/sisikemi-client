@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { CiSearch } from "react-icons/ci";
 import { styled } from "@mui/material/styles";
@@ -18,7 +18,6 @@ import { FetchCollectionResponseInterface } from "@/utils/interface";
 import { useCollectionStore } from "@/store/collectionStore";
 import { shallow } from "zustand/shallow";
 import moment from "moment";
-import { textAlign } from "@mui/system";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -65,6 +64,8 @@ const AdminCollection = () => {
     useState<FetchCollectionResponseInterface>();
 
   const ITEMS_PER_PAGE = 10;
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { fetchCollections, collections } = useCollectionStore(
     (state: any) => ({
       fetchCollections: state.fetchCollections,
@@ -72,6 +73,7 @@ const AdminCollection = () => {
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   useEffect(() => {
     handleCollectionsFetch();
@@ -121,7 +123,7 @@ const AdminCollection = () => {
   //     );
 
   const totalPages = 10;
-  const currentData = 1;
+  // const currentData = 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

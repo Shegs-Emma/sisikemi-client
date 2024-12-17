@@ -11,7 +11,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { GoDotFill } from "react-icons/go";
 import MyPagination from "../ui/pagination";
 import { useRouter } from "next/navigation";
 
@@ -102,7 +101,7 @@ const AdminOrders = () => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = React.useState<number>(1);
 
-  const ITEMS_PER_PAGE = 10;
+  // const ITEMS_PER_PAGE = 10;
   //   const totalPages = transactions?.length
   //     ? Math.ceil(transactions.length / ITEMS_PER_PAGE)
   //     : 0;
@@ -114,7 +113,7 @@ const AdminOrders = () => {
   //     );
 
   const totalPages = 10;
-  const currentData = 1;
+  // const currentData = 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

@@ -10,7 +10,7 @@ import CartService from "@/api/cart/cart";
 
 export const useCartStore = createWithEqualityFn(
   devtools(
-    (set, get) => ({
+    (set) => ({
       cart: [],
       cartItem: {},
       loading: false,
@@ -29,13 +29,15 @@ export const useCartStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {
           set({ loading: false });
         }
       },
-      fetchCart: async (data: FetchItemsInterface, router: any) => {
+      fetchCart: async (data: FetchItemsInterface) => {
         set({ loading: true });
         try {
           const response = await CartService.fetchUserCart(
@@ -51,6 +53,8 @@ export const useCartStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {
@@ -72,6 +76,8 @@ export const useCartStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {
@@ -93,6 +99,8 @@ export const useCartStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {

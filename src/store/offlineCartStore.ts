@@ -7,7 +7,7 @@ import { CartItemInterface } from "@/utils/interface";
 
 export const useOfflineCartStore = createWithEqualityFn(
   devtools(
-    (set, get) => ({
+    (set) => ({
       offlineCart:
         typeof window !== "undefined"
           ? JSON.parse(localStorage.getItem("cart") || "[]")

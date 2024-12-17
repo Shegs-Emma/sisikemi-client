@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect, useState, useTransition } from "react";
+import React, { FC, useEffect, useState } from "react";
 import RecentlyViewed from "@/components/reusebles/recentlyViewed";
 import { Button } from "@/components/ui/button";
 import { useProductStore } from "@/store/productStore";
@@ -24,46 +24,45 @@ import { useRouter } from "next/navigation";
 
 const Shop: FC = () => {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [fetchedProducts, setFetchedProducts] =
     useState<ProductResponseInterface>();
   const [selectedSize, setSelectedSize] = useState<string>("");
 
   const ITEMS_PER_PAGE = 10;
-  const { fetchProducts, products } = useProductStore(
+  const currentPage = 1;
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const { fetchProducts } = useProductStore(
     (state: any) => ({
       fetchProducts: state.fetchProducts,
-      products: state.products,
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   useEffect(() => {
     handleProductsFetch();
   }, []);
 
   const handleProductsFetch = async () => {
-    startTransition(async () => {
-      try {
-        const payload = {
-          page_id: currentPage.toString(),
-          page_size: ITEMS_PER_PAGE.toString(),
-        };
+    try {
+      const payload = {
+        page_id: currentPage.toString(),
+        page_size: ITEMS_PER_PAGE.toString(),
+      };
 
-        const response = await fetchProducts(payload);
+      const response = await fetchProducts(payload);
 
-        if (!response?.product?.length) {
-          return toast.error("Products could not be fetched");
-        }
-
-        setFetchedProducts(response);
-
-        return response.product;
-      } catch (err) {
-        return err;
+      if (!response?.product?.length) {
+        return toast.error("Products could not be fetched");
       }
-    });
+
+      setFetchedProducts(response);
+
+      return response.product;
+    } catch (err) {
+      return err;
+    }
   };
 
   return (

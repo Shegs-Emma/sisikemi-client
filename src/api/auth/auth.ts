@@ -1,11 +1,13 @@
 import axios from "axios";
-import { api } from "../index";
-import { RegisterInterface } from "@/utils/interface";
+import {
+  LoginUserResponseInterface,
+  RegisterInterface,
+} from "@/utils/interface";
 
 export const API_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 export default class AuthService {
-  static async loginAdmin(data: any) {
+  static async loginAdmin(data: LoginUserResponseInterface) {
     return axios.post(`${API_URL}login_user`, data);
   }
 

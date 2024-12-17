@@ -46,12 +46,14 @@ const Checkout = () => {
 
   const token = !!getCookie("accessToken");
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { fetchCart } = useCartStore(
     (state: any) => ({
       fetchCart: state.fetchCart,
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // ============================================== CHECK AVAILABILITY OF CART AND FETCH ============================== //
   useEffect(() => {

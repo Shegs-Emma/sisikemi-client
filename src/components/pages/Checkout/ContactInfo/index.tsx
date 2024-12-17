@@ -1,3 +1,4 @@
+import React, { FC } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,7 +14,6 @@ import {
 } from "@/utils/interface";
 import { Checkbox } from "@mui/material";
 import Image from "next/image";
-import React, { FC, useState } from "react";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { twMerge } from "tailwind-merge";
 

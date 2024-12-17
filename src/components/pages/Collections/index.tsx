@@ -8,19 +8,20 @@ import { toast } from "sonner";
 import { shallow } from "zustand/shallow";
 
 const Collections: FC = () => {
-  const [currentPage, setCurrentPage] = useState<number>(1);
   const [fetchedCollections, setFetchedCollections] =
     useState<FetchCollectionResponseInterface>();
 
   const ITEMS_PER_PAGE = 10;
+  const currentPage = 1;
 
-  const { fetchCollections, collections } = useCollectionStore(
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const { fetchCollections } = useCollectionStore(
     (state: any) => ({
       fetchCollections: state.fetchCollections,
-      collections: state.collections,
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   useEffect(() => {
     handleCollectionsFetch();
