@@ -186,3 +186,34 @@ export interface UpdateProductStatusPayload {
   product_id: number;
   status: string;
 }
+
+export interface ShippingMethodInterface {
+  name: string;
+  cost: string;
+}
+
+export interface OrderDetailsInterface {
+  email_phone: string;
+  country: string;
+  address: string;
+  first_name: string;
+  last_name: string;
+  town_city: string;
+  postal_code: string;
+  landmark: string;
+  shipping_method: ShippingMethodInterface;
+  payment_method: string;
+}
+
+export interface OrderDetailsErrorInterface {
+  email_phone: string;
+  country: string;
+  address: string;
+  first_name: string;
+  last_name: string;
+  town_city: string;
+  postal_code: string;
+  landmark: string;
+  shipping_method: string;
+  payment_method: string;
+}

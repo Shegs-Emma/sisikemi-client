@@ -78,7 +78,6 @@ const AdminCollection = () => {
   }, []);
 
   const handleCollectionsFetch = async () => {
-    const toastId = toast.loading("fetching collection...");
     try {
       const payload = {
         page_id: currentPage.toString(),
@@ -88,14 +87,8 @@ const AdminCollection = () => {
       const response = await fetchCollections(payload);
 
       if (!response?.collection?.length) {
-        return toast.error("Collection could not be fetched", {
-          id: toastId,
-        });
+        return toast.error("Collection could not be fetched");
       }
-
-      toast.success("Collection fetched successfully", {
-        id: toastId,
-      });
 
       setFetchedCollections(response);
 
@@ -180,7 +173,11 @@ const AdminCollection = () => {
               Collections
             </h1>
             <p className="font-lato font-normal text-sm text-[#828282] mt-1">
-              7 Collections
+              {collections && collections?.length
+                ? collections?.length > 1
+                  ? `${collections?.length} Collections`
+                  : `${collections?.length} Collection`
+                : null}
             </p>
           </div>
 

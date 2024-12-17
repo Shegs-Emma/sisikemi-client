@@ -198,7 +198,11 @@ const AdminProducts = () => {
               Products
             </h1>
             <p className="font-lato font-normal text-sm text-[#828282] ml-3 mt-3">
-              120 Products
+              {products && products?.length
+                ? products?.length > 1
+                  ? `${products?.length} Products`
+                  : `${products?.length} Product`
+                : null}
             </p>
           </div>
 

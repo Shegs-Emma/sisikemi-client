@@ -104,9 +104,11 @@ const Navbar = () => {
               NEW IN
             </h4>
           </Link>
-          <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333]">
-            SHOP
-          </h4>
+          <Link href="/shop">
+            <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
+              SHOP
+            </h4>
+          </Link>
           <Link href="/sale">
             <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
               SALE
@@ -122,9 +124,11 @@ const Navbar = () => {
               COLLECTIONS
             </h4>
           </Link>
-          <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333]">
-            BRIDAL
-          </h4>
+          <Link href="/bridal">
+            <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
+              BRIDAL
+            </h4>
+          </Link>
         </div>
 
         {isToken && (

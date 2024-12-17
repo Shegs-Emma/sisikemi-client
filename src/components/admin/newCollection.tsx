@@ -16,13 +16,18 @@ import { MediaUploadResponseInterface } from "@/utils/interface";
 import { toast } from "sonner";
 import { useMediaStore } from "@/store/mediaStore";
 import { useCollectionStore } from "@/store/collectionStore";
+import { BsThreeDots } from "react-icons/bs";
 
 const NewCollection = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [description, setDescription] = useState<string>("");
   const [thumbnailFile, setThumbnailFile] = useState<File[] | null>([]);
+  const [isShowingThumbnailFileOption, setIsShowingThumbnailFileOption] =
+    useState<boolean>(false);
   const [headerFile, setHeaderFile] = useState<File[] | null>([]);
+  const [isShowingHeaderFileOption, setIsShowingHeaderFileOption] =
+    useState<boolean>(false);
   const [thumbnailFileBase64, setThumbnailFileBase64] = useState<any>("");
   const [headerFileBase64, setHeaderFileBase64] = useState<any>("");
   const [formValues, setFormValues] = useState({
@@ -285,46 +290,103 @@ const NewCollection = () => {
             <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
               Thumbnail Image
             </p>
-            <div
-              {...getRootPropsFirst()}
-              className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] cursor-pointer"
-            >
-              <input {...getInputPropsFirst()} />
-              <GoPlus color="#363435" />
-
-              {thumbnailFile && thumbnailFile[0]?.name ? (
-                <p className="text-sm text-[#363435]">
-                  {thumbnailFile[0]?.name.slice(0, 5)}
-                </p>
-              ) : (
+            {thumbnailFile && thumbnailFile?.length ? (
+              <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center mr-4 border-[#d9d9d9]">
+                {isShowingThumbnailFileOption ? (
+                  <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
+                    <BsThreeDots
+                      color="#ffffff"
+                      onClick={() => setIsShowingThumbnailFileOption(false)}
+                    />
+                    <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
+                    <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
+                      <p
+                        onClick={() => setThumbnailFile(null)}
+                        className="font-lato text-sm font-normal text-[#ffffff]"
+                      >
+                        Delete
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
+                    <BsThreeDots
+                      color="#ffffff"
+                      onClick={() => setIsShowingThumbnailFileOption(true)}
+                    />
+                  </div>
+                )}
+                <Image
+                  src={URL.createObjectURL(thumbnailFile[0])}
+                  alt="section_img"
+                  width={180}
+                  height={180}
+                />
+              </div>
+            ) : (
+              <div
+                {...getRootPropsFirst()}
+                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] cursor-pointer"
+              >
+                <input {...getInputPropsFirst()} />
+                <GoPlus color="#363435" />
                 <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
                   Upload
                 </p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col mb-8">
             <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
               Header Image
             </p>
-            <div
-              {...getRootPropsSecond()}
-              className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] cursor-pointer"
-            >
-              <input {...getInputPropsSecond()} />
-              <GoPlus color="#363435" />
+            {headerFile && headerFile?.length ? (
+              <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center mr-4 border-[#d9d9d9]">
+                {isShowingHeaderFileOption ? (
+                  <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
+                    <BsThreeDots
+                      color="#ffffff"
+                      onClick={() => setIsShowingHeaderFileOption(false)}
+                    />
+                    <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
+                    <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
+                      <p
+                        onClick={() => setHeaderFile(null)}
+                        className="font-lato text-sm font-normal text-[#ffffff]"
+                      >
+                        Delete
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
+                    <BsThreeDots
+                      color="#ffffff"
+                      onClick={() => setIsShowingHeaderFileOption(true)}
+                    />
+                  </div>
+                )}
+                <Image
+                  src={URL.createObjectURL(headerFile[0])}
+                  alt="section_img"
+                  width={180}
+                  height={180}
+                />
+              </div>
+            ) : (
+              <div
+                {...getRootPropsSecond()}
+                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] cursor-pointer"
+              >
+                <input {...getInputPropsSecond()} />
+                <GoPlus color="#363435" />
 
-              {headerFile && headerFile[0]?.name ? (
-                <p className="text-sm text-[#363435]">
-                  {headerFile[0]?.name.slice(0, 5)}
-                </p>
-              ) : (
                 <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
                   Upload
                 </p>
-              )}
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="flex mt-4 mb-8">

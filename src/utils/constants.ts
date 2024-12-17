@@ -40,6 +40,29 @@ export const sizes = [
   },
 ];
 
+export const countries = [
+  {
+    id: 1,
+    name: "Nigeria",
+  },
+  {
+    id: 2,
+    name: "USA",
+  },
+  {
+    id: 3,
+    name: "UK",
+  },
+  {
+    id: 4,
+    name: "Australia",
+  },
+  {
+    id: 5,
+    name: "Argentina",
+  },
+];
+
 export const statuses = [
   {
     id: 1,

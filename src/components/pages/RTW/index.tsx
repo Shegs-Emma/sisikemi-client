@@ -1,12 +1,67 @@
+"use client";
+
 import RecentlyViewed from "@/components/reusebles/recentlyViewed";
 import { Button } from "@/components/ui/button";
+import { useProductStore } from "@/store/productStore";
+import { CurrencyComponent } from "@/utils/functions";
+import { ProductInterface } from "@/utils/interface";
 import Image from "next/image";
-import React, { FC } from "react";
+import { useRouter } from "next/navigation";
+import React, { FC, useEffect, useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { BsGrid3X3GapFill } from "react-icons/bs";
 import { IoGrid } from "react-icons/io5";
+import { toast } from "sonner";
+import { shallow } from "zustand/shallow";
 
 const RTW: FC = () => {
+  const router = useRouter();
+  const [fetchedProducts, setFetchedProducts] = useState<ProductInterface[]>(
+    []
+  );
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const ITEMS_PER_PAGE = 10;
+
+  const { fetchProducts, products } = useProductStore(
+    (state: any) => ({
+      fetchProducts: state.fetchProducts,
+      products: state.products,
+    }),
+    shallow
+  );
+
+  useEffect(() => {
+    handleProductsFetch();
+  }, []);
+
+  useEffect(() => {
+    if (products?.length) {
+      const rtw = products?.filter(
+        (prd: ProductInterface) => prd?.collection?.collection_name === "RTW"
+      );
+      setFetchedProducts(rtw);
+    }
+  }, [products]);
+
+  const handleProductsFetch = async () => {
+    try {
+      const payload = {
+        page_id: currentPage.toString(),
+        page_size: ITEMS_PER_PAGE.toString(),
+      };
+
+      const response = await fetchProducts(payload);
+
+      if (!response?.product?.length) {
+        return toast.error("Products could not be fetched");
+      }
+
+      return response.product;
+    } catch (err) {
+      return err;
+    }
+  };
+
   return (
     <div className="w-full flex flex-col p-0 md:pt-[6rem]">
       <div className="w-full flex border-b-[1px] border-b-[#e0e0e0] py-0 px-[2rem]">
@@ -59,73 +114,30 @@ const RTW: FC = () => {
 
       <div className="flex flex-col w-full border-b-[0.5px] border-b-[#4f4f4f] pb-[7rem]">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-14 px-[1.5rem] py-0">
-          <div className="flex flex-col">
-            <Image
-              src="/images/folake.svg"
-              alt="section_img"
-              width={280}
-              height={420}
-            />
-            <div className="flex flex-col text-center">
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
-                FOLAKE
-              </p>
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
-                N35,000
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <Image
-              src="/images/chisom.svg"
-              alt="section_img"
-              width={280}
-              height={420}
-            />
-            <div className="flex flex-col text-center">
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
-                CHISOM
-              </p>
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
-                N24,000
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <Image
-              src="/images/aisha.svg"
-              alt="section_img"
-              width={280}
-              height={420}
-            />
-            <div className="flex flex-col text-center">
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
-                AISHA
-              </p>
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
-                N68,000
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <Image
-              src="/images/bimpe.svg"
-              alt="section_img"
-              width={280}
-              height={420}
-            />
-            <div className="flex flex-col text-center">
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
-                BIMPE
-              </p>
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
-                N40,000
-              </p>
-            </div>
-          </div>
+          {fetchedProducts && fetchedProducts?.length
+            ? fetchedProducts?.map((prd: ProductInterface, idx) => (
+                <div
+                  onClick={() => router.push(`/new-in/${prd?.id}`)}
+                  key={idx}
+                  className="flex flex-col cursor-pointer"
+                >
+                  <Image
+                    src={prd?.product_image_main?.media_id?.url}
+                    alt="section_img"
+                    width={280}
+                    height={420}
+                  />
+                  <div className="flex flex-col text-center">
+                    <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
+                      {prd?.product_name}
+                    </p>
+                    <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
+                      {CurrencyComponent(Number(prd?.price))}
+                    </p>
+                  </div>
+                </div>
+              ))
+            : null}
         </div>
       </div>
 

@@ -6,16 +6,56 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { sizes } from "@/utils/constants";
+import { countries } from "@/utils/constants";
+import {
+  OrderDetailsErrorInterface,
+  OrderDetailsInterface,
+} from "@/utils/interface";
 import { Checkbox } from "@mui/material";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import { twMerge } from "tailwind-merge";
 
-const ContactInfo = () => {
+interface CheckoutProps {
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setOrderDetails: React.Dispatch<React.SetStateAction<OrderDetailsInterface>>;
+  orderDetails: OrderDetailsInterface;
+  setErrorFields: React.Dispatch<
+    React.SetStateAction<OrderDetailsErrorInterface>
+  >;
+  errorFields: OrderDetailsErrorInterface;
+}
+
+const ContactInfo: FC<CheckoutProps> = ({
+  setStep,
+  setOrderDetails,
+  orderDetails,
+  setErrorFields,
+  errorFields,
+}) => {
   const label = { inputProps: { "aria-label": "Checkbox demo" } };
-  const [selectedCountry, setSelectedCountry] = useState<string>("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setOrderDetails({
+      ...orderDetails,
+      [name]: value,
+    });
+
+    if (value.trim() !== "") {
+      setErrorFields({
+        ...errorFields,
+        [name]: false,
+      });
+    }
+  };
+
+  const handleContactInfoSave = () => {
+    return setStep(2);
+  };
+
   return (
     <div className="w-[60%] flex flex-col">
       <div className="flex my-[4rem] mx-[2rem]">
@@ -69,14 +109,14 @@ const ContactInfo = () => {
         <div className="flex flex-col w-full">
           <Input
             type="text"
-            name="email"
+            name="email_phone"
             placeholder="Email Address or Mobile Phone Number"
-            //   onChange={handleChange}
-            //   value={formValues?.firstName}
+            onChange={handleChange}
+            value={orderDetails?.email_phone}
             className={twMerge(
               "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] py-2 px-6 text-[#363435] w-[100%]"
             )}
-            //   isError={errorFields.firstName}
+            // isError={errorFields.email_phone}
           />
           <div className="w-full flex m-0 p-0">
             <Checkbox {...label} className="relative -left-3 text-[#828282]" />
@@ -96,22 +136,28 @@ const ContactInfo = () => {
       </div>
 
       <div className="mb-8 space-y-1 pl-10 pr-[7rem] mt-4">
-        <Select onValueChange={(value: string) => setSelectedCountry(value)}>
+        <Select
+          onValueChange={(value: string) =>
+            setOrderDetails({ ...orderDetails, country: value })
+          }
+        >
           <SelectTrigger
             className={twMerge(
               "w-full border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
             )}
           >
             <SelectValue
-              placeholder={selectedCountry ? selectedCountry : "Country/Region"}
+              placeholder={
+                orderDetails?.country ? orderDetails?.country : "Country/Region"
+              }
             />
           </SelectTrigger>
           <SelectContent className={twMerge("")}>
             <div className="h-full max-h-60 overflow-y-scroll scrollbar-thumb-[#363435]/40 scrollbar-thin bg-[#4f4f4f] scrollbar-track-[#363435]-200 w-full sm:w-full">
-              {sizes?.length &&
-                sizes?.map((size, idx) => (
-                  <SelectItem key={idx} value={size?.id.toString()}>
-                    {size?.name}
+              {countries?.length &&
+                countries?.map((county, idx) => (
+                  <SelectItem key={idx} value={county?.name}>
+                    {county?.name}
                   </SelectItem>
                 ))}
             </div>
@@ -124,8 +170,8 @@ const ContactInfo = () => {
           type="text"
           name="address"
           placeholder="Address"
-          //   onChange={handleChange}
-          //   value={formValues?.firstName}
+          onChange={handleChange}
+          value={orderDetails?.address}
           className={twMerge(
             "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] py-2 px-3 text-[#363435] w-[100%]"
           )}
@@ -136,10 +182,10 @@ const ContactInfo = () => {
       <div className="mb-8 space-y-1 pl-10 pr-[5rem] w-[100%] flex justify-between">
         <Input
           type="text"
-          name="address"
+          name="first_name"
           placeholder="First Name"
-          //   onChange={handleChange}
-          //   value={formValues?.firstName}
+          onChange={handleChange}
+          value={orderDetails?.first_name}
           className={twMerge(
             "mt-1 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[90%] py-2 px-3 text-[#363435]"
           )}
@@ -147,10 +193,10 @@ const ContactInfo = () => {
         />
         <Input
           type="text"
-          name="address"
+          name="last_name"
           placeholder="Last Name"
-          //   onChange={handleChange}
-          //   value={formValues?.firstName}
+          onChange={handleChange}
+          value={orderDetails?.last_name}
           className={twMerge(
             "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[90%] py-2 px-3 text-[#363435]"
           )}
@@ -161,10 +207,10 @@ const ContactInfo = () => {
       <div className="mb-8 space-y-1 pl-10 pr-[5rem] w-[100%] flex justify-between">
         <Input
           type="text"
-          name="address"
+          name="town_city"
           placeholder="Town / City"
-          //   onChange={handleChange}
-          //   value={formValues?.firstName}
+          onChange={handleChange}
+          value={orderDetails?.town_city}
           className={twMerge(
             "mt-1 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[85%] py-2 px-3 text-[#363435]"
           )}
@@ -172,10 +218,10 @@ const ContactInfo = () => {
         />
         <Input
           type="text"
-          name="address"
+          name="postal_code"
           placeholder="Postal Code"
-          //   onChange={handleChange}
-          //   value={formValues?.firstName}
+          onChange={handleChange}
+          value={orderDetails?.postal_code}
           className={twMerge(
             "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[85%] py-2 px-3 text-[#363435]"
           )}
@@ -183,10 +229,10 @@ const ContactInfo = () => {
         />
         <Input
           type="text"
-          name="address"
-          placeholder="Postal Code"
-          //   onChange={handleChange}
-          //   value={formValues?.firstName}
+          name="landmark"
+          placeholder="Landmark"
+          onChange={handleChange}
+          value={orderDetails?.landmark}
           className={twMerge(
             "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[85%] py-2 px-3 text-[#363435]"
           )}
@@ -194,7 +240,10 @@ const ContactInfo = () => {
         />
       </div>
 
-      <div className="flex flex-col w-[80%] p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435]">
+      <div
+        onClick={() => handleContactInfoSave()}
+        className="flex flex-col w-[80%] p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435]"
+      >
         CONTINUE TO SHIPPING
       </div>
     </div>
