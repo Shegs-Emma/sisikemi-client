@@ -30,7 +30,7 @@ const Landing = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-14 px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-14 px-6 m-auto md:m-0">
           <Image
             src="/images/section1.svg"
             alt="section_img"
@@ -71,7 +71,7 @@ const Landing = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[10px] py-0 pr-[1.5rem] pl-[2.5rem] mt-[5rem]">
+        <div className="md:grid md:grid-cols-3 md:gap-[10px] md:py-0 md:pr-[1.5rem] md:pl-[2.5rem] md:mt-[5rem] hidden">
           <div className="w-[95%]">
             <Image
               src="/images/section2.svg"
@@ -119,6 +119,65 @@ const Landing = () => {
               className="ml-[15%] md:ml-0"
             />
             <div className="relative flex flex-col -top-[20rem] md:-top-[17rem] -left-[2rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
+              <Button
+                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
+                variant="yellow"
+                type="submit"
+              >
+                VIEW COLLECTION
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-[10px] py-0 pr-[1.5rem] md:pl-[2.5rem] mt-[5rem] md:hidden">
+          <div className="w-[95%]">
+            <Image
+              src="/images/section2.svg"
+              alt="section_img"
+              width={280}
+              height={406}
+              className="ml-[15%] md:ml-0"
+            />
+            <div className="relative flex flex-col -top-[12rem] md:-top-[17rem] -left-[.5rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
+              <Button
+                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
+                variant="yellow"
+                type="submit"
+              >
+                VIEW COLLECTION
+              </Button>
+            </div>
+          </div>
+
+          <div className="w-[95%]">
+            <Image
+              src="/images/section2.svg"
+              alt="section_img"
+              width={280}
+              height={406}
+              className="ml-[15%] md:ml-0"
+            />
+            <div className="relative flex flex-col -top-[12rem] md:-top-[17rem] -left-[.5rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
+              <Button
+                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
+                variant="yellow"
+                type="submit"
+              >
+                VIEW COLLECTION
+              </Button>
+            </div>
+          </div>
+
+          <div className="w-[95%]">
+            <Image
+              src="/images/section2.svg"
+              alt="section_img"
+              width={280}
+              height={406}
+              className="ml-[15%] md:ml-0"
+            />
+            <div className="relative flex flex-col -top-[12rem] md:-top-[17rem] -left-[.5rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
               <Button
                 className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
                 variant="yellow"

@@ -21,7 +21,7 @@ const SliderMobile = () => {
           height={468}
           className="block md:hidden"
         />
-        <div className="absolute flex flex-col top-[20rem] z-10 h-[5rem] mr-auto ml-[30%] md:mr-auto">
+        <div className="absolute flex flex-col top-[20rem] z-10 h-[5rem] m-auto w-full">
           <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#fafafa] m-0">
             New in
           </h4>
@@ -46,7 +46,7 @@ const SliderMobile = () => {
           height={468}
           className="block md:hidden"
         />
-        <div className="absolute flex flex-col top-[20rem] z-10 h-[5rem] mr-auto ml-[30%] md:mr-auto">
+        <div className="absolute flex flex-col top-[20rem] z-10 h-[5rem] m-auto w-full">
           <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#fafafa] m-0">
             New in
           </h4>
@@ -71,7 +71,7 @@ const SliderMobile = () => {
           height={468}
           className="block md:hidden"
         />
-        <div className="absolute flex flex-col top-[20rem] z-10 h-[5rem] mr-auto ml-[30%] md:mr-auto">
+        <div className="absolute flex flex-col top-[20rem] z-10 h-[5rem] m-auto w-full">
           <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#fafafa] m-0">
             New in
           </h4>
