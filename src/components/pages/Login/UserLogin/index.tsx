@@ -25,9 +25,11 @@ const UserLogin = () => {
     setVisibility(!visibility);
   };
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { login } = useUserStore((state: any) => ({
     login: state.login,
   }));
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // Function to handle form submission
   const onSubmit = () => {
@@ -143,12 +145,19 @@ const UserLogin = () => {
           </div>
 
           <div className="flex flex-col justify-center items-center">
-            <div
-              onClick={() => onSubmit()}
-              className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4"
-            >
-              LOG IN
-            </div>
+            {isPending ? (
+              <div className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4">
+                Loading...
+              </div>
+            ) : (
+              <div
+                onClick={() => onSubmit()}
+                className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4"
+              >
+                LOG IN
+              </div>
+            )}
+
             <div className="flex justify-between  w-[70%] mt-4">
               <p
                 onClick={() => router.push("/register")}

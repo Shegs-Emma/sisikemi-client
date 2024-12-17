@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -14,9 +14,11 @@ const Login = () => {
   const router = useRouter();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { login } = useUserStore((state: any) => ({
     login: state.login,
   }));
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   const {
     register, // register inputs

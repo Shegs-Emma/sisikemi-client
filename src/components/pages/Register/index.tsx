@@ -39,9 +39,11 @@ const Register = () => {
     phone_number: false,
   });
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { register } = useUserStore((state: any) => ({
     register: state.register,
   }));
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   const InputType = visibility ? "text" : "password";
   const InputTypeConfirm = visibilityConfirm ? "text" : "password";
@@ -365,12 +367,19 @@ const Register = () => {
             )}
 
             <div className="flex flex-col justify-center items-center">
-              <div
-                onClick={() => handleSubmit()}
-                className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4 cursor-pointer"
-              >
-                CREATE MY ACCOUNT
-              </div>
+              {isPending ? (
+                <div className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4 cursor-pointer">
+                  loading....
+                </div>
+              ) : (
+                <div
+                  onClick={() => handleSubmit()}
+                  className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4 cursor-pointer"
+                >
+                  CREATE MY ACCOUNT
+                </div>
+              )}
+
               <p
                 onClick={() => router.push("/login")}
                 className="font-montserrat text-base font-medium text-[#4f4f4f] cursor-pointer"

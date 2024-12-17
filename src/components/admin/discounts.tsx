@@ -110,7 +110,7 @@ const AdminDiscounts = () => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = React.useState<number>(1);
 
-  const ITEMS_PER_PAGE = 10;
+  // const ITEMS_PER_PAGE = 10;
   //   const totalPages = transactions?.length
   //     ? Math.ceil(transactions.length / ITEMS_PER_PAGE)
   //     : 0;
@@ -122,7 +122,7 @@ const AdminDiscounts = () => {
   //     );
 
   const totalPages = 10;
-  const currentData = 1;
+  // const currentData = 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

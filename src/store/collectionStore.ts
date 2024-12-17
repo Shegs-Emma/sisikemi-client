@@ -9,14 +9,11 @@ import CollectionService from "@/api/collections/collection";
 
 export const useCollectionStore = createWithEqualityFn(
   devtools(
-    (set, get) => ({
+    (set) => ({
       collections: [],
       collection: {},
       loading: false,
-      createCollection: async (
-        data: CreateCollectionInterface,
-        router: any
-      ) => {
+      createCollection: async (data: CreateCollectionInterface) => {
         set({ loading: true });
         try {
           const response = await CollectionService.createCollection(data);
@@ -29,13 +26,15 @@ export const useCollectionStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {
           set({ loading: false });
         }
       },
-      fetchCollections: async (data: FetchItemsInterface, router: any) => {
+      fetchCollections: async (data: FetchItemsInterface) => {
         set({ loading: true });
         try {
           const response = await CollectionService.fetchCollections(
@@ -51,6 +50,8 @@ export const useCollectionStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {

@@ -3,14 +3,19 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { BsFillQuestionCircleFill } from "react-icons/bs";
 import { twMerge } from "tailwind-merge";
-import { CartResponseInterface } from "@/utils/interface";
+import {
+  CartResponseInterface,
+  OrderDetailsInterface,
+} from "@/utils/interface";
 import { CurrencyComponent } from "@/utils/functions";
 
 interface CartProps {
   items: CartResponseInterface[] | undefined;
+  orderDetails: OrderDetailsInterface;
+  step: number;
 }
 
-const Estimate: FC<CartProps> = ({ items }) => {
+const Estimate: FC<CartProps> = ({ items, orderDetails, step }) => {
   const [total, setTotal] = useState<number>(0);
 
   // ============================================== CALCULATE THE SUBTOTAL ON ONLINE CART ============================== //
@@ -110,7 +115,9 @@ const Estimate: FC<CartProps> = ({ items }) => {
               />
             </div>
             <p className="font-montserrat font-medium text-sm text-[#4f4f4f]">
-              Calculated at next step
+              {step > 1 && orderDetails?.shipping_method?.cost
+                ? CurrencyComponent(Number(orderDetails?.shipping_method?.cost))
+                : "Calculated at next step"}
             </p>
           </div>
         </div>
@@ -124,7 +131,11 @@ const Estimate: FC<CartProps> = ({ items }) => {
               NGN
             </div>
             <p className="font-montserrat font-semibold text-2xl ml-3 text-[#4f4f4f]">
-              N720,000.00
+              {orderDetails && orderDetails?.shipping_method?.cost
+                ? CurrencyComponent(
+                    Number(orderDetails?.shipping_method?.cost) + Number(total)
+                  )
+                : CurrencyComponent(Number(total))}
             </p>
           </div>
         </div>

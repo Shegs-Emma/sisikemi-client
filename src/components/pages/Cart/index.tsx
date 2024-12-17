@@ -28,6 +28,7 @@ const Cart = () => {
     useState<CartResponseRootInterface>();
   const token = !!getCookie("accessToken");
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { offlineCart, updateCart, deleteCart } = useOfflineCartStore(
     (state: any) => ({
       offlineCart: state.offlineCart,
@@ -47,6 +48,7 @@ const Cart = () => {
       }),
       shallow
     );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // ============================================== CALCULATE THE SUBTOTAL ON OFFLINE CART ============================== //
   useEffect(() => {

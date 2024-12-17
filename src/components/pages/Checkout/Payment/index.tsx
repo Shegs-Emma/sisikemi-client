@@ -1,12 +1,39 @@
-import React, { useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import {
   MdOutlineRadioButtonChecked,
   MdOutlineRadioButtonUnchecked,
 } from "react-icons/md";
+import { OrderDetailsInterface } from "@/utils/interface";
+import { CurrencyComponent } from "@/utils/functions";
 
-const Payment = () => {
+interface CheckoutProps {
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setOrderDetails: React.Dispatch<React.SetStateAction<OrderDetailsInterface>>;
+  orderDetails: OrderDetailsInterface;
+}
+
+const Payment: FC<CheckoutProps> = ({
+  setStep,
+  setOrderDetails,
+  orderDetails,
+}) => {
+  const [paymentMethod, setPaymentMethod] = useState<string>("");
+
+  useEffect(() => {
+    if (paymentMethod) {
+      setOrderDetails({
+        ...orderDetails,
+        payment_method: paymentMethod,
+      });
+    }
+  }, [paymentMethod]);
+
+  const handlePayment = () => {
+    console.log("orderDetails", orderDetails);
+  };
+
   return (
     <div className="w-[60%] flex flex-col">
       <div className="flex my-[4rem] mx-[2rem]">
@@ -29,7 +56,10 @@ const Payment = () => {
               Cart
             </h3>
             <BiChevronRight color="#F2994A" className="mt-[1px]" size={20} />
-            <h3 className="font-montserrat font-normal text-xs sm:text-sm text-[#F2994A] m-0 p-0 ">
+            <h3
+              onClick={() => setStep(2)}
+              className="cursor-pointer font-montserrat font-normal text-xs sm:text-sm text-[#F2994A] m-0 p-0 "
+            >
               Information
             </h3>
             <BiChevronRight color="#F2994A" className="mt-[1px]" size={20} />
@@ -51,10 +81,15 @@ const Payment = () => {
               Contact:
             </p>
             <p className="font-montserrat font-normal text-sm text-[#4f4f4f] ml-4">
-              Joyoluzzz@gmail.com
+              {orderDetails && orderDetails?.email_phone
+                ? orderDetails?.email_phone
+                : ""}
             </p>
           </div>
-          <p className="font-montserrat font-medium text-sm text-[#2f80ed]">
+          <p
+            onClick={() => setStep(1)}
+            className="font-montserrat font-medium text-sm text-[#2f80ed]"
+          >
             Change
           </p>
         </div>
@@ -65,10 +100,15 @@ const Payment = () => {
               Ship to:
             </p>
             <p className="font-montserrat fornt-normal text-sm text-[#4f4f4f] ml-4">
-              59 Oduduwa way, 100271 Ikaeja Lagos, Nigeria
+              {orderDetails && orderDetails?.address
+                ? orderDetails?.address
+                : ""}
             </p>
           </div>
-          <p className="font-montserrat font-medium text-sm text-[#2f80ed]">
+          <p
+            onClick={() => setStep(1)}
+            className="font-montserrat font-medium text-sm text-[#2f80ed]"
+          >
             Change
           </p>
         </div>
@@ -79,11 +119,26 @@ const Payment = () => {
               Method:
             </p>
             <p className="font-montserrat font-normal text-sm text-[#4f4f4f] ml-4">
-              Shipping Method 1 -{" "}
-              <span className="font-montserrat font-semibold">N5,000</span>
+              {orderDetails && orderDetails?.shipping_method?.name
+                ? orderDetails?.shipping_method?.name === "pay_on_delivery"
+                  ? "Pay on delivery - "
+                  : orderDetails?.shipping_method?.name === "pick_up"
+                  ? "Pick up station - "
+                  : "Courier Service - "
+                : ""}
+              <span className="font-montserrat font-semibold">
+                {orderDetails && orderDetails?.shipping_method?.cost
+                  ? CurrencyComponent(
+                      Number(orderDetails?.shipping_method?.cost)
+                    )
+                  : ""}
+              </span>
             </p>
           </div>
-          <p className="font-montserrat fornt-medium text-sm text-[#2f80ed]">
+          <p
+            onClick={() => setStep(2)}
+            className="font-montserrat fornt-medium text-sm text-[#2f80ed]"
+          >
             Change
           </p>
         </div>
@@ -101,9 +156,17 @@ const Payment = () => {
       </div>
 
       <div className="flex flex-col w-[80%] py-6 ml-10 mt-8 border-[1.2px] border-[#bdbdbd] rounded">
-        <div className="flex justify-between border-b-[1.2px] border-b-[#bdbdbd] pb-4 px-6">
+        <div
+          onClick={() => setPaymentMethod("pay_with_card")}
+          className="flex justify-between border-b-[1.2px] border-b-[#bdbdbd] pb-4 px-6 cursor-pointer"
+        >
           <div className="flex">
-            <MdOutlineRadioButtonChecked color="#2f80ed" className="mt-1" />
+            {paymentMethod === "pay_with_card" ? (
+              <MdOutlineRadioButtonChecked color="#2f80ed" className="mt-1" />
+            ) : (
+              <MdOutlineRadioButtonUnchecked color="#2f80ed" className="mt-1" />
+            )}
+
             <div className="flex flex-col ml-2">
               <p className="font-montserrat fornt-normal text-base text-[#363435] mb-1">
                 Pay with Card
@@ -112,9 +175,16 @@ const Payment = () => {
           </div>
         </div>
 
-        <div className="flex justify-between pt-4 px-6">
+        <div
+          onClick={() => setPaymentMethod("pay_with_paystack")}
+          className="flex justify-between pt-4 px-6 cursor-pointer"
+        >
           <div className="flex">
-            <MdOutlineRadioButtonUnchecked color="#2f80ed" className="mt-1" />
+            {paymentMethod === "pay_with_paystack" ? (
+              <MdOutlineRadioButtonChecked color="#2f80ed" className="mt-1" />
+            ) : (
+              <MdOutlineRadioButtonUnchecked color="#2f80ed" className="mt-1" />
+            )}
             <div className="flex flex-col ml-2">
               <p className="font-montserrat fornt-normal text-base text-[#363435] mb-1">
                 Pay with Paystack
@@ -180,7 +250,10 @@ const Payment = () => {
         </div>
       </div>
 
-      <div className="flex flex-col w-[80%] p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435]">
+      <div
+        onClick={() => handlePayment()}
+        className="flex flex-col w-[80%] p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435]"
+      >
         PAY NOW
       </div>
     </div>

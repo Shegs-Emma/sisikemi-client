@@ -13,16 +13,47 @@ import { toast } from "sonner";
 
 const Checkout = () => {
   const [isCartFetched, setIsCartFetched] = useState<boolean>(false);
+  const [step, setStep] = useState<number>(1);
   const [authenticatedCart, setAuthenticatedCart] =
     useState<CartResponseRootInterface>();
+  const [orderDetails, setOrderDetails] = useState({
+    email_phone: "",
+    country: "",
+    address: "",
+    first_name: "",
+    last_name: "",
+    town_city: "",
+    postal_code: "",
+    landmark: "",
+    shipping_method: {
+      name: "",
+      cost: "",
+    },
+    payment_method: "",
+  });
+  const [errorFields, setErrorFields] = useState({
+    email_phone: "",
+    country: "",
+    address: "",
+    first_name: "",
+    last_name: "",
+    town_city: "",
+    postal_code: "",
+    landmark: "",
+    shipping_method: "",
+    payment_method: "",
+  });
+
   const token = !!getCookie("accessToken");
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { fetchCart } = useCartStore(
     (state: any) => ({
       fetchCart: state.fetchCart,
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // ============================================== CHECK AVAILABILITY OF CART AND FETCH ============================== //
   useEffect(() => {
@@ -53,14 +84,36 @@ const Checkout = () => {
     }
   };
 
-  console.log("authenticatedCart", authenticatedCart);
-
   return (
     <div className="w-full flex pt-[5rem]">
-      <ContactInfo />
-      {/* <Shipping /> */}
-      {/* <Payment /> */}
-      <Estimate items={authenticatedCart?.cart} />
+      {step === 1 && (
+        <ContactInfo
+          setStep={setStep}
+          orderDetails={orderDetails}
+          setOrderDetails={setOrderDetails}
+          setErrorFields={setErrorFields}
+          errorFields={errorFields}
+        />
+      )}
+      {step === 2 && (
+        <Shipping
+          setStep={setStep}
+          orderDetails={orderDetails}
+          setOrderDetails={setOrderDetails}
+        />
+      )}
+      {step === 3 && (
+        <Payment
+          setStep={setStep}
+          orderDetails={orderDetails}
+          setOrderDetails={setOrderDetails}
+        />
+      )}
+      <Estimate
+        items={authenticatedCart?.cart}
+        step={step}
+        orderDetails={orderDetails}
+      />
     </div>
   );
 };

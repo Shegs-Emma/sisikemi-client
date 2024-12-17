@@ -7,11 +7,12 @@ import {
   LoginUserResponseInterface,
   RegisterInterface,
 } from "@/utils/interface";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export const useUserStore = createWithEqualityFn(
   devtools(
     persist(
-      (set, get) => ({
+      (set) => ({
         user: {},
         isAuth: false,
         loading: false,
@@ -19,7 +20,7 @@ export const useUserStore = createWithEqualityFn(
         resendLoading: false,
         login: async (
           data: LoginUserResponseInterface,
-          router: any,
+          router: AppRouterInstance,
           isAdmin: boolean
         ) => {
           set({ loading: true });
@@ -33,10 +34,12 @@ export const useUserStore = createWithEqualityFn(
             set({ isAuth: true });
 
             toast.success("Login successful! 🎉");
-            let userRoute;
+            let userRoute = "";
 
             userRoute = isAdmin ? `/admin/product` : "/new-in";
             router.push(userRoute);
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) {
             console.log("here:", error);
             const errorMessage =
@@ -53,7 +56,10 @@ export const useUserStore = createWithEqualityFn(
             set({ loading: false });
           }
         },
-        register: async (data: RegisterInterface, router: any) => {
+        register: async (
+          data: RegisterInterface,
+          router: AppRouterInstance
+        ) => {
           set({ loading: true });
           try {
             const response = await AuthService.register(data);
@@ -61,10 +67,12 @@ export const useUserStore = createWithEqualityFn(
             set({ user: { ...response?.data?.user } });
 
             toast.success("Registration successful! 🎉");
-            let userRoute;
+            let userRoute = "";
 
             userRoute = `/login`;
             router.push(userRoute);
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } catch (error: any) {
             const errorMessage =
               error?.response?.data?.message ||

@@ -7,7 +7,7 @@ import { twMerge } from "tailwind-merge";
 import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
 import Checkbox from "@mui/material/Checkbox";
-import { CgToggleOff, CgToggleOn } from "react-icons/cg";
+import { CgToggleOn } from "react-icons/cg";
 import Image from "next/image";
 
 const ViewDiscount = () => {

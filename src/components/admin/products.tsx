@@ -14,7 +14,7 @@ import Paper from "@mui/material/Paper";
 import { GoDotFill } from "react-icons/go";
 import MyPagination from "../ui/pagination";
 import { useRouter } from "next/navigation";
-import { ProductInterface, ProductResponseInterface } from "@/utils/interface";
+import { ProductInterface } from "@/utils/interface";
 import { useProductStore } from "@/store/productStore";
 import { shallow } from "zustand/shallow";
 import { toast } from "sonner";
@@ -63,6 +63,8 @@ const AdminProducts = () => {
   const [isViewing, setIsViewing] = useState<string>("all");
 
   const ITEMS_PER_PAGE = 10;
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const { fetchProducts, products } = useProductStore(
     (state: any) => ({
       fetchProducts: state.fetchProducts,
@@ -70,6 +72,8 @@ const AdminProducts = () => {
     }),
     shallow
   );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
+
   //   const totalPages = transactions?.length
   //     ? Math.ceil(transactions.length / ITEMS_PER_PAGE)
   //     : 0;
@@ -146,7 +150,7 @@ const AdminProducts = () => {
     : null;
 
   const totalPages = 10;
-  const currentData = 1;
+  // const currentData = 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -198,7 +202,11 @@ const AdminProducts = () => {
               Products
             </h1>
             <p className="font-lato font-normal text-sm text-[#828282] ml-3 mt-3">
-              120 Products
+              {products && products?.length
+                ? products?.length > 1
+                  ? `${products?.length} Products`
+                  : `${products?.length} Product`
+                : null}
             </p>
           </div>
 
@@ -242,7 +250,7 @@ const AdminProducts = () => {
         </div>
       </div>
 
-      {products && products?.length ? (
+      {products && products?.length && !isPending ? (
         <div className="w-full flex flex-col px-10 pt-4 my-10">
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -300,7 +308,9 @@ const AdminProducts = () => {
             </Table>
           </TableContainer>
         </div>
-      ) : null}
+      ) : (
+        <p>Loading...</p>
+      )}
 
       {products && products?.length ? (
         <div className="mx-auto text-xs text-gray-600 mb-10">

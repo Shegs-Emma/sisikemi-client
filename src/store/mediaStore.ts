@@ -1,4 +1,3 @@
-import { getCookie } from "cookies-next";
 // zustand
 import { createWithEqualityFn } from "zustand/traditional";
 import { devtools } from "zustand/middleware";
@@ -7,11 +6,11 @@ import MediaService from "@/api/media/media";
 
 export const useMediaStore = createWithEqualityFn(
   devtools(
-    (set, get) => ({
+    (set) => ({
       medium: [],
       media: {},
       loading: false,
-      createMedia: async (data: MediaUploadInterface, router: any) => {
+      createMedia: async (data: MediaUploadInterface) => {
         set({ loading: true });
         try {
           const response = await MediaService.uploadImage(data);
@@ -24,6 +23,8 @@ export const useMediaStore = createWithEqualityFn(
             return response.data;
           }
           set({ loading: false });
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
           return error;
         } finally {

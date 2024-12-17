@@ -1,12 +1,43 @@
-import React from "react";
+import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import {
   MdOutlineRadioButtonChecked,
   MdOutlineRadioButtonUnchecked,
 } from "react-icons/md";
+import {
+  OrderDetailsInterface,
+  ShippingMethodInterface,
+} from "@/utils/interface";
 
-const Shipping = () => {
+interface CheckoutProps {
+  setStep: React.Dispatch<React.SetStateAction<number>>;
+  setOrderDetails: React.Dispatch<React.SetStateAction<OrderDetailsInterface>>;
+  orderDetails: OrderDetailsInterface;
+}
+
+const Shipping: FC<CheckoutProps> = ({
+  setStep,
+  setOrderDetails,
+  orderDetails,
+}) => {
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethodInterface>(
+    (orderDetails && orderDetails?.shipping_method) || {}
+  );
+
+  useEffect(() => {
+    if (shippingMethod) {
+      setOrderDetails({
+        ...orderDetails,
+        shipping_method: shippingMethod,
+      });
+    }
+  }, [shippingMethod]);
+
+  const handleShippingMethod = () => {
+    return setStep(3);
+  };
+
   return (
     <div className="w-[60%] flex flex-col">
       <div className="flex my-[4rem] mx-[2rem]">
@@ -25,7 +56,10 @@ const Shipping = () => {
             height={40}
           />
           <div className="flex mt-4">
-            <h3 className="font-montserrat font-normal text-xs sm:text-sm text-[#F2994A] m-0 p-0 ">
+            <h3
+              onClick={() => setStep(1)}
+              className="font-montserrat cursor-pointer font-normal text-xs sm:text-sm text-[#F2994A] m-0 p-0 "
+            >
               Cart
             </h3>
             <BiChevronRight color="#F2994A" className="mt-[1px]" size={20} />
@@ -51,10 +85,15 @@ const Shipping = () => {
               Contact:
             </p>
             <p className="font-montserrat fornt-normal text-sm text-[#4f4f4f] ml-4">
-              Joyoluzzz@gmail.com
+              {orderDetails && orderDetails?.email_phone
+                ? orderDetails?.email_phone
+                : ""}
             </p>
           </div>
-          <p className="font-montserrat fornt-medium text-sm text-[#2f80ed]">
+          <p
+            onClick={() => setStep(1)}
+            className="font-montserrat fornt-medium text-sm text-[#2f80ed]"
+          >
             Change
           </p>
         </div>
@@ -65,10 +104,15 @@ const Shipping = () => {
               Ship to:
             </p>
             <p className="font-montserrat fornt-normal text-sm text-[#4f4f4f] ml-4">
-              59 Oduduwa way, 100271 Ikaeja Lagos, Nigeria
+              {orderDetails && orderDetails?.address
+                ? orderDetails?.address
+                : ""}
             </p>
           </div>
-          <p className="font-montserrat fornt-medium text-sm text-[#2f80ed]">
+          <p
+            onClick={() => setStep(1)}
+            className="font-montserrat fornt-medium text-sm text-[#2f80ed]"
+          >
             Change
           </p>
         </div>
@@ -83,12 +127,21 @@ const Shipping = () => {
       </div>
 
       <div className="flex flex-col w-[80%] py-6 ml-10 mt-8 border-[1.2px] border-[#bdbdbd] rounded">
-        <div className="flex justify-between border-b-[1.2px] border-b-[#bdbdbd] pb-4 px-6">
+        <div
+          onClick={() =>
+            setShippingMethod({ name: "pay_on_delivery", cost: "24000" })
+          }
+          className="flex justify-between border-b-[1.2px] border-b-[#bdbdbd] pb-4 px-6 cursor-pointer"
+        >
           <div className="flex">
-            <MdOutlineRadioButtonChecked color="#2f80ed" className="mt-1" />
+            {shippingMethod?.name === "pay_on_delivery" ? (
+              <MdOutlineRadioButtonChecked color="#2f80ed" className="mt-1" />
+            ) : (
+              <MdOutlineRadioButtonUnchecked color="#2f80ed" className="mt-1" />
+            )}
             <div className="flex flex-col ml-2">
               <p className="font-montserrat fornt-normal text-base text-[#363435] mb-1">
-                Shipping Method 1
+                Pay on Delivery
               </p>
               <p className="font-montserrat font-normal text-sm text-[#828282]">
                 Shipping Duration
@@ -100,12 +153,19 @@ const Shipping = () => {
           </p>
         </div>
 
-        <div className="flex justify-between border-b-[1.2px] border-b-[#bdbdbd] py-4 px-6">
+        <div
+          onClick={() => setShippingMethod({ name: "pick_up", cost: "10000" })}
+          className="flex justify-between border-b-[1.2px] border-b-[#bdbdbd] py-4 px-6 cursor-pointer"
+        >
           <div className="flex">
-            <MdOutlineRadioButtonUnchecked color="#2f80ed" className="mt-1" />
+            {shippingMethod?.name === "pick_up" ? (
+              <MdOutlineRadioButtonChecked color="#2f80ed" className="mt-1" />
+            ) : (
+              <MdOutlineRadioButtonUnchecked color="#2f80ed" className="mt-1" />
+            )}
             <div className="flex flex-col ml-2">
               <p className="font-montserrat fornt-normal text-base text-[#363435] mb-1">
-                Shipping Method 2
+                Pick Up Station
               </p>
               <p className="font-montserrat font-normal text-sm text-[#828282]">
                 Shipping Duration
@@ -117,12 +177,21 @@ const Shipping = () => {
           </p>
         </div>
 
-        <div className="flex justify-between pt-4 px-6">
+        <div
+          onClick={() =>
+            setShippingMethod({ name: "courier_service", cost: "15000" })
+          }
+          className="flex justify-between pt-4 px-6 cursor-pointer"
+        >
           <div className="flex">
-            <MdOutlineRadioButtonUnchecked color="#2f80ed" className="mt-1" />
+            {shippingMethod?.name === "courier_service" ? (
+              <MdOutlineRadioButtonChecked color="#2f80ed" className="mt-1" />
+            ) : (
+              <MdOutlineRadioButtonUnchecked color="#2f80ed" className="mt-1" />
+            )}
             <div className="flex flex-col ml-2">
               <p className="font-montserrat fornt-normal text-base text-[#363435] mb-1">
-                Shipping Method 3
+                Courier Service
               </p>
               <p className="font-montserrat font-normal text-sm text-[#828282]">
                 Shipping Duration
@@ -135,7 +204,10 @@ const Shipping = () => {
         </div>
       </div>
 
-      <div className="flex flex-col w-[80%] p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435]">
+      <div
+        onClick={() => handleShippingMethod()}
+        className="flex flex-col w-[80%] p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435]"
+      >
         CONTINUE TO PAYMENT
       </div>
     </div>
