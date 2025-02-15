@@ -114,9 +114,9 @@ const NewCollection = () => {
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   // Handle submission code ===========================================================================================================================
-  const { createMedia } = useMediaStore(
+  const { createMediaCloudinary } = useMediaStore(
     (state: any) => ({
-      createMedia: state.createMedia,
+      createMediaCloudinary: state.createMediaCloudinary,
     }),
     shallow
   );
@@ -132,15 +132,41 @@ const NewCollection = () => {
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // Handle submission code ===========================================================================================================================
-  const handleFileUpload = async (
+  // const handleFileUpload = async (
+  //   selectedFile: string,
+  //   filename: string
+  // ): Promise<MediaUploadResponseInterface | void> => {
+  //   try {
+  //     try {
+  //       const response = await createMedia({
+  //         image: selectedFile,
+  //         filename,
+  //       });
+
+  //       if (response?.media) {
+  //         return response?.media;
+  //       }
+  //       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //     } catch (err: any) {
+  //       return err;
+  //     }
+  //   } catch (error) {
+  //     toast.error("Upload failed!");
+  //     console.error("Error uploading file:", error);
+  //     return;
+  //   }
+  // };
+
+  // Handle submission code to Cloudinary ===========================================================================================================================
+  const handleFileUploadCloudinary = async (
     selectedFile: string,
     filename: string
   ): Promise<MediaUploadResponseInterface | void> => {
     try {
       try {
-        const response = await createMedia({
-          image: selectedFile,
-          filename,
+        const response = await createMediaCloudinary({
+          image_data: selectedFile,
+          image_name: filename,
         });
 
         if (response?.media) {
@@ -171,27 +197,31 @@ const NewCollection = () => {
             thumbnailFile?.length &&
             `${formValues?.collection_name
               .split(" ")
-              .join("_")}_thumbnail_${id}_.${
-              thumbnailFile[0]?.type.split("/")[1]
-            }`;
+              .join("_")}_thumbnail_${id}_.${thumbnailFile[0]}`;
           const header_image_name =
             headerFile?.length &&
             `${formValues?.collection_name
               .split(" ")
-              .join("_")}_header_${id}_.${headerFile[0]?.type.split("/")[1]}`;
+              .join("_")}_header_${id}_.${headerFile[0]}`;
 
           if (thumbnailFileBase64 && thumbnail_image_name) {
-            await handleFileUpload(thumbnailFileBase64, thumbnail_image_name)
+            await handleFileUploadCloudinary(
+              thumbnailFileBase64,
+              thumbnail_image_name
+            )
               .then((res) => {
                 if (res?.url) {
-                  return (thumbnail_image = res?.url);
+                  return (thumbnail_image = res.url);
                 }
               })
               .catch((err) => err);
           }
 
           if (headerFileBase64 && header_image_name) {
-            await handleFileUpload(headerFileBase64, header_image_name)
+            await handleFileUploadCloudinary(
+              headerFileBase64,
+              header_image_name
+            )
               .then((res) => {
                 if (res?.url) {
                   return (header_image = res?.url);

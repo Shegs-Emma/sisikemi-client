@@ -19,6 +19,8 @@ import { useProductStore } from "@/store/productStore";
 import { shallow } from "zustand/shallow";
 import { toast } from "sonner";
 import moment from "moment";
+import Container from "../reusebles/container";
+import EmptyImage from "../../../public/assets/emptyImage.svg";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -123,7 +125,7 @@ const AdminProducts = () => {
         const response = await fetchProducts(payload);
 
         if (!response?.product?.length) {
-          return toast.error("Products could not be fetched");
+          return;
         }
 
         // setFetchedProducts(response);
@@ -217,100 +219,127 @@ const AdminProducts = () => {
             + Add new product
           </div>
         </div>
-
-        <div className="flex mt-4">
-          <p
-            onClick={() => setIsViewing("all")}
-            className={` cursor-pointer font-normal text-sm font-lato text-[#363435] ${
-              isViewing === "all" ? "border-b-[#f2c94c] border-b-[2px]" : ""
-            }`}
-          >
-            All
-          </p>
-
-          <p
-            onClick={() => setIsViewing("active")}
-            className={` cursor-pointer font-normal text-sm font-lato text-[#363435] ml-4 ${
-              isViewing === "active" ? "border-b-[#f2c94c] border-b-[2px]" : ""
-            }`}
-          >
-            Active
-          </p>
-
-          <p
-            onClick={() => setIsViewing("archived")}
-            className={` cursor-pointer font-normal text-sm font-lato text-[#363435] ml-4 ${
-              isViewing === "archived"
-                ? "border-b-[#f2c94c] border-b-[2px]"
-                : ""
-            }`}
-          >
-            Archived
-          </p>
-        </div>
       </div>
 
-      {products && products?.length && !isPending ? (
-        <div className="w-full flex flex-col px-10 pt-4 my-10">
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>Product name</StyledTableCell>
-                  <StyledTableCell align="right">Price</StyledTableCell>
-                  <StyledTableCell align="right">Quantity</StyledTableCell>
-                  <StyledTableCell align="right">Collection</StyledTableCell>
-                  <StyledTableCell align="right">Last updated</StyledTableCell>
-                  <StyledTableCell align="right">Status</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows?.length &&
-                  rows.map((row, idx) => (
-                    <StyledTableRow key={idx}>
-                      <StyledTableCell
-                        component="th"
-                        scope="row"
-                        onClick={() => router.push(`/admin/product/${row.id}`)}
-                        className="cursor-pointer"
-                      >
-                        {row.name}
+      <div className="w-full flex flex-col px-10 pt-4">
+        {products && products?.length && !isPending ? (
+          <>
+            <div className="flex mt-4">
+              <p
+                onClick={() => setIsViewing("all")}
+                className={` cursor-pointer font-normal text-sm font-lato text-[#363435] ${
+                  isViewing === "all" ? "border-b-[#f2c94c] border-b-[2px]" : ""
+                }`}
+              >
+                All
+              </p>
+
+              <p
+                onClick={() => setIsViewing("active")}
+                className={` cursor-pointer font-normal text-sm font-lato text-[#363435] ml-4 ${
+                  isViewing === "active"
+                    ? "border-b-[#f2c94c] border-b-[2px]"
+                    : ""
+                }`}
+              >
+                Active
+              </p>
+
+              <p
+                onClick={() => setIsViewing("archived")}
+                className={` cursor-pointer font-normal text-sm font-lato text-[#363435] ml-4 ${
+                  isViewing === "archived"
+                    ? "border-b-[#f2c94c] border-b-[2px]"
+                    : ""
+                }`}
+              >
+                Archived
+              </p>
+            </div>
+            <div className="w-full flex flex-col my-10">
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                      <StyledTableCell>Product name</StyledTableCell>
+                      <StyledTableCell align="right">Price</StyledTableCell>
+                      <StyledTableCell align="right">Quantity</StyledTableCell>
+                      <StyledTableCell align="right">
+                        Collection
                       </StyledTableCell>
                       <StyledTableCell align="right">
-                        {`₦${Number(row.price).toLocaleString()}`}
+                        Last updated
                       </StyledTableCell>
-                      <StyledTableCell align="right">
-                        {row.quantity}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">
-                        {row.collection}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">
-                        {moment(row.lastUpdated).format("LL")}
-                      </StyledTableCell>
-                      <StyledTableCell align="right">
-                        <div
-                          className={`flex justify-end ${
-                            row.status === "active"
-                              ? "text-[#05830A]"
-                              : row.status === "archived"
-                              ? "text-[#074cb2]"
-                              : "text-[#f2994a]"
-                          }`}
-                        >
-                          <GoDotFill className="mr-1 mt-1" />
-                          {row.status}
-                        </div>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
+                      <StyledTableCell align="right">Status</StyledTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows?.length &&
+                      rows.map((row, idx) => (
+                        <StyledTableRow key={idx}>
+                          <StyledTableCell
+                            component="th"
+                            scope="row"
+                            onClick={() =>
+                              router.push(`/admin/product/${row.id}`)
+                            }
+                            className="cursor-pointer"
+                          >
+                            {row.name}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            {`₦${Number(row.price).toLocaleString()}`}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            {row.quantity}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            {row.collection}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            {moment(row.lastUpdated).format("LL")}
+                          </StyledTableCell>
+                          <StyledTableCell align="right">
+                            <div
+                              className={`flex justify-end ${
+                                row.status === "active"
+                                  ? "text-[#05830A]"
+                                  : row.status === "archived"
+                                  ? "text-[#074cb2]"
+                                  : "text-[#f2994a]"
+                              }`}
+                            >
+                              <GoDotFill className="mr-1 mt-1" />
+                              {row.status}
+                            </div>
+                          </StyledTableCell>
+                        </StyledTableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </div>
+          </>
+        ) : (
+          <Container className="mb-14 pt-6 @container">
+            <div className="mt-8 flex flex-col items-center justify-center">
+              <Image
+                src={EmptyImage}
+                alt="empty_img"
+                width={24}
+                height={24}
+                className="h-44 w-auto"
+              />
+              <h2 className="mt-4 text-xl font-bold text-[#333333]">
+                No Products uploaded yet
+              </h2>
+              <p className="mt-2 text-sm font-medium text-[#333333]">
+                Oops, it seems like your products are empty.
+              </p>
+            </div>
+          </Container>
+        )}
+      </div>
 
       {products && products?.length ? (
         <div className="mx-auto text-xs text-gray-600 mb-10">
