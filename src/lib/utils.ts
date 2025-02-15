@@ -30,3 +30,8 @@ export const onSubmitError = (errors: any) => {
 
   toast.error(` ${firstError.message}`);
 };
+
+export const capitalizeFirstLetter = (name: string) => {
+  if (!name) return name; // Handle empty or null strings
+  return name.charAt(0)?.toUpperCase() + name.slice(1);
+};

@@ -18,6 +18,8 @@ import { FetchCollectionResponseInterface } from "@/utils/interface";
 import { useCollectionStore } from "@/store/collectionStore";
 import { shallow } from "zustand/shallow";
 import moment from "moment";
+import Container from "../reusebles/container";
+import EmptyImage from "../../../public/assets/emptyImage.svg";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -61,7 +63,7 @@ const AdminCollection = () => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [fetchedCollections, setFetchedCollections] =
-    useState<FetchCollectionResponseInterface>();
+    useState<FetchCollectionResponseInterface | null>();
 
   const ITEMS_PER_PAGE = 10;
 
@@ -89,7 +91,7 @@ const AdminCollection = () => {
       const response = await fetchCollections(payload);
 
       if (!response?.collection?.length) {
-        return toast.error("Collection could not be fetched");
+        return setFetchedCollections(null);
       }
 
       setFetchedCollections(response);
@@ -248,7 +250,25 @@ const AdminCollection = () => {
             </Table>
           </TableContainer>
         </div>
-      ) : null}
+      ) : (
+        <Container className="mb-14 pt-6 @container">
+          <div className="mt-8 flex flex-col items-center justify-center">
+            <Image
+              src={EmptyImage}
+              alt="empty_img"
+              width={24}
+              height={24}
+              className="h-44 w-auto"
+            />
+            <h2 className="mt-4 text-xl font-bold text-[#333333]">
+              No Collections created yet
+            </h2>
+            <p className="mt-2 text-sm font-medium text-[#333333]">
+              Oops, it seems like your collections are empty.
+            </p>
+          </div>
+        </Container>
+      )}
 
       {collections && collections?.length ? (
         <div className="mx-auto text-xs text-gray-600 mb-10">

@@ -16,5 +16,6 @@ module.exports = {
         pathname: "/uploads/**", // specify the path pattern
       },
     ],
+    domains: ["res.cloudinary.com"], // Add Cloudinary's hostname here
   },
 };

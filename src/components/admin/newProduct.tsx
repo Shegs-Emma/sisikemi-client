@@ -101,9 +101,9 @@ const NewProduct = () => {
 
   // Handle submission code ===========================================================================================================================
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const { createMedia } = useMediaStore(
+  const { createMediaCloudinary } = useMediaStore(
     (state: any) => ({
-      createMedia: state.createMedia,
+      createMediaCloudinary: state.createMediaCloudinary,
     }),
     shallow
   );
@@ -163,7 +163,6 @@ const NewProduct = () => {
   }, [formValues.price, formValues.sale_price]);
 
   const handleCollectionsFetch = async () => {
-    const toastId = toast.loading("fetching collection...");
     startTransition(async () => {
       try {
         const payload = {
@@ -174,14 +173,8 @@ const NewProduct = () => {
         const response = await fetchCollections(payload);
 
         if (!response?.collection?.length) {
-          return toast.error("Collection could not be fetched", {
-            id: toastId,
-          });
+          return toast.error("Please upload collections first!");
         }
-
-        toast.success("Collection fetched successfully", {
-          id: toastId,
-        });
 
         setFetchedCollections(response);
 
@@ -295,21 +288,20 @@ const NewProduct = () => {
   };
 
   // Handle submission code ===========================================================================================================================
-  const handleFileUpload = async (
+  const handleFileUploadCloudinary = async (
     selectedFile: string,
     filename: string
   ): Promise<MediaUploadResponseInterface | void> => {
     try {
       try {
-        const response = await createMedia({
-          image: selectedFile,
-          filename,
+        const response = await createMediaCloudinary({
+          image_data: selectedFile,
+          image_name: filename,
         });
 
         if (response?.media) {
           return response?.media;
         }
-
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         return err;
@@ -368,35 +360,31 @@ const NewProduct = () => {
             mainImageFile?.length &&
             `${formValues?.product_name
               .split(" ")
-              .join("_")}_main_image_${id}_.${
-              mainImageFile[0]?.type.split("/")[1]
-            }`;
+              .join("_")}_main_image_${id}_.${mainImageFile[0]}`;
           const other_image_name_1 =
             otherImage1File?.length &&
             `${formValues?.product_name
               .split(" ")
-              .join("_")}_other_image_1_${id}_.${
-              otherImage1File[0]?.type.split("/")[1]
-            }`;
+              .join("_")}_other_image_1_${id}_.${otherImage1File[0]}`;
 
           const other_image_name_2 =
             otherImage2File?.length &&
             `${formValues?.product_name
               .split(" ")
-              .join("_")}_other_image_2_${id}_.${
-              otherImage2File[0]?.type.split("/")[1]
-            }`;
+              .join("_")}_other_image_2_${id}_.${otherImage2File[0]}`;
 
           const other_image_name_3 =
             otherImage3File?.length &&
             `${formValues?.product_name
               .split(" ")
-              .join("_")}_other_image_3_${id}_.${
-              otherImage3File[0]?.type.split("/")[1]
-            }`;
+              .join("_")}_other_image_3_${id}_.${otherImage3File[0]}`;
           if (mainImageFileBase64 && main_image_name) {
-            await handleFileUpload(mainImageFileBase64, main_image_name)
+            await handleFileUploadCloudinary(
+              mainImageFileBase64,
+              main_image_name
+            )
               .then((res) => {
+                console.log("res", res);
                 if (res?.url) {
                   return (main_image = res?.media_ref);
                 }
@@ -404,7 +392,10 @@ const NewProduct = () => {
               .catch((err) => err);
           }
           if (otherImage1FileBase64 && other_image_name_1) {
-            await handleFileUpload(otherImage1FileBase64, other_image_name_1)
+            await handleFileUploadCloudinary(
+              otherImage1FileBase64,
+              other_image_name_1
+            )
               .then((res) => {
                 if (res?.url) {
                   return (other_image_1 = res?.media_ref);
@@ -413,7 +404,10 @@ const NewProduct = () => {
               .catch((err) => err);
           }
           if (otherImage2FileBase64 && other_image_name_2) {
-            await handleFileUpload(otherImage2FileBase64, other_image_name_2)
+            await handleFileUploadCloudinary(
+              otherImage2FileBase64,
+              other_image_name_2
+            )
               .then((res) => {
                 if (res?.url) {
                   return (other_image_2 = res?.media_ref);
@@ -422,7 +416,10 @@ const NewProduct = () => {
               .catch((err) => err);
           }
           if (otherImage3FileBase64 && other_image_name_3) {
-            await handleFileUpload(otherImage3FileBase64, other_image_name_3)
+            await handleFileUploadCloudinary(
+              otherImage3FileBase64,
+              other_image_name_3
+            )
               .then((res) => {
                 if (res?.url) {
                   return (other_image_3 = res?.media_ref);
@@ -509,232 +506,281 @@ const NewProduct = () => {
         </p>
       </div>
 
-      {isPending ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="w-full px-10 flex sm:flex-row flex-col justify-between">
-          <div className="w-full sm:w-[50%] flex flex-col mt-12">
-            <div className="mb-8">
-              <Label
-                htmlFor="product_name"
-                className={twMerge(
-                  "font-lato font-medium text-sm text-[#363435]"
-                )}
-              >
-                Product name
-              </Label>
-              <Input
-                type="text"
-                name="product_name"
-                onChange={handleChange}
-                value={formValues?.product_name}
-                className={twMerge(
-                  "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
-                )}
-                // isError={errorFields.product_name}
-              />
-            </div>
+      <div className="w-full px-10 flex sm:flex-row flex-col justify-between">
+        <div className="w-full sm:w-[50%] flex flex-col mt-12">
+          <div className="mb-8">
+            <Label
+              htmlFor="product_name"
+              className={twMerge(
+                "font-lato font-medium text-sm text-[#363435]"
+              )}
+            >
+              Product name
+            </Label>
+            <Input
+              type="text"
+              name="product_name"
+              onChange={handleChange}
+              value={formValues?.product_name}
+              className={twMerge(
+                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
+              )}
+              // isError={errorFields.product_name}
+            />
+          </div>
 
-            <div className="mb-8">
-              <Label
-                htmlFor="product_description"
-                className={twMerge(
-                  "font-lato font-medium text-sm text-[#363435]"
-                )}
-              >
-                Product description
-              </Label>
-              <textarea
-                name="product_description"
-                onChange={(e) => setDescription(e.target.value)}
-                value={description}
-                className={twMerge(
-                  "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
-                )}
-                // isError={errorFields.product_description}
-              ></textarea>
-            </div>
+          <div className="mb-8">
+            <Label
+              htmlFor="product_description"
+              className={twMerge(
+                "font-lato font-medium text-sm text-[#363435]"
+              )}
+            >
+              Product description
+            </Label>
+            <textarea
+              name="product_description"
+              onChange={(e) => setDescription(e.target.value)}
+              value={description}
+              className={twMerge(
+                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
+              )}
+              // isError={errorFields.product_description}
+            ></textarea>
+          </div>
 
-            <div className="mb-8 space-y-1">
-              <Label
-                htmlFor="productCollection"
+          <div className="mb-8 space-y-1">
+            <Label
+              htmlFor="productCollection"
+              className={twMerge(
+                "font-lato font-medium text-sm text-[#363435]"
+              )}
+            >
+              Product collection
+            </Label>
+            <Select
+              onValueChange={(value: string) =>
+                setFormValues({ ...formValues, collection: +value })
+              }
+            >
+              <SelectTrigger
                 className={twMerge(
-                  "font-lato font-medium text-sm text-[#363435]"
+                  "w-full sm:w-[80%] border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
                 )}
               >
-                Product collection
-              </Label>
-              <Select
-                onValueChange={(value: string) =>
-                  setFormValues({ ...formValues, collection: +value })
-                }
-              >
-                <SelectTrigger
-                  className={twMerge(
-                    "w-full sm:w-[80%] border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
-                  )}
-                >
-                  <SelectValue
-                    placeholder={
-                      formValues?.collection ? formValues?.collection : ""
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent className={twMerge("")}>
-                  <div className="h-full max-h-60 overflow-y-scroll scrollbar-thumb-[#363435]/40 scrollbar-thin bg-[#4f4f4f] scrollbar-track-[#363435]-200 w-full sm:w-full">
-                    {fetchedCollections?.collection?.length &&
-                      fetchedCollections?.collection?.map((item, idx) => (
-                        <SelectItem key={idx} value={item?.id}>
-                          {item?.collection_name}
-                        </SelectItem>
-                      ))}
-                  </div>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="mb-8">
-              <Label
-                htmlFor="product_code"
-                className={twMerge(
-                  "font-lato font-medium text-sm text-[#363435]"
-                )}
-              >
-                Product code
-              </Label>
-              <Input
-                type="text"
-                name="product_code"
-                onChange={handleChange}
-                value={formValues?.product_code}
-                className={twMerge(
-                  "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
-                )}
-                //   isError={errorFields.firstName}
-              />
-            </div>
-
-            <div className="flex justify-between w-full sm:w-[80%]">
-              <div className="mb-8 w-[50%]">
-                <Label
-                  htmlFor="price"
-                  className={twMerge(
-                    "font-lato font-medium text-sm text-[#363435]"
-                  )}
-                >
-                  Product price naira
-                </Label>
-                <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
-                  <TbCurrencyNaira size={20} className="mt-[9px] ml-2" />
-                  <Input
-                    type="text"
-                    name="price"
-                    onChange={handleChange}
-                    value={formValues?.price}
-                    onKeyDown={handleKeyDown}
-                    className={twMerge(
-                      "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
-                    )}
-                    //   isError={errorFields.firstName}
-                  />
+                <SelectValue
+                  placeholder={
+                    formValues?.collection ? formValues?.collection : ""
+                  }
+                />
+              </SelectTrigger>
+              <SelectContent className={twMerge("")}>
+                <div className="h-full max-h-60 overflow-y-scroll scrollbar-thumb-[#363435]/40 scrollbar-thin bg-[#4f4f4f] scrollbar-track-[#363435]-200 w-full sm:w-full">
+                  {fetchedCollections?.collection?.length &&
+                    fetchedCollections?.collection?.map((item, idx) => (
+                      <SelectItem key={idx} value={item?.id}>
+                        {item?.collection_name}
+                      </SelectItem>
+                    ))}
                 </div>
-              </div>
+              </SelectContent>
+            </Select>
+          </div>
 
-              <div className="mb-8 w-[50%]">
-                <Label
-                  htmlFor="productPriceDollar"
+          <div className="mb-8">
+            <Label
+              htmlFor="product_code"
+              className={twMerge(
+                "font-lato font-medium text-sm text-[#363435]"
+              )}
+            >
+              Product code
+            </Label>
+            <Input
+              type="text"
+              name="product_code"
+              onChange={handleChange}
+              value={formValues?.product_code}
+              className={twMerge(
+                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
+              )}
+              //   isError={errorFields.firstName}
+            />
+          </div>
+
+          <div className="flex justify-between w-full sm:w-[80%]">
+            <div className="mb-8 w-[50%]">
+              <Label
+                htmlFor="price"
+                className={twMerge(
+                  "font-lato font-medium text-sm text-[#363435]"
+                )}
+              >
+                Product price naira
+              </Label>
+              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
+                <TbCurrencyNaira size={20} className="mt-[9px] ml-2" />
+                <Input
+                  type="text"
+                  name="price"
+                  onChange={handleChange}
+                  value={formValues?.price}
+                  onKeyDown={handleKeyDown}
                   className={twMerge(
-                    "font-lato font-medium text-sm text-[#363435]"
+                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
                   )}
-                >
-                  Product price Dollar
-                </Label>
-                <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
-                  <BsCurrencyDollar size={18} className="mt-[9px] ml-2" />
-                  <Input
-                    type="number"
-                    name="productSalesPriceDollar"
-                    value={dollarPrice}
-                    className={twMerge(
-                      "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
-                    )}
-                    readOnly
-                  />
-                </div>
+                  //   isError={errorFields.firstName}
+                />
               </div>
             </div>
 
-            <h2 className="font-medium text-xl font-lato text-[#363435] mb-6">
-              Sales
-            </h2>
-
-            <div className="flex justify-between w-full sm:w-[80%]">
-              <div className="mb-8 w-[50%]">
-                <Label
-                  htmlFor="sale_price"
+            <div className="mb-8 w-[50%]">
+              <Label
+                htmlFor="productPriceDollar"
+                className={twMerge(
+                  "font-lato font-medium text-sm text-[#363435]"
+                )}
+              >
+                Product price Dollar
+              </Label>
+              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
+                <BsCurrencyDollar size={18} className="mt-[9px] ml-2" />
+                <Input
+                  type="number"
+                  name="productSalesPriceDollar"
+                  value={dollarPrice}
                   className={twMerge(
-                    "font-lato font-medium text-xs sm:text-sm text-[#363435]"
+                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
                   )}
-                >
-                  Product sales price naira
-                </Label>
-                <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
-                  <TbCurrencyNaira size={20} className="mt-[9px] ml-2" />
-                  <Input
-                    type="text"
-                    name="sale_price"
-                    onChange={handleChange}
-                    value={formValues?.sale_price}
-                    onKeyDown={handleKeyDown}
-                    className={twMerge(
-                      "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div className="mb-8 w-[50%]">
-                <Label
-                  htmlFor="productSalesPriceDollar"
-                  className={twMerge(
-                    "font-lato font-medium text-xs sm:text-sm text-[#363435]"
-                  )}
-                >
-                  Product sales price Dollar
-                </Label>
-                <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
-                  <BsCurrencyDollar size={18} className="mt-[9px] ml-2" />
-                  <Input
-                    type="number"
-                    name="productSalesPriceDollar"
-                    value={saleDollarPrice}
-                    className={twMerge(
-                      "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
-                    )}
-                    readOnly
-                  />
-                </div>
+                  readOnly
+                />
               </div>
             </div>
           </div>
 
-          <div className="w-full sm:w-[50%] sm:bg-[#fafafa] sm:pt-8 sm:pb-12 sm:px-12 text-[#363435] mt-4 mb-12">
-            <div className="flex flex-col">
-              <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
-                Main Image
-              </p>
-              {mainImageFile && mainImageFile?.length ? (
-                <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9]">
-                  {isShowingMainOption ? (
+          <h2 className="font-medium text-xl font-lato text-[#363435] mb-6">
+            Sales
+          </h2>
+
+          <div className="flex justify-between w-full sm:w-[80%]">
+            <div className="mb-8 w-[50%]">
+              <Label
+                htmlFor="sale_price"
+                className={twMerge(
+                  "font-lato font-medium text-xs sm:text-sm text-[#363435]"
+                )}
+              >
+                Product sales price naira
+              </Label>
+              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
+                <TbCurrencyNaira size={20} className="mt-[9px] ml-2" />
+                <Input
+                  type="text"
+                  name="sale_price"
+                  onChange={handleChange}
+                  value={formValues?.sale_price}
+                  onKeyDown={handleKeyDown}
+                  className={twMerge(
+                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
+                  )}
+                />
+              </div>
+            </div>
+
+            <div className="mb-8 w-[50%]">
+              <Label
+                htmlFor="productSalesPriceDollar"
+                className={twMerge(
+                  "font-lato font-medium text-xs sm:text-sm text-[#363435]"
+                )}
+              >
+                Product sales price Dollar
+              </Label>
+              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
+                <BsCurrencyDollar size={18} className="mt-[9px] ml-2" />
+                <Input
+                  type="number"
+                  name="productSalesPriceDollar"
+                  value={saleDollarPrice}
+                  className={twMerge(
+                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
+                  )}
+                  readOnly
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full sm:w-[50%] sm:bg-[#fafafa] sm:pt-8 sm:pb-12 sm:px-12 text-[#363435] mt-4 mb-12">
+          <div className="flex flex-col">
+            <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
+              Main Image
+            </p>
+            {mainImageFile && mainImageFile?.length ? (
+              <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9]">
+                {isShowingMainOption ? (
+                  <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
+                    <BsThreeDots
+                      color="#ffffff"
+                      onClick={() => setIsShowingMainOption(false)}
+                    />
+                    <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
+                    <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
+                      <p
+                        onClick={() => setMainImageFile(null)}
+                        className="font-lato text-sm font-normal text-[#ffffff]"
+                      >
+                        Delete
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
+                    <BsThreeDots
+                      color="#ffffff"
+                      onClick={() => setIsShowingMainOption(true)}
+                    />
+                  </div>
+                )}
+                <Image
+                  src={URL.createObjectURL(mainImageFile[0])}
+                  alt="section_img"
+                  width={180}
+                  height={180}
+                />
+              </div>
+            ) : (
+              <div
+                {...getRootPropsMainImage()}
+                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] cursor-pointer"
+              >
+                <input {...getInputPropsMainImage()} />
+                <GoPlus color="#363435" />
+                <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
+                  Upload
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col mt-6">
+            <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
+              Other Images
+            </p>
+            <div className="flex">
+              {otherImage1File && otherImage1File?.length ? (
+                <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center mr-4 border-[#d9d9d9]">
+                  {isShowingOther1Option ? (
                     <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
                       <BsThreeDots
                         color="#ffffff"
-                        onClick={() => setIsShowingMainOption(false)}
+                        onClick={() => setIsShowingOther1Option(false)}
                       />
                       <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
                       <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
                         <p
-                          onClick={() => setMainImageFile(null)}
+                          onClick={() => setOtherImage1File(null)}
                           className="font-lato text-sm font-normal text-[#ffffff]"
                         >
                           Delete
@@ -745,12 +791,12 @@ const NewProduct = () => {
                     <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
                       <BsThreeDots
                         color="#ffffff"
-                        onClick={() => setIsShowingMainOption(true)}
+                        onClick={() => setIsShowingOther1Option(true)}
                       />
                     </div>
                   )}
                   <Image
-                    src={URL.createObjectURL(mainImageFile[0])}
+                    src={URL.createObjectURL(otherImage1File[0])}
                     alt="section_img"
                     width={180}
                     height={180}
@@ -758,323 +804,252 @@ const NewProduct = () => {
                 </div>
               ) : (
                 <div
-                  {...getRootPropsMainImage()}
-                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] cursor-pointer"
+                  {...getRootPropsOtherImage1()}
+                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] mr-4 cursor-pointer"
                 >
-                  <input {...getInputPropsMainImage()} />
                   <GoPlus color="#363435" />
+                  <input {...getInputPropsOtherImage1()} />
+                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
+                    Upload
+                  </p>
+                </div>
+              )}
+
+              {otherImage2File && otherImage2File?.length ? (
+                <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center mr-4 border-[#d9d9d9]">
+                  {isShowingOther2Option ? (
+                    <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
+                      <BsThreeDots
+                        color="#ffffff"
+                        onClick={() => setIsShowingOther2Option(false)}
+                      />
+                      <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
+                      <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
+                        <p
+                          onClick={() => setOtherImage2File(null)}
+                          className="font-lato text-sm font-normal text-[#ffffff]"
+                        >
+                          Delete
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
+                      <BsThreeDots
+                        color="#ffffff"
+                        onClick={() => setIsShowingOther2Option(true)}
+                      />
+                    </div>
+                  )}
+                  <Image
+                    src={URL.createObjectURL(otherImage2File[0])}
+                    alt="section_img"
+                    width={180}
+                    height={180}
+                  />
+                </div>
+              ) : (
+                <div
+                  {...getRootPropsOtherImage2()}
+                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] mr-4 cursor-pointer"
+                >
+                  <GoPlus color="#363435" />
+                  <input {...getInputPropsOtherImage2()} />
+                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
+                    Upload
+                  </p>
+                </div>
+              )}
+
+              {otherImage3File && otherImage3File?.length ? (
+                <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center mr-4 border-[#d9d9d9]">
+                  {isShowingOther3Option ? (
+                    <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
+                      <BsThreeDots
+                        color="#ffffff"
+                        onClick={() => setIsShowingOther3Option(false)}
+                      />
+                      <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
+                      <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
+                        <p
+                          onClick={() => setOtherImage3File(null)}
+                          className="font-lato text-sm font-normal text-[#ffffff]"
+                        >
+                          Delete
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
+                      <BsThreeDots
+                        color="#ffffff"
+                        onClick={() => setIsShowingOther3Option(true)}
+                      />
+                    </div>
+                  )}
+                  <Image
+                    src={URL.createObjectURL(otherImage3File[0])}
+                    alt="section_img"
+                    width={180}
+                    height={180}
+                  />
+                </div>
+              ) : (
+                <div
+                  {...getRootPropsOtherImage3()}
+                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] mr-4 cursor-pointer"
+                >
+                  <GoPlus color="#363435" />
+                  <input {...getInputPropsOtherImage3()} />
                   <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
                     Upload
                   </p>
                 </div>
               )}
             </div>
+          </div>
 
-            <div className="flex flex-col mt-6">
-              <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
-                Other Images
-              </p>
-              <div className="flex">
-                {otherImage1File && otherImage1File?.length ? (
-                  <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center mr-4 border-[#d9d9d9]">
-                    {isShowingOther1Option ? (
-                      <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
-                        <BsThreeDots
-                          color="#ffffff"
-                          onClick={() => setIsShowingOther1Option(false)}
-                        />
-                        <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
-                        <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
-                          <p
-                            onClick={() => setOtherImage1File(null)}
-                            className="font-lato text-sm font-normal text-[#ffffff]"
-                          >
-                            Delete
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
-                        <BsThreeDots
-                          color="#ffffff"
-                          onClick={() => setIsShowingOther1Option(true)}
-                        />
-                      </div>
-                    )}
-                    <Image
-                      src={URL.createObjectURL(otherImage1File[0])}
-                      alt="section_img"
-                      width={180}
-                      height={180}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    {...getRootPropsOtherImage1()}
-                    className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] mr-4 cursor-pointer"
-                  >
-                    <GoPlus color="#363435" />
-                    <input {...getInputPropsOtherImage1()} />
-                    <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
-                      Upload
-                    </p>
-                  </div>
-                )}
-
-                {otherImage2File && otherImage2File?.length ? (
-                  <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center mr-4 border-[#d9d9d9]">
-                    {isShowingOther2Option ? (
-                      <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
-                        <BsThreeDots
-                          color="#ffffff"
-                          onClick={() => setIsShowingOther2Option(false)}
-                        />
-                        <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
-                        <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
-                          <p
-                            onClick={() => setOtherImage2File(null)}
-                            className="font-lato text-sm font-normal text-[#ffffff]"
-                          >
-                            Delete
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
-                        <BsThreeDots
-                          color="#ffffff"
-                          onClick={() => setIsShowingOther2Option(true)}
-                        />
-                      </div>
-                    )}
-                    <Image
-                      src={URL.createObjectURL(otherImage2File[0])}
-                      alt="section_img"
-                      width={180}
-                      height={180}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    {...getRootPropsOtherImage2()}
-                    className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] mr-4 cursor-pointer"
-                  >
-                    <GoPlus color="#363435" />
-                    <input {...getInputPropsOtherImage2()} />
-                    <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
-                      Upload
-                    </p>
-                  </div>
-                )}
-
-                {otherImage3File && otherImage3File?.length ? (
-                  <div className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center mr-4 border-[#d9d9d9]">
-                    {isShowingOther3Option ? (
-                      <div className="absolute z-10 mb-[2.15rem] ml-[8.5rem] cursor-pointer">
-                        <BsThreeDots
-                          color="#ffffff"
-                          onClick={() => setIsShowingOther3Option(false)}
-                        />
-                        <div className="w-0 h-0 border-l-[5px] border-r-[5px] border-b-[10px] border-l-transparent border-r-transparent border-b-[#333333]-50 relative bottom-[5px] left-[3px]"></div>
-                        <div className="w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center relative right-[4rem] bottom-[5px]">
-                          <p
-                            onClick={() => setOtherImage3File(null)}
-                            className="font-lato text-sm font-normal text-[#ffffff]"
-                          >
-                            Delete
-                          </p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="absolute z-10 mb-[5rem] ml-[4.5rem] cursor-pointer">
-                        <BsThreeDots
-                          color="#ffffff"
-                          onClick={() => setIsShowingOther3Option(true)}
-                        />
-                      </div>
-                    )}
-                    <Image
-                      src={URL.createObjectURL(otherImage3File[0])}
-                      alt="section_img"
-                      width={180}
-                      height={180}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    {...getRootPropsOtherImage3()}
-                    className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] mr-4 cursor-pointer"
-                  >
-                    <GoPlus color="#363435" />
-                    <input {...getInputPropsOtherImage3()} />
-                    <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
-                      Upload
-                    </p>
-                  </div>
-                )}
-
-                {/* <div
-                {...getRootPropsOtherImage2()}
-                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] mr-4 cursor-pointer"
-              >
-                <input {...getInputPropsOtherImage2()} />
-                <GoPlus color="#363435" />
-                {otherImage2File && otherImage2File[0]?.name ? (
-                  <p className="text-sm text-[#363435]">
-                    {otherImage2File[0]?.name.slice(0, 5)}
-                  </p>
-                ) : (
-                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
-                    Upload
-                  </p>
-                )}
-              </div> */}
-                {/* <div
-                {...getRootPropsOtherImage3()}
-                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border-[1px] items-center border-[#d9d9d9] mr-4 cursor-pointer"
-              >
-                <input {...getInputPropsOtherImage3()} />
-                <GoPlus color="#363435" />
-                {otherImage3File && otherImage3File[0]?.name ? (
-                  <p className="text-sm text-[#363435]">
-                    {otherImage3File[0]?.name.slice(0, 5)}
-                  </p>
-                ) : (
-                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
-                    Upload
-                  </p>
-                )}
-              </div> */}
-              </div>
-            </div>
-
-            <div className="flex flex-col mt-6">
-              <div className="mb-8">
-                <Label
-                  htmlFor="quantity"
-                  className={twMerge(
-                    "font-lato font-medium text-sm text-[#363435]"
-                  )}
-                >
-                  Input Quantity
-                </Label>
-                <Input
-                  type="text"
-                  name="quantity"
-                  onChange={handleChange}
-                  value={formValues?.quantity}
-                  className={twMerge(
-                    "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full p-2 text-[#363435]"
-                  )}
-                />
-              </div>
-            </div>
-
-            <div className="mb-8 space-y-1">
+          <div className="flex flex-col mt-6">
+            <div className="mb-8">
               <Label
-                htmlFor="color"
+                htmlFor="quantity"
                 className={twMerge(
                   "font-lato font-medium text-sm text-[#363435]"
                 )}
               >
-                Select Color
+                Input Quantity
               </Label>
-              <Select
-                onValueChange={(value: string) =>
-                  setSelectedColors((col) => [...col, value])
-                }
-              >
-                <SelectTrigger
-                  className={twMerge(
-                    "w-full border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
-                  )}
-                >
-                  <SelectValue placeholder={"Select Colors"} />
-                </SelectTrigger>
-                <SelectContent className={twMerge("")}>
-                  <div className="h-full max-h-60 overflow-y-scroll scrollbar-thumb-[#363435]/40 scrollbar-thin bg-[#4f4f4f] scrollbar-track-[#363435]-200 w-full sm:w-full">
-                    {filteredColors?.length &&
-                      filteredColors?.map((color, idx) => (
-                        <SelectItem key={idx} value={color?.name}>
-                          {color?.name}
-                        </SelectItem>
-                      ))}
-                  </div>
-                </SelectContent>
-              </Select>
-              <div className="flex">
-                {selectedColors && selectedColors?.length
-                  ? selectedColors?.map((color, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => handleRemoveFromColorArray(color)}
-                        className="cursor-pointer text-xs text-[#363435] border-[0.5px] border-[#bdbdbd] p-1 rounded mr-2 mt-2"
-                      >
-                        {color}
-                      </div>
-                    ))
-                  : null}
-              </div>
-            </div>
-
-            <div className="mb-8 space-y-1">
-              <Label
-                htmlFor="size"
+              <Input
+                type="text"
+                name="quantity"
+                onChange={handleChange}
+                value={formValues?.quantity}
                 className={twMerge(
-                  "font-lato font-medium text-sm text-[#363435]"
+                  "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full p-2 text-[#363435]"
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="mb-8 space-y-1">
+            <Label
+              htmlFor="color"
+              className={twMerge(
+                "font-lato font-medium text-sm text-[#363435]"
+              )}
+            >
+              Select Color
+            </Label>
+            <Select
+              onValueChange={(value: string) =>
+                setSelectedColors((col) => [...col, value])
+              }
+            >
+              <SelectTrigger
+                className={twMerge(
+                  "w-full border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
                 )}
               >
-                Select Size
-              </Label>
-              <Select
-                onValueChange={(value: string) =>
-                  setSelectedSizes((siz) => [...siz, value])
-                }
-              >
-                <SelectTrigger
-                  className={twMerge(
-                    "w-full border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
-                  )}
-                >
-                  <SelectValue placeholder={"Select Sizes"} />
-                </SelectTrigger>
-                <SelectContent className={twMerge("")}>
-                  <div className="h-full max-h-60 overflow-y-scroll scrollbar-thumb-[#363435]/40 scrollbar-thin bg-[#4f4f4f] scrollbar-track-[#363435]-200 w-full sm:w-full">
-                    {filteredSizes?.length &&
-                      filteredSizes?.map((size, idx) => (
-                        <SelectItem key={idx} value={size?.name}>
-                          {size?.name}
-                        </SelectItem>
-                      ))}
-                  </div>
-                </SelectContent>
-              </Select>
-              <div className="flex">
-                {selectedSizes && selectedSizes?.length
-                  ? selectedSizes?.map((size, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => handleRemoveFromSizeArray(size)}
-                        className="cursor-pointer text-xs text-[#363435] border-[0.5px] border-[#bdbdbd] p-1 rounded mr-2 mt-2"
-                      >
-                        {size}
-                      </div>
-                    ))
-                  : null}
-              </div>
-            </div>
-
+                <SelectValue placeholder={"Select Colors"} />
+              </SelectTrigger>
+              <SelectContent className={twMerge("")}>
+                <div className="h-full max-h-60 overflow-y-scroll scrollbar-thumb-[#363435]/40 scrollbar-thin bg-[#4f4f4f] scrollbar-track-[#363435]-200 w-full sm:w-full">
+                  {filteredColors?.length &&
+                    filteredColors?.map((color, idx) => (
+                      <SelectItem key={idx} value={color?.name}>
+                        {color?.name}
+                      </SelectItem>
+                    ))}
+                </div>
+              </SelectContent>
+            </Select>
             <div className="flex">
-              <div className="flex w-[120px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] cursor-pointer">
-                <MdOutlineCancel color="#363435" />
-                <p className="font-lato font-normal text-base text-[#4f4f4f] ml-2">
-                  Cancel
+              {selectedColors && selectedColors?.length
+                ? selectedColors?.map((color, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleRemoveFromColorArray(color)}
+                      className="cursor-pointer text-xs text-[#363435] border-[0.5px] border-[#bdbdbd] p-1 rounded mr-2 mt-2"
+                    >
+                      {color}
+                    </div>
+                  ))
+                : null}
+            </div>
+          </div>
+
+          <div className="mb-8 space-y-1">
+            <Label
+              htmlFor="size"
+              className={twMerge(
+                "font-lato font-medium text-sm text-[#363435]"
+              )}
+            >
+              Select Size
+            </Label>
+            <Select
+              onValueChange={(value: string) =>
+                setSelectedSizes((siz) => [...siz, value])
+              }
+            >
+              <SelectTrigger
+                className={twMerge(
+                  "w-full border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
+                )}
+              >
+                <SelectValue placeholder={"Select Sizes"} />
+              </SelectTrigger>
+              <SelectContent className={twMerge("")}>
+                <div className="h-full max-h-60 overflow-y-scroll scrollbar-thumb-[#363435]/40 scrollbar-thin bg-[#4f4f4f] scrollbar-track-[#363435]-200 w-full sm:w-full">
+                  {filteredSizes?.length &&
+                    filteredSizes?.map((size, idx) => (
+                      <SelectItem key={idx} value={size?.name}>
+                        {size?.name}
+                      </SelectItem>
+                    ))}
+                </div>
+              </SelectContent>
+            </Select>
+            <div className="flex">
+              {selectedSizes && selectedSizes?.length
+                ? selectedSizes?.map((size, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleRemoveFromSizeArray(size)}
+                      className="cursor-pointer text-xs text-[#363435] border-[0.5px] border-[#bdbdbd] p-1 rounded mr-2 mt-2"
+                    >
+                      {size}
+                    </div>
+                  ))
+                : null}
+            </div>
+          </div>
+
+          <div className="flex">
+            <div className="flex w-[120px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] cursor-pointer">
+              <MdOutlineCancel color="#363435" />
+              <p className="font-lato font-normal text-base text-[#4f4f4f] ml-2">
+                Cancel
+              </p>
+            </div>
+
+            {isPending ? (
+              <div className="flex w-[180px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] bg-[#4f4f4f] ml-6 cursor-pointer">
+                <p className="font-lato font-normal text-sm text-[#ffffff] ml-2">
+                  Loading...
                 </p>
               </div>
-
-              <div
+            ) : (
+              <button
+                disabled={
+                  !fetchedCollections?.collection?.length ? true : false
+                }
                 onClick={() => handleSubmit()}
-                className="flex w-[180px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] bg-[#4f4f4f] ml-6 cursor-pointer"
+                className={`flex w-[180px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] bg-[#4f4f4f] ml-6 ${
+                  !fetchedCollections?.collection?.length
+                    ? "cursor-no-drop bg-opacity-50"
+                    : "cursor-pointer bg-opacity-100"
+                } `}
               >
                 <Image
                   src="/assets/save.svg"
@@ -1085,11 +1060,11 @@ const NewProduct = () => {
                 <p className="font-lato font-normal text-sm text-[#ffffff] ml-2">
                   Save new product
                 </p>
-              </div>
-            </div>
+              </button>
+            )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

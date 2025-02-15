@@ -4,6 +4,7 @@ import { createWithEqualityFn } from "zustand/traditional";
 import { devtools, persist } from "zustand/middleware";
 import { toast } from "sonner";
 import {
+  EmailVerifyInterface,
   LoginUserResponseInterface,
   RegisterInterface,
 } from "@/utils/interface";
@@ -16,6 +17,7 @@ export const useUserStore = createWithEqualityFn(
         user: {},
         isAuth: false,
         loading: false,
+        isVerified: {},
         isToken: !!getCookie("accessToken"),
         resendLoading: false,
         login: async (
@@ -67,6 +69,38 @@ export const useUserStore = createWithEqualityFn(
             set({ user: { ...response?.data?.user } });
 
             toast.success("Registration successful! 🎉");
+            let userRoute = "";
+
+            userRoute = `/welcome`;
+            router.push(userRoute);
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (error: any) {
+            const errorMessage =
+              error?.response?.data?.message ||
+              "An error occurred while logging in";
+            toast.error(errorMessage);
+            if (error?.response?.data?.isEmailVerificationError) {
+              const userRole = error?.response?.data?.userRole;
+              const userRoute = `/${userRole}/confirm?email=${error?.response?.data?.email}`;
+              router.push(userRoute);
+            }
+            set({ isAuth: false });
+          } finally {
+            set({ loading: false });
+          }
+        },
+        verifyEmail: async (
+          data: EmailVerifyInterface,
+          router: AppRouterInstance
+        ) => {
+          set({ loading: true });
+          try {
+            const response = await AuthService.verifyEmail(data);
+
+            set({ isVerifled: { ...response?.data?.is_verified } });
+
+            toast.success("Verification successful! 🎉");
             let userRoute = "";
 
             userRoute = `/login`;

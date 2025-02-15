@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+  EmailVerifyInterface,
   LoginUserResponseInterface,
   RegisterInterface,
 } from "@/utils/interface";
@@ -13,5 +14,9 @@ export default class AuthService {
 
   static async register(data: RegisterInterface) {
     return axios.post(`${API_URL}create_user`, data);
+  }
+
+  static async verifyEmail(data: EmailVerifyInterface) {
+    return axios.post(`${API_URL}verify_email`, data);
   }
 }

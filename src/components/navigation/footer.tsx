@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { RiSendPlaneFill } from "react-icons/ri";
 
 const Footer = () => {
+  const router = useRouter();
   return (
     <div className="flex flex-col md:flex-row justify-between py-[4rem] px-[2rem]">
       <div className="flex flex-col w-[70%] md:w-[20%]">
@@ -29,28 +33,31 @@ const Footer = () => {
         <h3 className="font-montserrat font-semibold text-sm md:text-base text-[#333333] p-0 my-[1.5rem] mx-0">
           INFO
         </h3>
-        <h3 className="font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
+        <h3 className="cursor-pointer hover:underline hover:text-[#fdcb2a] font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
           Rtw Collection
         </h3>
-        <h3 className="font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
+        <h3 className="cursor-pointer hover:underline hover:text-[#fdcb2a] font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
           Couture collection
         </h3>
-        <h3 className="font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
+        <h3 className="cursor-pointer hover:underline hover:text-[#fdcb2a] font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
           Bridal Collection
         </h3>
-        <h3 className="font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
+        <h3 className="cursor-pointer hover:underline hover:text-[#fdcb2a] font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
           Sales
         </h3>
-        <h3 className="font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
+        <h3
+          onClick={() => router.push("/about-us")}
+          className="cursor-pointer hover:underline hover:text-[#fdcb2a] font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0"
+        >
           About Us
         </h3>
-        <h3 className="font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
+        <h3 className="cursor-pointer hover:underline hover:text-[#fdcb2a] font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
           Contact Us
         </h3>
-        <h3 className="font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
+        <h3 className="cursor-pointer hover:underline hover:text-[#fdcb2a] font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
           FAQ
         </h3>
-        <h3 className="font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
+        <h3 className="cursor-pointer hover:underline hover:text-[#fdcb2a] font-montserrat font-normal text-sm md:text-base text-[#4f4f4f] p-0 mb-[1.5rem] mx-0">
           Order Tracking
         </h3>
       </div>

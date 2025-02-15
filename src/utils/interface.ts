@@ -23,9 +23,9 @@ export interface User {
   created_at: string;
 }
 
-export interface MediaUploadInterface {
-  image: string;
-  filename: string;
+export interface MediaUploadCloudinaryInterface {
+  image_data: string;
+  image_name: string;
 }
 
 export interface MediaUploadResponseInterface {
@@ -137,6 +137,11 @@ export interface RegisterInterface {
   email: string;
   password: string;
   phone_number: string;
+}
+
+export interface EmailVerifyInterface {
+  email_id: string;
+  secret_code: string;
 }
 
 export interface CartResponseRootInterface {

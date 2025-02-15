@@ -152,7 +152,7 @@ const ViewProduct: FC<ProductProps> = ({ id }) => {
           });
         }
 
-        toast.error(response, { id: toastId });
+        toast.success(response, { id: toastId });
         return router.push("/admin/product");
       }
     } catch (err) {

@@ -15,6 +15,10 @@ import LogoutPopup from "../popups/logoutPopup";
 import useLogout from "@/utils/useLogout";
 import { AiOutlineSetting } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
+import { getCookie } from "cookies-next";
+import { useUserStore } from "@/store/userStore";
+import { shallow } from "zustand/shallow";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 const AdminNavbar = () => {
   const router = useRouter();
@@ -24,6 +28,14 @@ const AdminNavbar = () => {
   const [isShowingProfileOption, setIsShowingProfileOption] =
     useState<boolean>(false);
   const [activePath, setActivePath] = useState<string>("product");
+
+  useEffect(() => {
+    const token = getCookie("accessToken");
+
+    if (!token) {
+      router.push("/login/owner");
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -37,6 +49,15 @@ const AdminNavbar = () => {
       setActivePath(currentlyViewing);
     }
   }, [currentUrl]);
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const { user } = useUserStore(
+    (state: any) => ({
+      user: state.user,
+    }),
+    shallow
+  );
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   return (
     <div className="w-full flex px-10 py-4">
@@ -139,7 +160,7 @@ const AdminNavbar = () => {
             onClick={() => setIsShowingProfileOption(!isShowingProfileOption)}
             className="font-lato font-normal text-sm text-[#363435] ml-2 mt-2"
           >
-            Username
+            {user && user?.username && capitalizeFirstLetter(user?.username)}
           </p>
 
           {isShowingProfileOption && (
@@ -157,10 +178,15 @@ const AdminNavbar = () => {
                   </div>
                   <div className="flex flex-col mt-3">
                     <p className="font-montserrat font-normal text-sm text-[#ffffff] mb-1">
-                      Joy Uwangue
+                      {user &&
+                        user?.first_name &&
+                        user.last_name &&
+                        `${capitalizeFirstLetter(
+                          user?.first_name
+                        )} ${capitalizeFirstLetter(user?.last_name)}`}
                     </p>
                     <p className="font-montserrat font-normal text-xs italic text-[#ffffff]">
-                      joyuwangue1@gmail.com
+                      {user && user?.email}
                     </p>
                   </div>
                 </div>
