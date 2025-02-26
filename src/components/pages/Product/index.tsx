@@ -203,6 +203,7 @@ const Product: FC<ProductProps> = ({ id }) => {
     const removed = removeFromCart(fetchedProduct?.product_ref_no);
 
     toast.success("Item removed from cart!");
+    setIsAddedToCart(false);
     return removed;
   };
 
@@ -416,7 +417,10 @@ const Product: FC<ProductProps> = ({ id }) => {
                   />
                   {quantity}
                   <AiOutlinePlus
-                    onClick={() => increment(setQuantity)}
+                    onClick={() =>
+                      fetchedProduct?.quantity &&
+                      increment(setQuantity, fetchedProduct?.quantity)
+                    }
                     color="#4F4F4F"
                     className="cursor-pointer mt-1"
                   />

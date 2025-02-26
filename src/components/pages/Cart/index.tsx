@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { useOfflineCartStore } from "@/store/offlineCartStore";
 import Image from "next/image";
@@ -17,9 +17,11 @@ import { useCartStore } from "@/store/cartStore";
 import { getCookie } from "cookies-next";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useProductStore } from "@/store/productStore";
 
 const Cart = () => {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [total, setTotal] = useState<number>(0);
   const [offlineTotal, setOfflineTotal] = useState<number>(0);
   const [isCartFetched, setIsCartFetched] = useState<boolean>(false);
@@ -48,6 +50,13 @@ const Cart = () => {
       }),
       shallow
     );
+
+  const { getProduct } = useProductStore(
+    (state: any) => ({
+      getProduct: state.getProduct,
+    }),
+    shallow
+  );
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   // ============================================== CALCULATE THE SUBTOTAL ON OFFLINE CART ============================== //
@@ -189,19 +198,36 @@ const Cart = () => {
         const payloadDec = {
           product_quantity: Number(cartItem?.product_quantity) - 1,
           item_id: +cartItem.id,
+          product_id: +cartItem?.product_id,
+          action: "decrement",
         };
 
         handleUpdateRequest(payloadDec);
         break;
 
       case "increase":
-        const payloadInc = {
-          product_quantity: Number(cartItem?.product_quantity) + 1,
-          item_id: +cartItem.id,
-        };
+        if (+cartItem?.product_id) {
+          const response = await getProduct(+cartItem?.product_id);
 
-        handleUpdateRequest(payloadInc);
-        break;
+          if (!response?.product) {
+            return toast.error("Product could not be fetched");
+          }
+
+          if (
+            Number(cartItem?.product_quantity) < response?.product?.quantity
+          ) {
+            const payloadInc = {
+              product_quantity: Number(cartItem?.product_quantity) + 1,
+              item_id: +cartItem.id,
+              product_id: +cartItem?.product_id,
+              action: "increment",
+            };
+
+            handleUpdateRequest(payloadInc);
+          }
+
+          break;
+        }
 
       default:
         return;

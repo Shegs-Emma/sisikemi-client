@@ -197,12 +197,10 @@ const NewCollection = () => {
             thumbnailFile?.length &&
             `${formValues?.collection_name
               .split(" ")
-              .join("_")}_thumbnail_${id}_.${thumbnailFile[0]}`;
+              .join("_")}_thumbnail_${id}`;
           const header_image_name =
             headerFile?.length &&
-            `${formValues?.collection_name
-              .split(" ")
-              .join("_")}_header_${id}_.${headerFile[0]}`;
+            `${formValues?.collection_name.split(" ").join("_")}_header_${id}`;
 
           if (thumbnailFileBase64 && thumbnail_image_name) {
             await handleFileUploadCloudinary(

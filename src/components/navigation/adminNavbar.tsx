@@ -107,9 +107,9 @@ const AdminNavbar = () => {
         </p>
 
         <p
-          onClick={() => router.push("/admin/order")}
-          className={`w-[104px] py-[8px] pl-[15px] opacity-[80%] font-lato text-sm font-normal cursor-pointer ${
-            activePath === "order"
+          onClick={() => router.push("/admin/orders")}
+          className={`w-[104px] py-[8px] pl-[15px] opacity-[80%] font-lato text-sm font-normal cursor-pointer text-center ${
+            activePath === "orders"
               ? "border-[#f2c94c] text-[#fdcb2a]  bg-[rgba(242,201,76,0.2)] rounded border-[1px]"
               : "text-[#333333]"
           }`}

@@ -13,9 +13,15 @@ interface CartProps {
   items: CartResponseInterface[] | undefined;
   orderDetails: OrderDetailsInterface;
   step: number;
+  fetchTotalCost: (cost: number) => void;
 }
 
-const Estimate: FC<CartProps> = ({ items, orderDetails, step }) => {
+const Estimate: FC<CartProps> = ({
+  items,
+  orderDetails,
+  step,
+  fetchTotalCost,
+}) => {
   const [total, setTotal] = useState<number>(0);
 
   // ============================================== CALCULATE THE SUBTOTAL ON ONLINE CART ============================== //
@@ -33,6 +39,14 @@ const Estimate: FC<CartProps> = ({ items, orderDetails, step }) => {
       setTotal(subtotal);
     }
   }, [items]);
+
+  useEffect(() => {
+    if (orderDetails?.shipping_method?.cost && total) {
+      const cost = Number(orderDetails?.shipping_method?.cost) + Number(total);
+      fetchTotalCost(cost);
+    }
+  }, [total, orderDetails?.shipping_method?.cost]);
+
   return (
     <div className="w-[40%] bg-[#f2f2f2] px-10 pt-[10rem]">
       <div className="flex flex-col">
