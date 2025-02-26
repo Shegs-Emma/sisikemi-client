@@ -5,8 +5,11 @@ import { devtools, persist } from "zustand/middleware";
 import { toast } from "sonner";
 import {
   EmailVerifyInterface,
+  ForgotPasswordInterface,
   LoginUserResponseInterface,
   RegisterInterface,
+  ResetPasswordInterface,
+  VerifyCodeInterface,
 } from "@/utils/interface";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
@@ -18,6 +21,9 @@ export const useUserStore = createWithEqualityFn(
         isAuth: false,
         loading: false,
         isVerified: {},
+        isCodeSent: {},
+        codeVerified: {},
+        passwordReset: {},
         isToken: !!getCookie("accessToken"),
         resendLoading: false,
         login: async (
@@ -117,6 +123,91 @@ export const useUserStore = createWithEqualityFn(
               const userRoute = `/${userRole}/confirm?email=${error?.response?.data?.email}`;
               router.push(userRoute);
             }
+            set({ isAuth: false });
+          } finally {
+            set({ loading: false });
+          }
+        },
+        forgotPassword: async (
+          data: ForgotPasswordInterface,
+          router: AppRouterInstance
+        ) => {
+          set({ loading: true });
+          try {
+            const response = await AuthService.forgotPassword(data);
+
+            set({ isCodeSent: { ...response?.data?.code_is_sent } });
+
+            toast.success("Verification Code sent successfully! 🎉");
+            localStorage.setItem("email", data.email);
+            let userRoute = "";
+
+            userRoute = `/verification_code`;
+            router.push(userRoute);
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (error: any) {
+            const errorMessage =
+              error?.response?.data?.message ||
+              "An error occurred while logging in";
+            toast.error(errorMessage);
+            set({ isAuth: false });
+          } finally {
+            set({ loading: false });
+          }
+        },
+        verifyCode: async (
+          data: VerifyCodeInterface,
+          router: AppRouterInstance
+        ) => {
+          set({ loading: true });
+          try {
+            const response = await AuthService.verifyCode(data);
+
+            set({ codeVerified: { ...response?.data?.isVerified } });
+
+            toast.success("Verification Code correct! 🎉");
+            localStorage.setItem("code", data.code);
+            let userRoute = "";
+
+            userRoute = `/reset_password`;
+            router.push(userRoute);
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (error: any) {
+            const errorMessage =
+              error?.response?.data?.message ||
+              "An error occurred while logging in";
+            toast.error(errorMessage);
+            set({ isAuth: false });
+          } finally {
+            set({ loading: false });
+          }
+        },
+        resetPassword: async (
+          data: ResetPasswordInterface,
+          router: AppRouterInstance
+        ) => {
+          set({ loading: true });
+          try {
+            const response = await AuthService.resetPassword(data);
+
+            set({ passwordReset: { ...response?.data?.isUpdated } });
+
+            toast.success("Password reset successfully! 🎉");
+            localStorage.removeItem("code");
+            localStorage.removeItem("email");
+            let userRoute = "";
+
+            userRoute = `/login`;
+            router.push(userRoute);
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (error: any) {
+            const errorMessage =
+              error?.response?.data?.message ||
+              "An error occurred while logging in";
+            toast.error(errorMessage);
             set({ isAuth: false });
           } finally {
             set({ loading: false });

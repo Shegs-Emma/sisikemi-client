@@ -13,6 +13,7 @@ export interface LoginUserResponseInterface {
 }
 
 export interface User {
+  id: number;
   username: string;
   first_name: string;
   last_name: string;
@@ -144,6 +145,21 @@ export interface EmailVerifyInterface {
   secret_code: string;
 }
 
+export interface ForgotPasswordInterface {
+  email: string;
+}
+
+export interface VerifyCodeInterface {
+  email: string;
+  code: string;
+}
+
+export interface ResetPasswordInterface {
+  email: string;
+  code: string;
+  password: string;
+}
+
 export interface CartResponseRootInterface {
   cart: CartResponseInterface[];
   next_page_token: string;
@@ -165,6 +181,8 @@ export interface CartResponseInterface {
 export interface UpdateCartItemRequestPayloadInterface {
   item_id: number;
   product_quantity: number;
+  product_id: number;
+  action: string;
 }
 
 export interface CreateCartRequestInterface {
@@ -221,4 +239,62 @@ export interface OrderDetailsErrorInterface {
   landmark: string;
   shipping_method: string;
   payment_method: string;
+}
+
+export interface Username {
+  username: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  email: string;
+  password_changed_at: string;
+  created_at: string;
+}
+
+export interface ShippingAddressId {
+  username: Username;
+  country: string;
+  address: string;
+  town: string;
+  postal_code: string;
+  landmark: string;
+  created_at: string;
+}
+
+export interface Item {
+  id: string;
+  order_id: string;
+  product_id: string;
+  quantity: string;
+  price: number;
+  created_at: string;
+}
+
+export interface OrdersInterface {
+  id: string;
+  ref_no: string;
+  username: Username;
+  amount: number;
+  payment_method: string;
+  shipping_address_id: ShippingAddressId;
+  shipping_method: string;
+  order_status: string;
+  items: Item[];
+  created_at: string;
+}
+
+export interface CreateOrderPayloadInterface {
+  username: string;
+  amount: number;
+  payment_method: string;
+  shipping_method: string;
+  user_ref_id: number;
+  order_status: string;
+  country: string;
+  address: string;
+  town: string;
+  postal_code: string;
+  landmark: string;
+  page_id: number;
+  page_size: number;
 }

@@ -143,7 +143,7 @@ const AdminProducts = () => {
           `${prod.id}`,
           `${prod.product_name}`,
           `${prod.price}`,
-          `${prod.quantity}`,
+          `${prod.quantity && prod.quantity > 0 ? prod.quantity : "0"}`,
           `${prod.collection.collection_name}`,
           `${prod.created_at}`,
           `${prod.status}`

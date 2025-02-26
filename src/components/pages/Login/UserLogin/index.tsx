@@ -166,7 +166,10 @@ const UserLogin = () => {
                 CREATE ACCOUNT
               </p>
               <GoDotFill color="#4f4f4f" className="mt-2" />
-              <p className="font-montserrat text-base font-medium text-[#4f4f4f] cursor-pointer">
+              <p
+                onClick={() => router.push("/forgot_password")}
+                className="font-montserrat text-base font-medium text-[#4f4f4f] cursor-pointer"
+              >
                 FORGOT PASSWORD
               </p>
             </div>

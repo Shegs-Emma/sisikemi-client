@@ -31,8 +31,24 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { logout, isLoading } = useLogout();
   const [isToken, setIsToken] = useState<string>("");
+  const [currentUrl, setCurrentUrl] = useState("");
   const [isShowingProfileOption, setIsShowingProfileOption] =
     useState<boolean>(false);
+  const [activePath, setActivePath] = useState<string>("new-in");
+
+  useEffect(() => {
+    if (currentUrl) {
+      const currentlyViewing = currentUrl?.split("/")[3];
+
+      setActivePath(currentlyViewing);
+    }
+  }, [currentUrl]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentUrl(window.location.href);
+    }
+  }, []);
 
   useEffect(() => {
     if (isToken) {
@@ -102,32 +118,58 @@ const Navbar = () => {
         </Link>
         <div className="flex justify-between w-[45%] mt-3">
           <Link href="/new-in">
-            <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
+            <h4
+              className={`font-montserrat ${
+                activePath === "new-in" ? "text-[#fdcb2a]" : "text-[#333333]"
+              } font-medium text-xs md:text-sm cursor-pointer`}
+            >
               NEW IN
             </h4>
           </Link>
           <Link href="/shop">
-            <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
+            <h4
+              className={`font-montserrat ${
+                activePath === "shop" ? "text-[#fdcb2a]" : "text-[#333333]"
+              } font-medium text-xs md:text-sm cursor-pointer`}
+            >
               SHOP
             </h4>
           </Link>
           <Link href="/sale">
-            <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
+            <h4
+              className={`font-montserrat ${
+                activePath === "sale" ? "text-[#fdcb2a]" : "text-[#333333]"
+              } font-medium text-xs md:text-sm cursor-pointer`}
+            >
               SALE
             </h4>
           </Link>
           <Link href="/rtw">
-            <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
+            <h4
+              className={`font-montserrat ${
+                activePath === "rtw" ? "text-[#fdcb2a]" : "text-[#333333]"
+              } font-medium text-xs md:text-sm cursor-pointer`}
+            >
               RTW
             </h4>
           </Link>
           <Link href="/collections">
-            <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
+            <h4
+              className={`font-montserrat ${
+                activePath === "collections"
+                  ? "text-[#fdcb2a]"
+                  : "text-[#333333]"
+              } font-medium text-xs md:text-sm cursor-pointer`}
+            >
               COLLECTIONS
             </h4>
           </Link>
           <Link href="/bridal">
-            <h4 className="font-montserrat font-medium text-xs md:text-sm text-[#333333] cursor-pointer">
+            <h4
+              className={`font-montserrat ${
+                activePath === "bridal" ? "text-[#fdcb2a]" : "text-[#333333]"
+              } font-medium text-xs md:text-sm cursor-pointer`}
+            >
               BRIDAL
             </h4>
           </Link>

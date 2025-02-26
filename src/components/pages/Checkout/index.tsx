@@ -14,6 +14,7 @@ import { toast } from "sonner";
 const Checkout = () => {
   const [isCartFetched, setIsCartFetched] = useState<boolean>(false);
   const [step, setStep] = useState<number>(1);
+  const [totalCost, setTotalCost] = useState<number>(1);
   const [authenticatedCart, setAuthenticatedCart] =
     useState<CartResponseRootInterface>();
   const [orderDetails, setOrderDetails] = useState({
@@ -84,6 +85,10 @@ const Checkout = () => {
     }
   };
 
+  const fetchTotalCost = (cost: number) => {
+    setTotalCost(cost);
+  };
+
   return (
     <div className="w-full flex pt-[5rem]">
       {step === 1 && (
@@ -107,12 +112,14 @@ const Checkout = () => {
           setStep={setStep}
           orderDetails={orderDetails}
           setOrderDetails={setOrderDetails}
+          totalCost={totalCost}
         />
       )}
       <Estimate
         items={authenticatedCart?.cart}
         step={step}
         orderDetails={orderDetails}
+        fetchTotalCost={fetchTotalCost}
       />
     </div>
   );

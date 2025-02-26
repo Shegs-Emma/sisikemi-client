@@ -39,9 +39,17 @@ export const formatNumber = (num: string) => {
 };
 
 export const increment = (
-  setQuantity: React.Dispatch<React.SetStateAction<number>>
+  setQuantity: React.Dispatch<React.SetStateAction<number>>,
+  qty: number
 ) => {
-  setQuantity((prevQuantity) => prevQuantity + 1);
+  if (qty) {
+    setQuantity((prevQuantity) => {
+      if (prevQuantity < qty) {
+        return prevQuantity + 1;
+      }
+      return prevQuantity;
+    });
+  }
 };
 
 export const decrement = (

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 import {
@@ -7,19 +7,71 @@ import {
 } from "react-icons/md";
 import { OrderDetailsInterface } from "@/utils/interface";
 import { CurrencyComponent } from "@/utils/functions";
+import { useOrderStore } from "@/store/orderStore";
+import { shallow } from "zustand/shallow";
+import { useUserStore } from "@/store/userStore";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useCartStore } from "@/store/cartStore";
 
 interface CheckoutProps {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   setOrderDetails: React.Dispatch<React.SetStateAction<OrderDetailsInterface>>;
   orderDetails: OrderDetailsInterface;
+  totalCost: number;
 }
 
 const Payment: FC<CheckoutProps> = ({
   setStep,
   setOrderDetails,
   orderDetails,
+  totalCost,
 }) => {
+  const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState<string>("");
+  const [isPending, startTransition] = useTransition();
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const { createOrder } = useOrderStore(
+    (state: any) => ({
+      createOrder: state.createOrder,
+    }),
+    shallow
+  );
+
+  const { user } = useUserStore(
+    (state: any) => ({
+      user: state.user,
+    }),
+    shallow
+  );
+
+  const { fetchCart } = useCartStore(
+    (state: any) => ({
+      fetchCart: state.fetchCart,
+    }),
+    shallow
+  );
+
+  const handleCartFetch = async () => {
+    try {
+      const payload = {
+        page_id: "1",
+        page_size: "10",
+      };
+
+      const response = await fetchCart(payload);
+
+      if (!response?.cart?.length) {
+        return;
+      }
+
+      return response.product;
+    } catch (err) {
+      return err;
+    }
+  };
+  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   useEffect(() => {
     if (paymentMethod) {
@@ -31,7 +83,46 @@ const Payment: FC<CheckoutProps> = ({
   }, [paymentMethod]);
 
   const handlePayment = () => {
-    console.log("orderDetails", orderDetails);
+    const toastId = "Processing your order...";
+    startTransition(async () => {
+      try {
+        const payload = {
+          username: user?.username,
+          amount: totalCost,
+          payment_method: orderDetails?.payment_method,
+          shipping_method: orderDetails?.shipping_method?.name,
+          user_ref_id: +user?.id,
+          order_status: "pending",
+          country: orderDetails.country,
+          address: orderDetails.address,
+          town: orderDetails.town_city,
+          postal_code: orderDetails.postal_code,
+          landmark: orderDetails.landmark,
+          page_id: 1,
+          page_size: 5,
+        };
+
+        const response = await createOrder(payload);
+
+        if (!response?.order) {
+          return toast.error("Order could not be created", { id: toastId });
+        }
+
+        const cartpayload = {
+          page_id: "1",
+          page_size: "10",
+        };
+
+        await fetchCart(cartpayload);
+
+        router.push("/new-in");
+        toast.success("Order created successfully", { id: toastId });
+
+        return response.order;
+      } catch (err) {
+        return err;
+      }
+    });
   };
 
   return (

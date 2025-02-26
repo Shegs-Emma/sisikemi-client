@@ -135,29 +135,32 @@ const NewIn: FC = () => {
         <div className="flex flex-col w-full border-b-[0.5px] border-b-[#4f4f4f] pb-[7rem]">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-14 px-[1.5rem] py-0">
             {fetchedProducts?.product?.length
-              ? fetchedProducts?.product?.map((product, idx) => (
-                  <div
-                    onClick={() => router.push(`/new-in/${product?.id}`)}
-                    key={idx}
-                    className="flex flex-col cursor-pointer"
-                  >
-                    <Image
-                      src={product?.product_image_main?.media_id?.url}
-                      alt="section_img"
-                      width={280}
-                      height={506}
-                      // className="min-h-[506px]"
-                    />
-                    <div className="flex flex-col text-center">
-                      <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
-                        {product?.product_name.toUpperCase()}
-                      </p>
-                      <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
-                        {`₦${Number(product?.price).toLocaleString()}`}
-                      </p>
-                    </div>
-                  </div>
-                ))
+              ? fetchedProducts?.product?.map(
+                  (product, idx) =>
+                    product?.quantity > 0 && (
+                      <div
+                        onClick={() => router.push(`/new-in/${product?.id}`)}
+                        key={idx}
+                        className="flex flex-col cursor-pointer"
+                      >
+                        <Image
+                          src={product?.product_image_main?.media_id?.url}
+                          alt="section_img"
+                          width={280}
+                          height={506}
+                          // className="min-h-[506px]"
+                        />
+                        <div className="flex flex-col text-center">
+                          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
+                            {product?.product_name.toUpperCase()}
+                          </p>
+                          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
+                            {`₦${Number(product?.price).toLocaleString()}`}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                )
               : null}
           </div>
         </div>
