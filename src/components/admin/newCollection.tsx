@@ -8,7 +8,7 @@ import { shallow } from "zustand/shallow";
 import { Input } from "../ui/input";
 import { useDropzone } from "react-dropzone";
 import { GoPlus } from "react-icons/go";
-import { MdOutlineCancel } from "react-icons/md";
+import { MdDeleteOutline, MdOutlineCancel } from "react-icons/md";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { convertToBase64, generateId } from "@/utils/functions";
@@ -16,18 +16,13 @@ import { MediaUploadResponseInterface } from "@/utils/interface";
 import { toast } from "sonner";
 import { useMediaStore } from "@/store/mediaStore";
 import { useCollectionStore } from "@/store/collectionStore";
-import { BsThreeDots } from "react-icons/bs";
 
 const NewCollection = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [description, setDescription] = useState<string>("");
   const [thumbnailFile, setThumbnailFile] = useState<File[] | null>([]);
-  const [isShowingThumbnailFileOption, setIsShowingThumbnailFileOption] =
-    useState<boolean>(false);
   const [headerFile, setHeaderFile] = useState<File[] | null>([]);
-  const [isShowingHeaderFileOption, setIsShowingHeaderFileOption] =
-    useState<boolean>(false);
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const [thumbnailFileBase64, setThumbnailFileBase64] = useState<any>("");
   const [headerFileBase64, setHeaderFileBase64] = useState<any>("");
@@ -322,7 +317,7 @@ const NewCollection = () => {
             ></textarea>
           </div>
 
-          <div className="flex flex-col mb-8">
+          {/* <div className="flex flex-col mb-8">
             <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
               Thumbnail Image
             </p>
@@ -419,6 +414,154 @@ const NewCollection = () => {
                 <GoPlus color="#363435" />
 
                 <p className="font-lato font-normal text-sm text-[#000000] text-opacity-[45%]">
+                  Upload
+                </p>
+              </div>
+            )}
+          </div> */}
+
+          <div className="flex flex-col mb-8">
+            <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
+              Thumbnail Image
+            </p>
+            {thumbnailFile && thumbnailFile?.length ? (
+              <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group bg-gray-50">
+                {/* Options Dropdown */}
+                <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <MdDeleteOutline
+                    color="#e34949ff"
+                    className="cursor-pointer bg-opacity-50 p-1"
+                    size={25}
+                    onClick={() => setThumbnailFile(null)}
+                  />
+                </div>
+                {/* {isShowingThumbnailFileOption ? (
+                  <div className="absolute top-1 right-1 z-20">
+                    <div className="relative">
+                      <BsThreeDots
+                        color="#ffffff"
+                        className="cursor-pointer bg-black bg-opacity-60 rounded-full p-1"
+                        size={20}
+                        onClick={() => setIsShowingThumbnailFileOption(false)}
+                      />
+                      <div className="absolute top-6 right-0 w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center shadow-lg">
+                        <p
+                          onClick={() => setThumbnailFile(null)}
+                          className="font-lato text-sm font-normal text-white cursor-pointer hover:bg-white hover:bg-opacity-10 w-full text-center py-1"
+                        >
+                          Delete
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <BsThreeDots
+                      color="#ffffff"
+                      className="cursor-pointer bg-black bg-opacity-60 rounded-full p-1"
+                      size={20}
+                      onClick={() => setIsShowingThumbnailFileOption(true)}
+                    />
+                  </div>
+                )} */}
+
+                {/* Image Container */}
+                <div className="w-full h-full flex items-center justify-center">
+                  <Image
+                    src={URL.createObjectURL(thumbnailFile[0])}
+                    alt="Thumbnail image"
+                    width={100}
+                    height={100}
+                    className="w-full h-full object-contain"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div
+                {...getRootPropsFirst()}
+                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors bg-white  justify-center items-center"
+              >
+                <input {...getInputPropsFirst()} />
+                <GoPlus color="#363435" size={20} />
+                <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
+                  Upload
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="flex flex-col mb-8">
+            <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
+              Header Image
+            </p>
+            {headerFile && headerFile?.length ? (
+              <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group bg-gray-50">
+                {/* Options Dropdown */}
+                <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <MdDeleteOutline
+                    color="#e34949ff"
+                    className="cursor-pointer bg-opacity-50 p-1"
+                    size={25}
+                    onClick={() => setHeaderFile(null)}
+                  />
+                </div>
+                {/* {isShowingHeaderFileOption ? (
+                  <div className="absolute top-1 right-1 z-20">
+                    <div className="relative">
+                      <BsThreeDots
+                        color="#ffffff"
+                        className="cursor-pointer bg-black bg-opacity-60 rounded-full p-1"
+                        size={20}
+                        onClick={() => setIsShowingHeaderFileOption(false)}
+                      />
+                      <div className="absolute top-6 right-0 w-[80px] py-2 rounded bg-[#333333] flex flex-col items-center justify-center shadow-lg">
+                        <p
+                          onClick={() => setHeaderFile(null)}
+                          className="font-lato text-sm font-normal text-white cursor-pointer hover:bg-white hover:bg-opacity-10 w-full text-center py-1"
+                        >
+                          Delete
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <BsThreeDots
+                      color="#ffffff"
+                      className="cursor-pointer bg-black bg-opacity-60 rounded-full p-1"
+                      size={20}
+                      onClick={() => setIsShowingHeaderFileOption(true)}
+                    />
+                  </div>
+                )} */}
+
+                {/* Image Container */}
+                <div className="w-full h-full flex items-center justify-center">
+                  <Image
+                    src={URL.createObjectURL(headerFile[0])}
+                    alt="Header image"
+                    width={100}
+                    height={100}
+                    className="w-full h-full object-contain"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div
+                {...getRootPropsSecond()}
+                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors bg-white  justify-center items-center"
+              >
+                <input {...getInputPropsSecond()} />
+                <GoPlus color="#363435" size={20} />
+                <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
                   Upload
                 </p>
               </div>

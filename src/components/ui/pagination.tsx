@@ -13,6 +13,8 @@ const MyPagination: FC<IProps> = ({
   totalPages,
   onPageChange,
 }) => {
+  console.log("currentPage", currentPage);
+  console.log("totalPages", totalPages);
   const handlePrevious = () => {
     if (currentPage > 1) {
       onPageChange(currentPage - 1);

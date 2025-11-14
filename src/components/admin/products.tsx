@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import { CiSearch } from "react-icons/ci";
 import { styled } from "@mui/material/styles";
@@ -17,7 +17,6 @@ import { useRouter } from "next/navigation";
 import { ProductInterface } from "@/utils/interface";
 import { useProductStore } from "@/store/productStore";
 import { shallow } from "zustand/shallow";
-import { toast } from "sonner";
 import moment from "moment";
 import Container from "../reusebles/container";
 import EmptyImage from "../../../public/assets/emptyImage.svg";
@@ -62,9 +61,10 @@ const AdminProducts = () => {
   const [fetchedProducts, setFetchedProducts] = useState<ProductInterface[]>(
     []
   );
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [isViewing, setIsViewing] = useState<string>("all");
 
-  const ITEMS_PER_PAGE = 10;
+  const ITEMS_PER_PAGE = 5;
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const { fetchProducts, products } = useProductStore(
@@ -74,17 +74,6 @@ const AdminProducts = () => {
     }),
     shallow
   );
-  /* eslint-enable @typescript-eslint/no-explicit-any */
-
-  //   const totalPages = transactions?.length
-  //     ? Math.ceil(transactions.length / ITEMS_PER_PAGE)
-  //     : 0;
-  //   const currentData =
-  //     transactions?.length &&
-  //     transactions.slice(
-  //       (currentPage - 1) * ITEMS_PER_PAGE,
-  //       currentPage * ITEMS_PER_PAGE
-  //     );
 
   useEffect(() => {
     if (products?.length) {
@@ -110,11 +99,7 @@ const AdminProducts = () => {
     }
   }, [isViewing, products]);
 
-  useEffect(() => {
-    handleProductsFetch();
-  }, []);
-
-  const handleProductsFetch = async () => {
+  const handleProductsFetch = useCallback(async () => {
     startTransition(async () => {
       try {
         const payload = {
@@ -124,18 +109,28 @@ const AdminProducts = () => {
 
         const response = await fetchProducts(payload);
 
-        if (!response?.product?.length) {
-          return;
+        if (!response) return;
+
+        if (response?.product?.length) {
+          setFetchedProducts(response.product);
+        } else {
+          setFetchedProducts([]);
         }
 
-        // setFetchedProducts(response);
+        if (response?.total_pages) {
+          setTotalPages(response.total_pages);
+        }
 
         return response.product;
       } catch (err) {
-        return err;
+        console.log(err);
       }
     });
-  };
+  }, [currentPage, fetchProducts]);
+
+  useEffect(() => {
+    handleProductsFetch();
+  }, [handleProductsFetch]);
 
   const rows = fetchedProducts?.length
     ? fetchedProducts?.map((prod) =>
@@ -150,9 +145,6 @@ const AdminProducts = () => {
         )
       )
     : null;
-
-  const totalPages = 10;
-  // const currentData = 1;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

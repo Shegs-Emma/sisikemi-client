@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import { Checkbox } from "@mui/material";
+import { Checkbox, IconButton, InputAdornment } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
@@ -113,26 +113,28 @@ const UserLogin = () => {
                 value={pwd}
                 onChange={(e) => {
                   const limit = 30;
-
-                  // 👇️ only take first N characters
                   setPwd(e.target.value.slice(0, limit));
                 }}
                 className={twMerge(
                   "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
                 )}
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={viewer} edge="end">
+                          {visibility ? (
+                            <EyeOff color="#4b5563" size={20} />
+                          ) : (
+                            <Eye color="#4b5563" size={20} />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                }}
               />
             </Box>
-            <button
-              type="button"
-              onClick={viewer}
-              className="transform -translate-y-1/2 mt-5 mx-2 absolute right-[20rem]"
-            >
-              {visibility ? (
-                <EyeOff color="#4b5563" size={20} />
-              ) : (
-                <Eye color="#4b5563" size={20} />
-              )}
-            </button>
             <div className="w-full flex m-0 p-0">
               <Checkbox
                 {...label}
