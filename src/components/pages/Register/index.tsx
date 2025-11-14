@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import { Checkbox } from "@mui/material";
+import { Checkbox, IconButton, InputAdornment } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { twMerge } from "tailwind-merge";
@@ -57,12 +57,21 @@ const Register = () => {
   };
 
   // Handle change code ========================================================================================================================
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
+
+    let newValue = value;
+
+    // Restrict phone_number to only digits and max 13
+    if (name === "phone_number") {
+      newValue = newValue.replace(/\D/g, "").slice(0, 13);
+    }
 
     setFormValues({
       ...formValues,
-      [name]: value,
+      [name]: newValue,
     });
 
     if (value.trim() !== "") {
@@ -209,8 +218,27 @@ const Register = () => {
                   size="small"
                   color="success"
                   name="phone_number"
-                  type="number"
-                  onChange={handleChange}
+                  type="tel"
+                  // onChange={handleChange}
+                  onChange={(e) => {
+                    let value = e.target.value;
+                    // remove non-digits
+                    value = value.replace(/\D/g, "");
+                    // cut to 13 digits
+                    if (value.length > 13) value = value.slice(0, 13);
+
+                    e.target.value = value; // enforce back into the input
+                    handleChange(e);
+                  }}
+                  slotProps={{
+                    input: {
+                      inputProps: {
+                        maxLength: 13,
+                        inputMode: "numeric",
+                        pattern: "[0-9]*",
+                      },
+                    },
+                  }}
                   className={twMerge(
                     "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
                   )}
@@ -261,26 +289,28 @@ const Register = () => {
                   value={pwd}
                   onChange={(e) => {
                     const limit = 30;
-
-                    // 👇️ only take first N characters
                     setPwd(e.target.value.slice(0, limit));
                   }}
                   className={twMerge(
                     "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
                   )}
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={viewer} edge="end">
+                            {visibility ? (
+                              <EyeOff color="#4b5563" size={20} />
+                            ) : (
+                              <Eye color="#4b5563" size={20} />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
               </Box>
-              <button
-                type="button"
-                onClick={viewer}
-                className="transform -translate-y-1/2 mt-5 mx-2 absolute left-[34rem]"
-              >
-                {visibility ? (
-                  <EyeOff color="#4b5563" size={20} />
-                ) : (
-                  <Eye color="#4b5563" size={20} />
-                )}
-              </button>
             </div>
 
             <div className="flex flex-col w-full mt-6">
@@ -294,34 +324,36 @@ const Register = () => {
               >
                 <TextField
                   id="outlined-basic"
-                  label="Confirm Password"
+                  label="Password"
                   variant="outlined"
                   size="small"
                   color="success"
-                  value={confirmPwd}
                   type={InputTypeConfirm}
+                  value={confirmPwd}
                   onChange={(e) => {
                     const limit = 30;
-
-                    // 👇️ only take first N characters
                     setConfirmPwd(e.target.value.slice(0, limit));
                   }}
                   className={twMerge(
                     "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
                   )}
+                  slotProps={{
+                    input: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={viewerConfirm} edge="end">
+                            {visibilityConfirm ? (
+                              <EyeOff color="#4b5563" size={20} />
+                            ) : (
+                              <Eye color="#4b5563" size={20} />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
                 />
               </Box>
-              <button
-                type="button"
-                onClick={viewerConfirm}
-                className="transform -translate-y-1/2 mt-5 mx-2 absolute left-[34rem]"
-              >
-                {visibilityConfirm ? (
-                  <EyeOff color="#4b5563" size={20} />
-                ) : (
-                  <Eye color="#4b5563" size={20} />
-                )}
-              </button>
               <div className="w-full flex m-0 p-0">
                 <Checkbox
                   {...label}

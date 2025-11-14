@@ -141,20 +141,25 @@ const NewIn: FC = () => {
                       <div
                         onClick={() => router.push(`/new-in/${product?.id}`)}
                         key={idx}
-                        className="flex flex-col cursor-pointer"
+                        className="flex flex-col cursor-pointer h-[420px] w-full"
                       >
-                        <Image
-                          src={product?.product_image_main?.media_id?.url}
-                          alt="section_img"
-                          width={280}
-                          height={506}
-                          // className="min-h-[506px]"
-                        />
-                        <div className="flex flex-col text-center">
-                          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">
+                        {/* IMAGE WRAPPER WITH FIXED HEIGHT */}
+                        <div className="h-[390px] w-full overflow-hidden flex justify-center">
+                          <Image
+                            src={product?.product_image_main?.media_id?.url}
+                            alt="section_img"
+                            width={280}
+                            height={506}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+
+                        {/* TEXT AREA */}
+                        <div className="flex flex-col text-center mt-3">
+                          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f]">
                             {product?.product_name.toUpperCase()}
                           </p>
-                          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
+                          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f]">
                             {`₦${Number(product?.price).toLocaleString()}`}
                           </p>
                         </div>

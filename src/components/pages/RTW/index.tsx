@@ -129,6 +129,7 @@ const RTW: FC = () => {
                     alt="section_img"
                     width={280}
                     height={420}
+                    className="flex mx-auto"
                   />
                   <div className="flex flex-col text-center">
                     <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] my-2">

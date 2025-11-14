@@ -70,6 +70,7 @@ const Collections: FC = () => {
                     alt="section_img"
                     width={400}
                     height={400}
+                    className="flex mx-auto"
                   />
                   <div className="flex flex-col text-center">
                     <p className="font-montserrat font-semibold text-xl text-[#4f4f4f] my-2">

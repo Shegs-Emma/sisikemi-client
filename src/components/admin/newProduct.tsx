@@ -31,7 +31,8 @@ import { useCollectionStore } from "@/store/collectionStore";
 import { colors, sizes } from "@/utils/constants";
 import { useProductStore } from "@/store/productStore";
 import { TbCurrencyNaira } from "react-icons/tb";
-import { BsCurrencyDollar, BsThreeDots } from "react-icons/bs";
+import { BsCurrencyDollar } from "react-icons/bs";
+import { MdDeleteOutline } from "react-icons/md";
 
 const NewProduct = () => {
   const router = useRouter();
@@ -45,14 +46,6 @@ const NewProduct = () => {
   const [otherImage1File, setOtherImage1File] = useState<File[] | null>([]);
   const [otherImage2File, setOtherImage2File] = useState<File[] | null>([]);
   const [otherImage3File, setOtherImage3File] = useState<File[] | null>([]);
-  const [isShowingMainOption, setIsShowingMainOption] =
-    useState<boolean>(false);
-  const [isShowingOther1Option, setIsShowingOther1Option] =
-    useState<boolean>(false);
-  const [isShowingOther2Option, setIsShowingOther2Option] =
-    useState<boolean>(false);
-  const [isShowingOther3Option, setIsShowingOther3Option] =
-    useState<boolean>(false);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const [mainImageFileBase64, setMainImageFileBase64] = useState<any>("");
@@ -131,7 +124,7 @@ const NewProduct = () => {
       );
       setFilteredColors(filterColorArray);
     }
-  }, [colors, selectedColors]);
+  }, [selectedColors]);
 
   useEffect(() => {
     if (sizes?.length || selectedSizes?.length) {
@@ -140,29 +133,9 @@ const NewProduct = () => {
       );
       setFilteredSizes(filterSizeArray);
     }
-  }, [sizes, selectedSizes]);
+  }, [selectedSizes]);
 
-  useEffect(() => {
-    handleCollectionsFetch();
-  }, []);
-
-  useEffect(() => {
-    if (formValues.price) {
-      const formatted = formValues.price.split(",").join("");
-      const updatedDollarPrice = (Number(formatted) / 1618.81).toFixed(2);
-      setDollarPrice(+updatedDollarPrice);
-    }
-
-    if (formValues.sale_price) {
-      const formattedSale = formValues.sale_price.split(",").join("");
-      const updatedSaleDollarPrice = (Number(formattedSale) / 1618.81).toFixed(
-        2
-      );
-      setSaleDollarPrice(+updatedSaleDollarPrice);
-    }
-  }, [formValues.price, formValues.sale_price]);
-
-  const handleCollectionsFetch = async () => {
+  const handleCollectionsFetch = useCallback(async () => {
     startTransition(async () => {
       try {
         const payload = {
@@ -183,7 +156,27 @@ const NewProduct = () => {
         return err;
       }
     });
-  };
+  }, [fetchCollections]);
+
+  useEffect(() => {
+    handleCollectionsFetch();
+  }, [handleCollectionsFetch]);
+
+  useEffect(() => {
+    if (formValues.price) {
+      const formatted = formValues.price.split(",").join("");
+      const updatedDollarPrice = (Number(formatted) / 1618.81).toFixed(2);
+      setDollarPrice(+updatedDollarPrice);
+    }
+
+    if (formValues.sale_price) {
+      const formattedSale = formValues.sale_price.split(",").join("");
+      const updatedSaleDollarPrice = (Number(formattedSale) / 1618.81).toFixed(
+        2
+      );
+      setSaleDollarPrice(+updatedSaleDollarPrice);
+    }
+  }, [formValues.price, formValues.sale_price]);
 
   // Drag n Drop code ========================================================================================================================
   /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -195,7 +188,6 @@ const NewProduct = () => {
     );
 
     setMainImageFile(mappedFiles);
-    setIsShowingMainOption(false);
   }, []);
 
   const {
@@ -211,7 +203,6 @@ const NewProduct = () => {
     );
 
     setOtherImage1File(mappedFiles);
-    setIsShowingOther1Option(false);
   }, []);
 
   const {
@@ -227,7 +218,6 @@ const NewProduct = () => {
     );
 
     setOtherImage2File(mappedFiles);
-    setIsShowingOther2Option(false);
   }, []);
 
   const {
@@ -243,7 +233,6 @@ const NewProduct = () => {
     );
 
     setOtherImage3File(mappedFiles);
-    setIsShowingOther3Option(false);
   }, []);
 
   const {
@@ -713,7 +702,7 @@ const NewProduct = () => {
         </div>
 
         <div className="w-full sm:w-[50%] sm:bg-[#fafafa] sm:pt-8 sm:pb-12 sm:px-12 text-[#363435] mt-4 mb-12">
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
               Main Image
             </p>
@@ -907,6 +896,178 @@ const NewProduct = () => {
                 </div>
               )}
             </div>
+          </div> */}
+
+          {/* Main Image Section */}
+          <div className="flex flex-col">
+            <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
+              Main Image
+            </p>
+            {mainImageFile && mainImageFile?.length ? (
+              <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group">
+                {/* Options Dropdown */}
+                <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <MdDeleteOutline
+                    color="#e34949ff"
+                    className="cursor-pointer bg-opacity-50 p-1"
+                    size={25}
+                    onClick={() => setMainImageFile(null)}
+                  />
+                </div>
+
+                {/* Image with proper containment */}
+                <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                  <Image
+                    src={URL.createObjectURL(mainImageFile[0])}
+                    alt="Main product image"
+                    width={100}
+                    height={100}
+                    className="w-full h-full object-cover"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div
+                {...getRootPropsMainImage()}
+                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors justify-center items-center"
+              >
+                <input {...getInputPropsMainImage()} />
+                <GoPlus color="#363435" size={20} />
+                <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
+                  Upload
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Other Images Section */}
+          <div className="flex flex-col mt-6">
+            <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
+              Other Images
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {/* Other Image 1 */}
+              {otherImage1File && otherImage1File?.length ? (
+                <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group">
+                  <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MdDeleteOutline
+                      color="#e34949ff"
+                      className="cursor-pointer bg-opacity-50 p-1"
+                      size={25}
+                      onClick={() => setOtherImage1File(null)}
+                    />
+                  </div>
+                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                    <Image
+                      src={URL.createObjectURL(otherImage1File[0])}
+                      alt="Product image 1"
+                      width={100}
+                      height={100}
+                      className="w-full h-full object-cover"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div
+                  {...getRootPropsOtherImage1()}
+                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors justify-center items-center"
+                >
+                  <input {...getInputPropsOtherImage1()} />
+                  <GoPlus color="#363435" size={20} />
+                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
+                    Upload
+                  </p>
+                </div>
+              )}
+
+              {/* Other Image 2 */}
+              {otherImage2File && otherImage2File?.length ? (
+                <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group">
+                  <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MdDeleteOutline
+                      color="#e34949ff"
+                      className="cursor-pointer bg-opacity-50 p-1"
+                      size={25}
+                      onClick={() => setOtherImage2File(null)}
+                    />
+                  </div>
+                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                    <Image
+                      src={URL.createObjectURL(otherImage2File[0])}
+                      alt="Product image 2"
+                      width={100}
+                      height={100}
+                      className="w-full h-full object-cover"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div
+                  {...getRootPropsOtherImage2()}
+                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors justify-center items-center"
+                >
+                  <input {...getInputPropsOtherImage2()} />
+                  <GoPlus color="#363435" size={20} />
+                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
+                    Upload
+                  </p>
+                </div>
+              )}
+
+              {/* Other Image 3 */}
+              {otherImage3File && otherImage3File?.length ? (
+                <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group">
+                  <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MdDeleteOutline
+                      color="#e34949ff"
+                      className="cursor-pointer bg-opacity-50 p-1"
+                      size={25}
+                      onClick={() => setOtherImage3File(null)}
+                    />
+                  </div>
+                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
+                    <Image
+                      src={URL.createObjectURL(otherImage3File[0])}
+                      alt="Product image 3"
+                      width={100}
+                      height={100}
+                      className="w-full h-full object-cover"
+                      style={{
+                        maxWidth: "100%",
+                        maxHeight: "100%",
+                        objectFit: "contain",
+                      }}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div
+                  {...getRootPropsOtherImage3()}
+                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors justify-center items-center"
+                >
+                  <input {...getInputPropsOtherImage3()} />
+                  <GoPlus color="#363435" size={20} />
+                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
+                    Upload
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col mt-6">
@@ -1026,7 +1187,10 @@ const NewProduct = () => {
           </div>
 
           <div className="flex">
-            <div className="flex w-[120px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] cursor-pointer">
+            <div
+              onClick={() => router.back()}
+              className="flex w-[120px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] cursor-pointer"
+            >
               <MdOutlineCancel color="#363435" />
               <p className="font-lato font-normal text-base text-[#4f4f4f] ml-2">
                 Cancel
