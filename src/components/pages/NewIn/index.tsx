@@ -1,13 +1,19 @@
 "use client";
 
-import React, { FC, useEffect, useState, useTransition } from "react";
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 import RecentlyViewed from "@/components/reusebles/recentlyViewed";
 import { Button } from "@/components/ui/button";
 import { useProductStore } from "@/store/productStore";
 import { ProductResponseInterface } from "@/utils/interface";
 import Image from "next/image";
 import { BiChevronDown } from "react-icons/bi";
-import { BsGrid3X3GapFill } from "react-icons/bs";
+import { BsGrid3X3GapFill, BsStars } from "react-icons/bs";
 import { IoGrid } from "react-icons/io5";
 import { shallow } from "zustand/shallow";
 import { toast } from "sonner";
@@ -21,6 +27,7 @@ import {
 import { twMerge } from "tailwind-merge";
 import { sizes } from "@/utils/constants";
 import { useRouter } from "next/navigation";
+import { FiArrowUpRight } from "react-icons/fi";
 
 const NewIn: FC = () => {
   const router = useRouter();
@@ -37,15 +44,11 @@ const NewIn: FC = () => {
     (state: any) => ({
       fetchProducts: state.fetchProducts,
     }),
-    shallow
+    shallow,
   );
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
-  useEffect(() => {
-    handleProductsFetch();
-  }, []);
-
-  const handleProductsFetch = async () => {
+  const handleProductsFetch = useCallback(async () => {
     startTransition(async () => {
       try {
         const payload = {
@@ -66,109 +69,185 @@ const NewIn: FC = () => {
         return err;
       }
     });
-  };
+  }, [ITEMS_PER_PAGE, currentPage, fetchProducts, startTransition]);
+
+  useEffect(() => {
+    handleProductsFetch();
+  }, [handleProductsFetch]);
+
+  const availableProducts =
+    fetchedProducts?.product?.filter((product) => product?.quantity > 0) ?? [];
 
   return (
-    <div className="w-full flex flex-col p-0 md:pt-[6rem]">
-      <div className="w-full flex border-b-[1px] border-b-[#e0e0e0] py-0 px-[2rem]">
-        <div className="w-[15%] border-r-[1px] border-r-[#e0e0e0] h-[4rem] pt-[2rem] pr-[6rem] flex justify-between">
-          <IoGrid color="#BDBDBD" size={24} />
-          <BsGrid3X3GapFill color="#363435" size={24} />
-        </div>
+    <div className="flex w-full flex-col bg-[linear-gradient(180deg,#fffdf9_0%,#fff7f0_38%,#ffffff_100%)] pt-[6.5rem] md:pt-[10.75rem] xl:pt-[11.5rem]">
+      <section className="px-4 pb-8 pt-4 md:px-8 md:pb-10 lg:px-12 xl:px-16">
+        <div className="mx-auto max-w-[1380px] overflow-hidden rounded-[32px] border border-[#eadfce] bg-[radial-gradient(circle_at_top_left,rgba(239,211,120,0.28),transparent_28%),linear-gradient(135deg,#fffaf4_0%,#ffffff_58%,#f8efe4_100%)] shadow-[0_30px_80px_rgba(84,56,28,0.12)]">
+          <div className="grid gap-8 px-6 py-8 md:px-8 md:py-10 lg:grid-cols-[1.3fr_0.7fr] lg:items-end lg:px-12 lg:py-14">
+            <div className="max-w-2xl">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#dcc6a9] bg-white/75 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#a86728]">
+                <BsStars className="text-xs" />
+                New In Edit
+              </div>
+              <h1 className="font-montserrat text-[2rem] font-semibold uppercase leading-[1.05] tracking-[0.08em] text-[#2f2924] md:text-[2.8rem] xl:text-[3.4rem]">
+                Fresh silhouettes designed to lead the room.
+              </h1>
+              <p className="mt-4 max-w-xl font-montserrat text-sm leading-7 text-[#6b6258] md:text-base">
+                Discover the newest Sisikemi arrivals, cut with structure,
+                softened with movement, and styled for occasions that call for
+                presence.
+              </p>
+            </div>
 
-        <div className="w-[70%]"></div>
-
-        <div className="w-[15%] border-l-[1px] border-l-[#e0e0e0]">
-          <div className="flex justify-between w-[50%] mx-auto mt-[1.5rem] mb-0">
-            <h3 className="font-montserrat font-semibold text-xm md:text-lg text-[#4f4f4f] p-0 m-0 ">
-              SORT
-            </h3>
-            <BiChevronDown color="#363435" size={24} />
+            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+              <div className="rounded-[24px] border border-white/70 bg-white/80 p-5 shadow-[0_16px_40px_rgba(70,45,20,0.08)]">
+                <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.22em] text-[#a86728]">
+                  In Stock
+                </p>
+                <p className="mt-3 font-montserrat text-3xl font-semibold text-[#2f2924]">
+                  {availableProducts.length}
+                </p>
+                <p className="mt-2 font-montserrat text-sm text-[#6b6258]">
+                  Ready to shop now.
+                </p>
+              </div>
+              <div className="rounded-[24px] border border-white/70 bg-[#2f2924] p-5 shadow-[0_16px_40px_rgba(70,45,20,0.12)]">
+                <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.22em] text-[#d8c3aa]">
+                  Mood
+                </p>
+                <p className="mt-3 font-montserrat text-lg font-medium text-white">
+                  Tailored drama with a lighter finish.
+                </p>
+              </div>
+              <div className="rounded-[24px] border border-white/70 bg-white/80 p-5 shadow-[0_16px_40px_rgba(70,45,20,0.08)]">
+                <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.22em] text-[#a86728]">
+                  Curation
+                </p>
+                <p className="mt-3 font-montserrat text-sm leading-6 text-[#6b6258]">
+                  Edited for events, evenings, and statement entrances.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="flex justify-between w-[45%] md:w-[29%] mx-auto mt-[4rem] mb-[5rem]">
-        <Button
-          className="w-[183px] h-[36px] px-[15px] py-[10px] border-[0.8px] border-[#C4C4C4] flex justify-between rounded font-semibold text-xs text-[#363435] font-montserrat outline-0 cursor-pointer my-0 mx-auto"
-          type="submit"
-        >
-          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0">
-            PRODUCT TYPE
-          </p>
-          <BiChevronDown
-            color="#363435"
-            size={20}
-            className="relative -top-[0.1rem]"
-          />
-        </Button>
-
-        <Select onValueChange={(value: string) => setSelectedSize(value)}>
-          <SelectTrigger
-            className={twMerge(
-              "w-[104px] bg-transparent h-[36px] px-[15px] py-[10px] border-[0.8px] border-[#C4C4C4] flex justify-between rounded font-semibold text-xs text-[#363435] font-montserrat outline-0 cursor-pointer my-0 mx-auto"
-            )}
-          >
-            <SelectValue
-              className="font-montserrat font-semibold text-xs text-[#4f4f4f] m-0"
-              placeholder={selectedSize ? selectedSize : "SIZE"}
-            />
-          </SelectTrigger>
-          <SelectContent
-            className={twMerge("border-none bg-transparent shadow-none")}
-          >
-            <div className="h-full max-h-60 overflow-y-scroll  bg-[#ffffff] text-[#363435] shadow-lg w-[124px] rounded">
-              {sizes?.length &&
-                sizes?.map((size, idx) => (
-                  <SelectItem key={idx} value={size?.id.toString()}>
-                    {size.name.toUpperCase()}
-                  </SelectItem>
-                ))}
+      <section className="px-4 pb-8 md:px-8 lg:px-12 xl:px-16">
+        <div className="mx-auto flex max-w-[1380px] flex-col gap-4 rounded-[28px] border border-[#eadfce] bg-white/85 p-4 shadow-[0_20px_60px_rgba(84,56,28,0.08)] backdrop-blur-sm md:p-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-1 items-center gap-3 rounded-[22px] border border-[#f0e4d6] bg-[#fffaf4] p-3 md:gap-4 md:p-4">
+            <div className="flex items-center gap-2 rounded-full bg-white px-3 py-2 shadow-[0_8px_20px_rgba(84,56,28,0.08)]">
+              <IoGrid color="#b6aea4" size={18} />
+              <BsGrid3X3GapFill color="#363435" size={18} />
             </div>
-          </SelectContent>
-        </Select>
-      </div>
+            <div className="min-w-0">
+              <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.24em] text-[#a86728]">
+                Collection View
+              </p>
+              <p className="truncate font-montserrat text-sm text-[#6b6258] md:text-base">
+                {availableProducts.length} pieces available in the current edit
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button
+              className="h-auto w-full justify-between rounded-full border border-[#d8c7b3] bg-[#fffaf4] px-5 py-3 font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#363435] shadow-none transition-colors hover:bg-white sm:w-[200px]"
+              type="button"
+            >
+              <span>Product Type</span>
+              <BiChevronDown color="#363435" size={18} />
+            </Button>
+
+            <Select onValueChange={(value: string) => setSelectedSize(value)}>
+              <SelectTrigger
+                className={twMerge(
+                  "h-auto w-full rounded-full border border-[#d8c7b3] bg-[#fffaf4] px-5 py-3 font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#363435] shadow-none outline-0 transition-colors hover:bg-white sm:w-[140px]",
+                )}
+              >
+                <SelectValue
+                  className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#4f4f4f]"
+                  placeholder={selectedSize ? selectedSize : "Size"}
+                />
+              </SelectTrigger>
+              <SelectContent
+                className={twMerge("border-none bg-transparent shadow-none")}
+              >
+                <div className="h-full max-h-60 w-[140px] overflow-y-scroll rounded-2xl bg-[#ffffff] text-[#363435] shadow-lg">
+                  {sizes?.length &&
+                    sizes?.map((size, idx) => (
+                      <SelectItem key={idx} value={size?.id.toString()}>
+                        {size.name.toUpperCase()}
+                      </SelectItem>
+                    ))}
+                </div>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </section>
 
       {isPending ? (
-        <p>Loading...</p>
+        <section className="px-4 pb-16 md:px-8 lg:px-12 xl:px-16">
+          <div className="mx-auto grid max-w-[1380px] grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="overflow-hidden rounded-[24px] border border-[#eee3d6] bg-white p-3 shadow-[0_18px_40px_rgba(84,56,28,0.06)]"
+              >
+                <div className="h-[240px] animate-pulse rounded-[18px] bg-[#f5ede3] md:h-[320px]" />
+                <div className="mt-4 h-3 w-2/3 animate-pulse rounded-full bg-[#efe3d6]" />
+                <div className="mt-3 h-3 w-1/3 animate-pulse rounded-full bg-[#efe3d6]" />
+              </div>
+            ))}
+          </div>
+        </section>
       ) : (
-        <div className="flex flex-col w-full border-b-[0.5px] border-b-[#4f4f4f] pb-[7rem]">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-14 px-[1.5rem] py-0">
-            {fetchedProducts?.product?.length
-              ? fetchedProducts?.product?.map(
-                  (product, idx) =>
-                    product?.quantity > 0 && (
-                      <div
-                        onClick={() => router.push(`/new-in/${product?.id}`)}
-                        key={idx}
-                        className="flex flex-col cursor-pointer h-[420px] w-full"
-                      >
-                        {/* IMAGE WRAPPER WITH FIXED HEIGHT */}
-                        <div className="h-[390px] w-full overflow-hidden flex justify-center">
-                          <Image
-                            src={product?.product_image_main?.media_id?.url}
-                            alt="section_img"
-                            width={280}
-                            height={506}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-
-                        {/* TEXT AREA */}
-                        <div className="flex flex-col text-center mt-3">
-                          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f]">
-                            {product?.product_name.toUpperCase()}
-                          </p>
-                          <p className="font-montserrat font-semibold text-xs text-[#4f4f4f]">
-                            {`₦${Number(product?.price).toLocaleString()}`}
-                          </p>
-                        </div>
+        <section className="px-4 pb-16 md:px-8 lg:px-12 xl:px-16">
+          <div className="mx-auto grid max-w-[1380px] grid-cols-2 gap-4 border-b border-[#d8c7b3] pb-16 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:gap-6">
+            {availableProducts.length
+              ? availableProducts.map((product, idx) => (
+                  <article
+                    onClick={() => router.push(`/new-in/${product?.id}`)}
+                    key={idx}
+                    className="group flex cursor-pointer flex-col overflow-hidden rounded-[24px] border border-[#eee3d6] bg-white p-3 shadow-[0_18px_40px_rgba(84,56,28,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(84,56,28,0.14)] md:p-4"
+                  >
+                    <div className="relative overflow-hidden rounded-[18px] bg-[#f8efe4]">
+                      <div className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#7d664d] shadow-sm">
+                        New In
                       </div>
-                    )
-                )
+                      <Image
+                        src={product?.product_image_main?.media_id?.url}
+                        alt={product?.product_name}
+                        width={400}
+                        height={560}
+                        className="h-[240px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] md:h-[320px] xl:h-[360px]"
+                      />
+                    </div>
+
+                    <div className="flex flex-1 flex-col justify-between px-1 pb-1 pt-4">
+                      <div>
+                        <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#a86728]">
+                          Signature Piece
+                        </p>
+                        <h3 className="mt-2 font-montserrat text-sm font-semibold uppercase leading-6 text-[#2f2924] md:text-base">
+                          {product?.product_name}
+                        </h3>
+                      </div>
+
+                      <div className="mt-4 flex items-end justify-between gap-3">
+                        <p className="font-montserrat text-sm font-semibold text-[#4f4f4f] md:text-base">
+                          {`₦${Number(product?.price).toLocaleString()}`}
+                        </p>
+                        <span className="inline-flex items-center gap-1 font-montserrat text-[11px] font-semibold uppercase tracking-[0.18em] text-[#7d664d] transition-transform duration-300 group-hover:translate-x-1">
+                          View
+                          <FiArrowUpRight size={14} />
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+                ))
               : null}
           </div>
-        </div>
+        </section>
       )}
 
       <RecentlyViewed title="RECENTLY VIEWED" />

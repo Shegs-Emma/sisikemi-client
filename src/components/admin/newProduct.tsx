@@ -33,6 +33,67 @@ import { useProductStore } from "@/store/productStore";
 import { TbCurrencyNaira } from "react-icons/tb";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { MdDeleteOutline } from "react-icons/md";
+import type { DropzoneInputProps, DropzoneRootProps } from "react-dropzone";
+
+interface UploadImageCardProps {
+  label?: string;
+  file: File[] | null;
+  onDelete: () => void;
+  rootProps: DropzoneRootProps;
+  inputProps: DropzoneInputProps;
+}
+
+const UploadImageCard = ({
+  label,
+  file,
+  onDelete,
+  rootProps,
+  inputProps,
+}: UploadImageCardProps) => {
+  const previewUrl = file?.length ? URL.createObjectURL(file[0]) : "";
+
+  return (
+    <div className="flex flex-col">
+      {label ? (
+        <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
+          {label}
+        </p>
+      ) : null}
+
+      {file?.length ? (
+        <div className="relative w-full max-w-[220px] aspect-square rounded-md border border-[#d9d9d9] overflow-hidden bg-[#f4f4f4] shadow-sm group">
+          <button
+            type="button"
+            onClick={onDelete}
+            className="absolute right-2 top-2 z-20 h-8 w-8 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Delete selected image"
+          >
+            <MdDeleteOutline color="#ff7c7c" size={18} />
+          </button>
+
+          <Image
+            src={previewUrl}
+            alt="Selected product image"
+            fill
+            sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px"
+            className="object-cover"
+          />
+        </div>
+      ) : (
+        <div
+          {...rootProps}
+          className="flex flex-col w-full max-w-[220px] aspect-square rounded-md justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors items-center bg-white"
+        >
+          <input {...inputProps} />
+          <GoPlus color="#363435" size={20} />
+          <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
+            Upload
+          </p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const NewProduct = () => {
   const router = useRouter();
@@ -60,7 +121,7 @@ const NewProduct = () => {
     FilteredColorsInterface[]
   >([]);
   const [filteredSizes, setFilteredSizes] = useState<FilteredSizesInterface[]>(
-    []
+    [],
   );
   const [formValues, setFormValues] = useState({
     product_name: "",
@@ -98,14 +159,14 @@ const NewProduct = () => {
     (state: any) => ({
       createMediaCloudinary: state.createMediaCloudinary,
     }),
-    shallow
+    shallow,
   );
 
   const { fetchCollections } = useCollectionStore(
     (state: any) => ({
       fetchCollections: state.fetchCollections,
     }),
-    shallow
+    shallow,
   );
 
   const { createProduct, fetchProducts } = useProductStore(
@@ -113,14 +174,14 @@ const NewProduct = () => {
       createProduct: state.createProduct,
       fetchProducts: state.fetchProducts,
     }),
-    shallow
+    shallow,
   );
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   useEffect(() => {
     if (colors?.length || selectedColors?.length) {
       const filterColorArray = colors?.filter(
-        (fca) => !selectedColors.includes(fca?.name)
+        (fca) => !selectedColors.includes(fca?.name),
       );
       setFilteredColors(filterColorArray);
     }
@@ -129,7 +190,7 @@ const NewProduct = () => {
   useEffect(() => {
     if (sizes?.length || selectedSizes?.length) {
       const filterSizeArray = sizes?.filter(
-        (fca) => !selectedSizes.includes(fca?.name)
+        (fca) => !selectedSizes.includes(fca?.name),
       );
       setFilteredSizes(filterSizeArray);
     }
@@ -172,7 +233,7 @@ const NewProduct = () => {
     if (formValues.sale_price) {
       const formattedSale = formValues.sale_price.split(",").join("");
       const updatedSaleDollarPrice = (Number(formattedSale) / 1618.81).toFixed(
-        2
+        2,
       );
       setSaleDollarPrice(+updatedSaleDollarPrice);
     }
@@ -184,7 +245,7 @@ const NewProduct = () => {
     const mappedFiles = acceptedFiles.map((file: any) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-      })
+      }),
     );
 
     setMainImageFile(mappedFiles);
@@ -199,7 +260,7 @@ const NewProduct = () => {
     const mappedFiles = acceptedFiles.map((file: any) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-      })
+      }),
     );
 
     setOtherImage1File(mappedFiles);
@@ -214,7 +275,7 @@ const NewProduct = () => {
     const mappedFiles = acceptedFiles.map((file: any) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-      })
+      }),
     );
 
     setOtherImage2File(mappedFiles);
@@ -229,7 +290,7 @@ const NewProduct = () => {
     const mappedFiles = acceptedFiles.map((file: any) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-      })
+      }),
     );
 
     setOtherImage3File(mappedFiles);
@@ -279,7 +340,7 @@ const NewProduct = () => {
   // Handle submission code ===========================================================================================================================
   const handleFileUploadCloudinary = async (
     selectedFile: string,
-    filename: string
+    filename: string,
   ): Promise<MediaUploadResponseInterface | void> => {
     try {
       try {
@@ -349,73 +410,99 @@ const NewProduct = () => {
             mainImageFile?.length &&
             `${formValues?.product_name
               .split(" ")
-              .join("_")}_main_image_${id}_.${mainImageFile[0]}`;
+              .join(
+                "_",
+              )}_main_image_${id}_.${mainImageFile[0]?.type.split("/")[1]}`;
+
           const other_image_name_1 =
             otherImage1File?.length &&
             `${formValues?.product_name
               .split(" ")
-              .join("_")}_other_image_1_${id}_.${otherImage1File[0]}`;
+              .join(
+                "_",
+              )}_other_image_1_${id}_.${otherImage1File[0]?.type.split("/")[1]}`;
 
           const other_image_name_2 =
             otherImage2File?.length &&
             `${formValues?.product_name
               .split(" ")
-              .join("_")}_other_image_2_${id}_.${otherImage2File[0]}`;
+              .join(
+                "_",
+              )}_other_image_2_${id}_.${otherImage2File[0]?.type.split("/")[1]}`;
 
           const other_image_name_3 =
             otherImage3File?.length &&
             `${formValues?.product_name
               .split(" ")
-              .join("_")}_other_image_3_${id}_.${otherImage3File[0]}`;
+              .join(
+                "_",
+              )}_other_image_3_${id}_.${otherImage3File[0]?.type.split("/")[1]}`;
+
+          // Upload main image
           if (mainImageFileBase64 && main_image_name) {
-            await handleFileUploadCloudinary(
-              mainImageFileBase64,
-              main_image_name
-            )
-              .then((res) => {
-                console.log("res", res);
-                if (res?.url) {
-                  return (main_image = res?.media_ref);
-                }
-              })
-              .catch((err) => err);
+            try {
+              const mainRes = await handleFileUploadCloudinary(
+                mainImageFileBase64,
+                main_image_name,
+              );
+              if (mainRes?.media_ref) {
+                main_image = mainRes.media_ref;
+              } else {
+                toast.error("Main image upload failed", { id: toastId });
+                return;
+              }
+            } catch (err) {
+              console.error("Main image upload error:", err);
+              toast.error("Failed to upload main image", { id: toastId });
+              return;
+            }
           }
+
+          // Upload other image 1
           if (otherImage1FileBase64 && other_image_name_1) {
-            await handleFileUploadCloudinary(
-              otherImage1FileBase64,
-              other_image_name_1
-            )
-              .then((res) => {
-                if (res?.url) {
-                  return (other_image_1 = res?.media_ref);
-                }
-              })
-              .catch((err) => err);
+            try {
+              const other1Res = await handleFileUploadCloudinary(
+                otherImage1FileBase64,
+                other_image_name_1,
+              );
+              if (other1Res?.media_ref) {
+                other_image_1 = other1Res.media_ref;
+              }
+            } catch (err) {
+              console.error("Other image 1 upload error:", err);
+            }
           }
+
+          // Upload other image 2
           if (otherImage2FileBase64 && other_image_name_2) {
-            await handleFileUploadCloudinary(
-              otherImage2FileBase64,
-              other_image_name_2
-            )
-              .then((res) => {
-                if (res?.url) {
-                  return (other_image_2 = res?.media_ref);
-                }
-              })
-              .catch((err) => err);
+            try {
+              const other2Res = await handleFileUploadCloudinary(
+                otherImage2FileBase64,
+                other_image_name_2,
+              );
+              if (other2Res?.media_ref) {
+                other_image_2 = other2Res.media_ref;
+              }
+            } catch (err) {
+              console.error("Other image 2 upload error:", err);
+            }
           }
+
+          // Upload other image 3
           if (otherImage3FileBase64 && other_image_name_3) {
-            await handleFileUploadCloudinary(
-              otherImage3FileBase64,
-              other_image_name_3
-            )
-              .then((res) => {
-                if (res?.url) {
-                  return (other_image_3 = res?.media_ref);
-                }
-              })
-              .catch((err) => err);
+            try {
+              const other3Res = await handleFileUploadCloudinary(
+                otherImage3FileBase64,
+                other_image_name_3,
+              );
+              if (other3Res?.media_ref) {
+                other_image_3 = other3Res.media_ref;
+              }
+            } catch (err) {
+              console.error("Other image 3 upload error:", err);
+            }
           }
+
           const payload = {
             ...formValues,
             price: formValues.price.split(",").join(""),
@@ -455,6 +542,7 @@ const NewProduct = () => {
           return response?.product;
         } catch (err) {
           console.error("Error in:", err);
+          toast.error("An unexpected error occurred", { id: toastId });
         }
       });
     } catch (err) {
@@ -483,8 +571,8 @@ const NewProduct = () => {
   };
 
   return (
-    <div className="w-full z-10 mt-10 flex flex flex-col">
-      <div className="w-full flex px-10 pt-4 pb-10 border-b-[1px] border-b-[#e0e0e0]">
+    <div className="w-full z-10 mt-10 flex flex-col bg-[#fcfcfc]">
+      <div className="w-full flex px-4 sm:px-10 pt-4 pb-6 sm:pb-10 border-b-[1px] border-b-[#e0e0e0]">
         <FaArrowLeftLong
           color="#363435"
           className="mt-1 cursor-pointer"
@@ -495,13 +583,13 @@ const NewProduct = () => {
         </p>
       </div>
 
-      <div className="w-full px-10 flex sm:flex-row flex-col justify-between">
-        <div className="w-full sm:w-[50%] flex flex-col mt-12">
+      <div className="w-full px-4 sm:px-10 py-6 sm:py-10 flex sm:flex-row flex-col justify-between gap-8">
+        <div className="w-full sm:w-[52%] flex flex-col">
           <div className="mb-8">
             <Label
               htmlFor="product_name"
               className={twMerge(
-                "font-lato font-medium text-sm text-[#363435]"
+                "font-lato font-medium text-sm text-[#363435]",
               )}
             >
               Product name
@@ -512,17 +600,17 @@ const NewProduct = () => {
               onChange={handleChange}
               value={formValues?.product_name}
               className={twMerge(
-                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
+                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[88%] p-2 text-[#363435] bg-white",
               )}
               // isError={errorFields.product_name}
             />
           </div>
 
-          <div className="mb-8">
+          <div className="mb-8 flex flex-col">
             <Label
               htmlFor="product_description"
               className={twMerge(
-                "font-lato font-medium text-sm text-[#363435]"
+                "font-lato font-medium text-sm text-[#363435]",
               )}
             >
               Product description
@@ -532,7 +620,7 @@ const NewProduct = () => {
               onChange={(e) => setDescription(e.target.value)}
               value={description}
               className={twMerge(
-                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
+                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[88%] p-2 text-[#363435] min-h-28 bg-white",
               )}
               // isError={errorFields.product_description}
             ></textarea>
@@ -542,7 +630,7 @@ const NewProduct = () => {
             <Label
               htmlFor="productCollection"
               className={twMerge(
-                "font-lato font-medium text-sm text-[#363435]"
+                "font-lato font-medium text-sm text-[#363435]",
               )}
             >
               Product collection
@@ -554,7 +642,7 @@ const NewProduct = () => {
             >
               <SelectTrigger
                 className={twMerge(
-                  "w-full sm:w-[80%] border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
+                  "w-full sm:w-[88%] border-[#bdbdbd] bg-white text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]",
                 )}
               >
                 <SelectValue
@@ -580,7 +668,7 @@ const NewProduct = () => {
             <Label
               htmlFor="product_code"
               className={twMerge(
-                "font-lato font-medium text-sm text-[#363435]"
+                "font-lato font-medium text-sm text-[#363435]",
               )}
             >
               Product code
@@ -591,23 +679,23 @@ const NewProduct = () => {
               onChange={handleChange}
               value={formValues?.product_code}
               className={twMerge(
-                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
+                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[88%] p-2 text-[#363435] bg-white",
               )}
               //   isError={errorFields.firstName}
             />
           </div>
 
-          <div className="flex justify-between w-full sm:w-[80%]">
+          <div className="flex justify-between w-full sm:w-[88%] gap-4">
             <div className="mb-8 w-[50%]">
               <Label
                 htmlFor="price"
                 className={twMerge(
-                  "font-lato font-medium text-sm text-[#363435]"
+                  "font-lato font-medium text-sm text-[#363435]",
                 )}
               >
                 Product price naira
               </Label>
-              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
+              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] text-[#363435] w-full bg-white">
                 <TbCurrencyNaira size={20} className="mt-[9px] ml-2" />
                 <Input
                   type="text"
@@ -616,7 +704,7 @@ const NewProduct = () => {
                   value={formValues?.price}
                   onKeyDown={handleKeyDown}
                   className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
+                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg p-2 text-[#363435] w-full outline-none bg-transparent",
                   )}
                   //   isError={errorFields.firstName}
                 />
@@ -627,19 +715,19 @@ const NewProduct = () => {
               <Label
                 htmlFor="productPriceDollar"
                 className={twMerge(
-                  "font-lato font-medium text-sm text-[#363435]"
+                  "font-lato font-medium text-sm text-[#363435]",
                 )}
               >
                 Product price Dollar
               </Label>
-              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
+              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] text-[#363435] w-full bg-white">
                 <BsCurrencyDollar size={18} className="mt-[9px] ml-2" />
                 <Input
                   type="number"
                   name="productSalesPriceDollar"
                   value={dollarPrice}
                   className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
+                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg p-2 text-[#363435] w-full outline-none bg-transparent",
                   )}
                   readOnly
                 />
@@ -651,17 +739,17 @@ const NewProduct = () => {
             Sales
           </h2>
 
-          <div className="flex justify-between w-full sm:w-[80%]">
+          <div className="flex justify-between w-full sm:w-[88%] gap-4">
             <div className="mb-8 w-[50%]">
               <Label
                 htmlFor="sale_price"
                 className={twMerge(
-                  "font-lato font-medium text-xs sm:text-sm text-[#363435]"
+                  "font-lato font-medium text-xs sm:text-sm text-[#363435]",
                 )}
               >
                 Product sales price naira
               </Label>
-              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
+              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] text-[#363435] w-full bg-white">
                 <TbCurrencyNaira size={20} className="mt-[9px] ml-2" />
                 <Input
                   type="text"
@@ -670,7 +758,7 @@ const NewProduct = () => {
                   value={formValues?.sale_price}
                   onKeyDown={handleKeyDown}
                   className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
+                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg p-2 text-[#363435] w-full outline-none bg-transparent",
                   )}
                 />
               </div>
@@ -680,19 +768,19 @@ const NewProduct = () => {
               <Label
                 htmlFor="productSalesPriceDollar"
                 className={twMerge(
-                  "font-lato font-medium text-xs sm:text-sm text-[#363435]"
+                  "font-lato font-medium text-xs sm:text-sm text-[#363435]",
                 )}
               >
                 Product sales price Dollar
               </Label>
-              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435] w-[90%]">
+              <div className="flex mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] text-[#363435] w-full bg-white">
                 <BsCurrencyDollar size={18} className="mt-[9px] ml-2" />
                 <Input
                   type="number"
                   name="productSalesPriceDollar"
                   value={saleDollarPrice}
                   className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg w-[80%] p-2 text-[#363435] w-[90%] outline-none"
+                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg p-2 text-[#363435] w-full outline-none bg-transparent",
                   )}
                   readOnly
                 />
@@ -701,7 +789,7 @@ const NewProduct = () => {
           </div>
         </div>
 
-        <div className="w-full sm:w-[50%] sm:bg-[#fafafa] sm:pt-8 sm:pb-12 sm:px-12 text-[#363435] mt-4 mb-12">
+        <div className="w-full sm:w-[48%] sm:bg-[#fafafa] sm:rounded-xl sm:pt-8 sm:pb-12 sm:px-8 text-[#363435] mt-2 sm:mt-0 mb-10 border border-transparent sm:border-[#efefef]">
           {/* <div className="flex flex-col">
             <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
               Main Image
@@ -898,175 +986,39 @@ const NewProduct = () => {
             </div>
           </div> */}
 
-          {/* Main Image Section */}
           <div className="flex flex-col">
-            <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
-              Main Image
-            </p>
-            {mainImageFile && mainImageFile?.length ? (
-              <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group">
-                {/* Options Dropdown */}
-                <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <MdDeleteOutline
-                    color="#e34949ff"
-                    className="cursor-pointer bg-opacity-50 p-1"
-                    size={25}
-                    onClick={() => setMainImageFile(null)}
-                  />
-                </div>
-
-                {/* Image with proper containment */}
-                <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                  <Image
-                    src={URL.createObjectURL(mainImageFile[0])}
-                    alt="Main product image"
-                    width={100}
-                    height={100}
-                    className="w-full h-full object-cover"
-                    style={{
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      objectFit: "contain",
-                    }}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div
-                {...getRootPropsMainImage()}
-                className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors justify-center items-center"
-              >
-                <input {...getInputPropsMainImage()} />
-                <GoPlus color="#363435" size={20} />
-                <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
-                  Upload
-                </p>
-              </div>
-            )}
+            <UploadImageCard
+              label="Main Image"
+              file={mainImageFile}
+              onDelete={() => setMainImageFile(null)}
+              rootProps={getRootPropsMainImage()}
+              inputProps={getInputPropsMainImage()}
+            />
           </div>
 
-          {/* Other Images Section */}
           <div className="flex flex-col mt-6">
             <p className="font-lato text-sm font-medium text-[#4f4f4f] mb-2">
               Other Images
             </p>
-            <div className="flex flex-wrap gap-3">
-              {/* Other Image 1 */}
-              {otherImage1File && otherImage1File?.length ? (
-                <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group">
-                  <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <MdDeleteOutline
-                      color="#e34949ff"
-                      className="cursor-pointer bg-opacity-50 p-1"
-                      size={25}
-                      onClick={() => setOtherImage1File(null)}
-                    />
-                  </div>
-                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                    <Image
-                      src={URL.createObjectURL(otherImage1File[0])}
-                      alt="Product image 1"
-                      width={100}
-                      height={100}
-                      className="w-full h-full object-cover"
-                      style={{
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div
-                  {...getRootPropsOtherImage1()}
-                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors justify-center items-center"
-                >
-                  <input {...getInputPropsOtherImage1()} />
-                  <GoPlus color="#363435" size={20} />
-                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
-                    Upload
-                  </p>
-                </div>
-              )}
-
-              {/* Other Image 2 */}
-              {otherImage2File && otherImage2File?.length ? (
-                <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group">
-                  <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <MdDeleteOutline
-                      color="#e34949ff"
-                      className="cursor-pointer bg-opacity-50 p-1"
-                      size={25}
-                      onClick={() => setOtherImage2File(null)}
-                    />
-                  </div>
-                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                    <Image
-                      src={URL.createObjectURL(otherImage2File[0])}
-                      alt="Product image 2"
-                      width={100}
-                      height={100}
-                      className="w-full h-full object-cover"
-                      style={{
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div
-                  {...getRootPropsOtherImage2()}
-                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors justify-center items-center"
-                >
-                  <input {...getInputPropsOtherImage2()} />
-                  <GoPlus color="#363435" size={20} />
-                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
-                    Upload
-                  </p>
-                </div>
-              )}
-
-              {/* Other Image 3 */}
-              {otherImage3File && otherImage3File?.length ? (
-                <div className="relative w-[104px] h-[104px] rounded-sm border border-[#d9d9d9] overflow-hidden group">
-                  <div className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <MdDeleteOutline
-                      color="#e34949ff"
-                      className="cursor-pointer bg-opacity-50 p-1"
-                      size={25}
-                      onClick={() => setOtherImage3File(null)}
-                    />
-                  </div>
-                  <div className="w-full h-full flex items-center justify-center bg-gray-50">
-                    <Image
-                      src={URL.createObjectURL(otherImage3File[0])}
-                      alt="Product image 3"
-                      width={100}
-                      height={100}
-                      className="w-full h-full object-cover"
-                      style={{
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div
-                  {...getRootPropsOtherImage3()}
-                  className="flex flex-col w-[104px] h-[104px] rounded-sm justify-center border border-[#d9d9d9] cursor-pointer hover:border-[#363435] transition-colors justify-center items-center"
-                >
-                  <input {...getInputPropsOtherImage3()} />
-                  <GoPlus color="#363435" size={20} />
-                  <p className="font-lato font-normal text-sm text-[#000000] text-opacity-45 mt-1">
-                    Upload
-                  </p>
-                </div>
-              )}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <UploadImageCard
+                file={otherImage1File}
+                onDelete={() => setOtherImage1File(null)}
+                rootProps={getRootPropsOtherImage1()}
+                inputProps={getInputPropsOtherImage1()}
+              />
+              <UploadImageCard
+                file={otherImage2File}
+                onDelete={() => setOtherImage2File(null)}
+                rootProps={getRootPropsOtherImage2()}
+                inputProps={getInputPropsOtherImage2()}
+              />
+              <UploadImageCard
+                file={otherImage3File}
+                onDelete={() => setOtherImage3File(null)}
+                rootProps={getRootPropsOtherImage3()}
+                inputProps={getInputPropsOtherImage3()}
+              />
             </div>
           </div>
 
@@ -1075,7 +1027,7 @@ const NewProduct = () => {
               <Label
                 htmlFor="quantity"
                 className={twMerge(
-                  "font-lato font-medium text-sm text-[#363435]"
+                  "font-lato font-medium text-sm text-[#363435]",
                 )}
               >
                 Input Quantity
@@ -1086,7 +1038,7 @@ const NewProduct = () => {
                 onChange={handleChange}
                 value={formValues?.quantity}
                 className={twMerge(
-                  "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full p-2 text-[#363435]"
+                  "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full p-2 text-[#363435]",
                 )}
               />
             </div>
@@ -1096,7 +1048,7 @@ const NewProduct = () => {
             <Label
               htmlFor="color"
               className={twMerge(
-                "font-lato font-medium text-sm text-[#363435]"
+                "font-lato font-medium text-sm text-[#363435]",
               )}
             >
               Select Color
@@ -1108,7 +1060,7 @@ const NewProduct = () => {
             >
               <SelectTrigger
                 className={twMerge(
-                  "w-full border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
+                  "w-full border-[#bdbdbd] bg-white text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]",
                 )}
               >
                 <SelectValue placeholder={"Select Colors"} />
@@ -1143,7 +1095,7 @@ const NewProduct = () => {
             <Label
               htmlFor="size"
               className={twMerge(
-                "font-lato font-medium text-sm text-[#363435]"
+                "font-lato font-medium text-sm text-[#363435]",
               )}
             >
               Select Size
@@ -1155,7 +1107,7 @@ const NewProduct = () => {
             >
               <SelectTrigger
                 className={twMerge(
-                  "w-full border-[#bdbdbd] bg-transparent text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]"
+                  "w-full border-[#bdbdbd] bg-white text-[#363435] focus:ring-grocedy_primary_color focus-visible:ring-[1.5px]",
                 )}
               >
                 <SelectValue placeholder={"Select Sizes"} />
@@ -1186,7 +1138,7 @@ const NewProduct = () => {
             </div>
           </div>
 
-          <div className="flex">
+          <div className="flex bg-[#eaeaea] rounded-md p-4 sm:p-6 gap-4 sm:gap-6 mt-2">
             <div
               onClick={() => router.back()}
               className="flex w-[120px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] cursor-pointer"
@@ -1209,7 +1161,7 @@ const NewProduct = () => {
                   !fetchedCollections?.collection?.length ? true : false
                 }
                 onClick={() => handleSubmit()}
-                className={`flex w-[180px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] bg-[#4f4f4f] ml-6 ${
+                className={`flex w-[180px] h-[48px] rounded-sm justify-center border-[0.8px] items-center border-[#4f4f4f] bg-[#4f4f4f] ${
                   !fetchedCollections?.collection?.length
                     ? "cursor-no-drop bg-opacity-50"
                     : "cursor-pointer bg-opacity-100"

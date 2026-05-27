@@ -1,29 +1,22 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import { Checkbox, IconButton, InputAdornment } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import { GoDotFill } from "react-icons/go";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { useUserStore } from "@/store/userStore";
+import { BsStars } from "react-icons/bs";
+import { FiArrowUpRight } from "react-icons/fi";
 
 const UserLogin = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [pwd, setPwd] = useState("");
   const [email, setEmail] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [visibility, setVisibility] = useState(false);
-  const InputType = visibility ? "text" : "password";
-
-  const viewer = () => {
-    setVisibility(!visibility);
-  };
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const { login } = useUserStore((state: any) => ({
@@ -33,6 +26,8 @@ const UserLogin = () => {
 
   // Function to handle form submission
   const onSubmit = () => {
+    if (!email.trim() || !pwd.trim()) return;
+
     startTransition(async () => {
       try {
         const isAdmin = false;
@@ -48,135 +43,165 @@ const UserLogin = () => {
   };
 
   return (
-    <div className="hidden md:block md:w-full fixed z-50 flex flex-col">
-      <div className="w-full flex justify-between py-[1rem] px-[2rem]">
-        <Link href="/">
-          <div className="">
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_12%_14%,rgba(231,177,111,0.24),transparent_32%),radial-gradient(circle_at_90%_8%,rgba(109,177,209,0.18),transparent_30%),linear-gradient(155deg,#fffaf4_0%,#ffffff_52%,#f6f8ff_100%)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute -left-24 top-1/3 h-56 w-56 rounded-full bg-[#f4e4d0]/60 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 bottom-10 h-52 w-52 rounded-full bg-[#dcecf8]/65 blur-3xl" />
+
+      <div className="relative z-10 grid w-full max-w-[1100px] overflow-hidden rounded-[30px] border border-[#e8dccf] bg-white/90 shadow-[0_30px_80px_rgba(49,35,22,0.12)] backdrop-blur-sm lg:grid-cols-[1fr_1.08fr]">
+        <section className="hidden flex-col justify-between bg-[linear-gradient(155deg,#2f2924_0%,#3c332b_56%,#2f2924_100%)] p-10 text-white lg:flex">
+          <Link href="/" className="w-fit">
             <Image
               src="/assets/main_logo.svg"
-              alt="logo"
-              width={70}
-              height={40}
+              alt="Sisikemi logo"
+              width={78}
+              height={46}
+              className="brightness-[5.28]"
             />
-          </div>
-        </Link>
-      </div>
+          </Link>
 
-      <div className="flex flex-col w-[640px] bg-[#ffffff] py-6 px-12 shadow-2xl ml-[30%] mt-12 rounded">
-        <div className="flex flex-col justify-center items-center">
-          <p className="font-montserrat font-semibold text-lg text-[#333333]">
-            LOG IN
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#c2ab8f]/45 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#ecdac4]">
+              <BsStars className="text-xs" />
+              Sisikemi Access
+            </div>
+            <h1 className="font-montserrat text-4xl font-semibold uppercase leading-[1.1] tracking-[0.06em] text-[#fbf3ea]">
+              Return to your
+              <br />
+              curated wardrobe.
+            </h1>
+            <p className="mt-5 max-w-md font-montserrat text-sm leading-7 text-[#d6c3af]">
+              Sign in to continue shopping new arrivals, track orders, and save
+              your favorite edits.
+            </p>
+          </div>
+
+          <p className="font-montserrat text-xs uppercase tracking-[0.22em] text-[#b79d80]">
+            Tailored Style. Effortless Access.
           </p>
-          <p className="font-montserrat font-medium text-xs text-[#333333] mt-2">
-            Please enter your e-mail and password
-          </p>
-        </div>
-        <div className="flex flex-col w-full mt-8">
-          <div className="flex flex-col w-full">
-            <Box
-              component="form"
-              sx={{ "& .MuiTextField-root": { width: "100%" } }}
-              noValidate
-              autoComplete="off"
-            >
-              <TextField
-                id="outlined-basic"
-                label="Email Address"
-                variant="outlined"
-                size="small"
-                color="success"
-                onChange={(e) => setEmail(e.target.value)}
-                value={email}
-                className={twMerge(
-                  "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                )}
+        </section>
+
+        <section className="p-6 sm:p-8 md:p-10 lg:p-12">
+          <div className="mb-8 flex items-center justify-between lg:hidden">
+            <Link href="/" className="w-fit">
+              <Image
+                src="/assets/main_logo.svg"
+                alt="Sisikemi logo"
+                width={76}
+                height={44}
               />
-            </Box>
+            </Link>
+            <span className="rounded-full border border-[#dec8b1] bg-[#fff8ef] px-3 py-1.5 font-montserrat text-[10px] font-semibold uppercase tracking-[0.2em] text-[#a86728]">
+              Login
+            </span>
           </div>
 
-          <div className="flex flex-col w-full mt-8">
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { width: "100%" },
+          <div className="mx-auto w-full max-w-[460px]">
+            <h2 className="font-montserrat text-3xl font-semibold uppercase tracking-[0.06em] text-[#2f2924]">
+              Welcome Back
+            </h2>
+            <p className="mt-3 font-montserrat text-sm leading-7 text-[#63584a]">
+              Please enter your email and password to continue.
+            </p>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
               }}
-              noValidate
-              autoComplete="off"
+              className="mt-8 space-y-5"
             >
-              <TextField
-                id="outlined-basic"
-                label="Password"
-                variant="outlined"
-                size="small"
-                color="success"
-                type={InputType}
-                value={pwd}
-                onChange={(e) => {
-                  const limit = 30;
-                  setPwd(e.target.value.slice(0, limit));
-                }}
-                className={twMerge(
-                  "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                )}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton onClick={viewer} edge="end">
-                          {visibility ? (
-                            <EyeOff color="#4b5563" size={20} />
-                          ) : (
-                            <Eye color="#4b5563" size={20} />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
-            </Box>
-            <div className="w-full flex m-0 p-0">
-              <Checkbox
-                {...label}
-                className="relative -left-3 text-[#828282]"
-              />
-              <p className="font-lato font-normal text-sm text-[#4f4f4f] mt-3 -ml-4">
-                Remember Me
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col justify-center items-center">
-            {isPending ? (
-              <div className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4">
-                Loading...
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-12 w-full rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-4 font-montserrat text-sm text-[#2f2924] outline-none transition focus:border-[#a86728] focus:ring-2 focus:ring-[#e7d3bc]"
+                  placeholder="you@example.com"
+                  required
+                />
               </div>
-            ) : (
-              <div
-                onClick={() => onSubmit()}
-                className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4"
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                >
+                  Password
+                </label>
+                <div className="flex h-12 items-center rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-3">
+                  <input
+                    id="password"
+                    type={visibility ? "text" : "password"}
+                    value={pwd}
+                    onChange={(e) => setPwd(e.target.value.slice(0, 30))}
+                    className="h-full w-full bg-transparent pr-2 font-montserrat text-sm text-[#2f2924] outline-none"
+                    placeholder="Enter your password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setVisibility((prev) => !prev)}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#5f5447] transition hover:bg-white"
+                    aria-label={visibility ? "Hide password" : "Show password"}
+                  >
+                    {visibility ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-3">
+                <label className="inline-flex cursor-pointer items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="h-4 w-4 rounded border-[#c9b49b] text-[#a86728] focus:ring-[#d7bfa4]"
+                  />
+                  <span className="font-montserrat text-sm text-[#5f5447]">
+                    Remember me
+                  </span>
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => router.push("/forgot_password")}
+                  className="font-montserrat text-xs font-semibold uppercase tracking-[0.16em] text-[#7e5b3a] transition hover:text-[#a86728]"
+                >
+                  Forgot password
+                </button>
+              </div>
+
+              <Button
+                type="submit"
+                loading={isPending}
+                disabled={!email.trim() || !pwd.trim()}
+                className="h-12 w-full rounded-full bg-[#2f2924] font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#1f1a16]"
               >
-                LOG IN
-              </div>
-            )}
+                Log In
+              </Button>
 
-            <div className="flex justify-between  w-[70%] mt-4">
-              <p
+              <button
+                type="button"
                 onClick={() => router.push("/register")}
-                className="font-montserrat text-base font-medium text-[#4f4f4f] cursor-pointer"
+                className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#d8c7b3] bg-white px-5 py-3 font-montserrat text-[11px] font-semibold uppercase tracking-[0.18em] text-[#3c332b] transition hover:border-[#bfa486] hover:bg-[#fff8ef]"
               >
-                CREATE ACCOUNT
-              </p>
-              <GoDotFill color="#4f4f4f" className="mt-2" />
-              <p
-                onClick={() => router.push("/forgot_password")}
-                className="font-montserrat text-base font-medium text-[#4f4f4f] cursor-pointer"
-              >
-                FORGOT PASSWORD
-              </p>
-            </div>
+                Create Account
+                <FiArrowUpRight
+                  size={14}
+                  className="transition group-hover:translate-x-0.5"
+                />
+              </button>
+            </form>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

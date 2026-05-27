@@ -1,6 +1,13 @@
 "use client";
 
-import React, { FC, useEffect, useState, useTransition } from "react";
+import React, {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import RecentlyViewed from "@/components/reusebles/recentlyViewed";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -12,11 +19,11 @@ import { useProductStore } from "@/store/productStore";
 import { shallow } from "zustand/shallow";
 import { CartItemInterface, ProductInterface } from "@/utils/interface";
 import { toast } from "sonner";
-import { colors, sizes } from "@/utils/constants";
 import { useOfflineCartStore } from "@/store/offlineCartStore";
 import { decrement, increment } from "@/utils/functions";
 import { useCartStore } from "@/store/cartStore";
 import { getCookie } from "cookies-next";
+import { BsStars } from "react-icons/bs";
 
 interface ProductProps {
   id: string | string[] | undefined;
@@ -24,10 +31,9 @@ interface ProductProps {
 
 const Product: FC<ProductProps> = ({ id }) => {
   const [isPending, startTransition] = useTransition();
-  const [isViewing, setIsViewing] = useState<string>("");
   const [currentImg, setCurrentImg] = useState<string>("");
-  const [selectedSizeId, setSelectedSizeId] = useState<number>(0);
-  const [selectedColorId, setSelectedColorId] = useState<number>(0);
+  const [selectedSizeIndex, setSelectedSizeIndex] = useState<number>(0);
+  const [selectedColorIndex, setSelectedColorIndex] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
   const [fetchedProduct, setFetchedProduct] = useState<ProductInterface>();
   const [isAddedToCart, setIsAddedToCart] = useState<boolean>(false);
@@ -40,7 +46,7 @@ const Product: FC<ProductProps> = ({ id }) => {
     (state: any) => ({
       getProduct: state.getProduct,
     }),
-    shallow
+    shallow,
   );
 
   const { addToCart, offlineCart, removeFromCart } = useOfflineCartStore(
@@ -49,7 +55,7 @@ const Product: FC<ProductProps> = ({ id }) => {
       offlineCart: state.offlineCart,
       removeFromCart: state.removeFromCart,
     }),
-    shallow
+    shallow,
   );
 
   const { createCartItem, fetchCart } = useCartStore(
@@ -57,43 +63,11 @@ const Product: FC<ProductProps> = ({ id }) => {
       createCartItem: state.createCartItem,
       fetchCart: state.fetchCart,
     }),
-    shallow
+    shallow,
   );
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
-  useEffect(() => {
-    if (id) {
-      handleFetch();
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (offlineCart?.length && fetchedProduct?.product_ref_no) {
-      const isExists = offlineCart.some(
-        (prod: CartItemInterface) => +prod?.product_id === +fetchedProduct?.id
-      );
-
-      setIsAddedToCart(isExists);
-    }
-  }, [offlineCart, fetchedProduct?.product_ref_no]);
-
-  useEffect(() => {
-    if (fetchedCartItems?.length && fetchedProduct?.product_ref_no) {
-      const isExists = fetchedCartItems.some(
-        (prod: CartItemInterface) => +prod?.product_id === +fetchedProduct?.id
-      );
-
-      setIsAddedToCart(isExists);
-    }
-  }, [fetchedCartItems, fetchedProduct?.product_ref_no]);
-
-  useEffect(() => {
-    if (isViewing) {
-      setCurrentImg(isViewing);
-    }
-  }, [isViewing]);
-
-  const handleFetch = async () => {
+  const handleFetch = useCallback(async () => {
     startTransition(async () => {
       try {
         if (id) {
@@ -110,25 +84,58 @@ const Product: FC<ProductProps> = ({ id }) => {
         return err;
       }
     });
-  };
+  }, [getProduct, id, startTransition]);
+
+  useEffect(() => {
+    if (id) {
+      handleFetch();
+    }
+  }, [handleFetch, id]);
+
+  useEffect(() => {
+    if (offlineCart?.length && fetchedProduct?.product_ref_no) {
+      const isExists = offlineCart.some(
+        (prod: CartItemInterface) => +prod?.product_id === +fetchedProduct?.id,
+      );
+
+      setIsAddedToCart(isExists);
+    }
+  }, [offlineCart, fetchedProduct?.id, fetchedProduct?.product_ref_no]);
+
+  useEffect(() => {
+    if (fetchedCartItems?.length && fetchedProduct?.product_ref_no) {
+      const isExists = fetchedCartItems.some(
+        (prod: CartItemInterface) => +prod?.product_id === +fetchedProduct?.id,
+      );
+
+      setIsAddedToCart(isExists);
+    }
+  }, [fetchedCartItems, fetchedProduct?.id, fetchedProduct?.product_ref_no]);
+
+  useEffect(() => {
+    const mainImage = fetchedProduct?.product_image_main?.media_id?.url;
+
+    if (mainImage) {
+      setCurrentImg(mainImage);
+    }
+  }, [fetchedProduct?.product_image_main?.media_id?.url]);
 
   const handleCurrentView = (url: string) => {
-    setIsViewing(url);
+    setCurrentImg(url);
   };
 
   const handleAddToCart = () => {
-    const sizeSelect = sizes.filter((size) => size.id === selectedSizeId).pop();
-    const colorSelect = colors
-      .filter((color) => color.id === selectedColorId)
-      .pop();
+    const sizeSelect = fetchedProduct?.size?.[selectedSizeIndex];
+    const colorSelect = fetchedProduct?.color?.[selectedColorIndex];
+
     const payload = {
       product_id: Number(fetchedProduct?.id),
       product_name: fetchedProduct?.product_name,
       product_image: fetchedProduct?.product_image_main?.media_id?.url,
       product_price: fetchedProduct?.price,
       product_quantity: quantity,
-      product_size: sizeSelect?.name,
-      product_color: colorSelect?.name,
+      product_size: sizeSelect,
+      product_color: colorSelect,
     };
 
     const response = addToCart(payload);
@@ -140,12 +147,8 @@ const Product: FC<ProductProps> = ({ id }) => {
   const handleCart = async () => {
     const toastId = toast.loading("Adding cart item");
     try {
-      const sizeSelect = sizes
-        .filter((size) => size.id === selectedSizeId)
-        .pop();
-      const colorSelect = colors
-        .filter((color) => color.id === selectedColorId)
-        .pop();
+      const sizeSelect = fetchedProduct?.size?.[selectedSizeIndex];
+      const colorSelect = fetchedProduct?.color?.[selectedColorIndex];
 
       const payload = {
         product_id: Number(fetchedProduct?.id),
@@ -153,8 +156,8 @@ const Product: FC<ProductProps> = ({ id }) => {
         product_image: fetchedProduct?.product_image_main?.media_id?.url,
         product_price: fetchedProduct?.price,
         product_quantity: quantity,
-        product_size: sizeSelect?.name,
-        product_color: colorSelect?.name,
+        product_size: sizeSelect,
+        product_color: colorSelect,
       };
 
       const response = await createCartItem(payload);
@@ -207,267 +210,228 @@ const Product: FC<ProductProps> = ({ id }) => {
     return removed;
   };
 
+  const productImages = useMemo(
+    () =>
+      [
+        fetchedProduct?.product_image_main?.media_id?.url,
+        fetchedProduct?.product_image_other_1?.media_id?.url,
+        fetchedProduct?.product_image_other_2?.media_id?.url,
+        fetchedProduct?.product_image_other_3?.media_id?.url,
+      ].filter((img): img is string => Boolean(img)),
+    [
+      fetchedProduct?.product_image_main?.media_id?.url,
+      fetchedProduct?.product_image_other_1?.media_id?.url,
+      fetchedProduct?.product_image_other_2?.media_id?.url,
+      fetchedProduct?.product_image_other_3?.media_id?.url,
+    ],
+  );
+
+  const activeImage = currentImg || productImages[0] || "/images/recent1.svg";
+
   return (
-    <div className="w-full flex flex-col p-0 md:pt-[7rem]">
-      <div className="flex my-[4rem] mx-[2rem]">
-        <h3 className="font-montserrat font-normal text-xs sm:text-lg text-[#4f4f4f] m-0 p-0 ">
-          Home Page
-        </h3>
-        <BiChevronRight color="#363435" size={24} />
-        <h3 className="font-montserrat font-normal text-xs sm:text-lg text-[#4f4f4f] m-0 p-0 ">
-          Product Page
-        </h3>
-      </div>
+    <div className="flex w-full flex-col bg-[linear-gradient(180deg,#fffdf9_0%,#fff7f0_42%,#ffffff_100%)] pt-[6.5rem] md:pt-[10.75rem] xl:pt-[11.5rem]">
+      <section className="px-4 pb-6 pt-4 md:px-8 lg:px-12 xl:px-16">
+        <div className="mx-auto flex max-w-[1380px] flex-wrap items-center gap-2 rounded-full border border-[#eadfce] bg-white/80 px-4 py-2.5 text-xs font-medium text-[#6f675f] shadow-[0_12px_30px_rgba(84,56,28,0.06)] md:gap-3 md:text-sm">
+          <span>Home Page</span>
+          <BiChevronRight size={18} />
+          <span className="text-[#2f2924]">Product Page</span>
+        </div>
+      </section>
 
       {isPending ? (
-        <p>Loading...</p>
+        <section className="px-4 pb-16 md:px-8 lg:px-12 xl:px-16">
+          <div className="mx-auto grid max-w-[1380px] gap-6 lg:grid-cols-2">
+            <div className="h-[520px] animate-pulse rounded-[28px] bg-[#f4ece1]" />
+            <div className="h-[520px] animate-pulse rounded-[28px] bg-[#f4ece1]" />
+          </div>
+        </section>
       ) : (
-        <div className="w-full px-[2rem] pb-[15rem] flex justify-between border-b-[0.5px] border-b-[#4f4f4f]">
-          <div className="w-[47%] flex justify-between">
-            <div className="flex flex-col w-[15%]">
-              <div className="mb-[0.9rem]">
-                <Image
-                  src={
-                    fetchedProduct &&
-                    fetchedProduct?.product_image_main?.media_id?.url
-                      ? fetchedProduct?.product_image_main?.media_id?.url
-                      : ""
-                  }
-                  alt="section_img"
-                  className="cursor-pointer"
-                  width={60}
-                  height={86}
-                  onClick={() =>
-                    handleCurrentView(
-                      fetchedProduct?.product_image_main?.media_id?.url
-                        ? fetchedProduct?.product_image_main?.media_id?.url
-                        : ""
-                    )
-                  }
-                />
-              </div>
-              <div className="mb-[0.9rem]">
-                <Image
-                  src={
-                    fetchedProduct &&
-                    fetchedProduct?.product_image_other_1?.media_id?.url
-                      ? fetchedProduct?.product_image_other_1?.media_id?.url
-                      : ""
-                  }
-                  alt="section_img"
-                  className="cursor-pointer"
-                  width={60}
-                  height={86}
-                  onClick={() =>
-                    handleCurrentView(
-                      fetchedProduct?.product_image_other_1?.media_id?.url
-                        ? fetchedProduct?.product_image_other_1?.media_id?.url
-                        : ""
-                    )
-                  }
-                />
-              </div>
-              <div className="mb-[0.9rem]">
-                <Image
-                  src={
-                    fetchedProduct &&
-                    fetchedProduct?.product_image_other_2?.media_id?.url
-                      ? fetchedProduct?.product_image_other_2?.media_id?.url
-                      : ""
-                  }
-                  alt="section_img"
-                  className="cursor-pointer"
-                  width={60}
-                  height={86}
-                  onClick={() =>
-                    handleCurrentView(
-                      fetchedProduct?.product_image_other_2?.media_id?.url
-                        ? fetchedProduct?.product_image_other_2?.media_id?.url
-                        : ""
-                    )
-                  }
-                />
-              </div>
-              <div className="mb-[0.9rem]">
-                <Image
-                  src={
-                    fetchedProduct &&
-                    fetchedProduct?.product_image_other_3?.media_id?.url
-                      ? fetchedProduct?.product_image_other_3?.media_id?.url
-                      : ""
-                  }
-                  alt="section_img"
-                  className="cursor-pointer"
-                  width={60}
-                  height={86}
-                  onClick={() =>
-                    handleCurrentView(
-                      fetchedProduct?.product_image_other_3?.media_id?.url
-                        ? fetchedProduct?.product_image_other_3?.media_id?.url
-                        : ""
-                    )
-                  }
-                />
-              </div>
-            </div>
-            <div className="flex flex-col w-[80%]">
-              <Image
-                src={
-                  currentImg
-                    ? currentImg
-                    : fetchedProduct?.product_image_main?.media_id?.url
-                    ? fetchedProduct?.product_image_main?.media_id?.url
-                    : ""
-                }
-                alt="section_img"
-                width={560}
-                height={810}
-              />
-            </div>
-          </div>
+        <section className="px-4 pb-16 md:px-8 lg:px-12 xl:px-16">
+          <div className="mx-auto grid max-w-[1380px] gap-6 border-b border-[#d8c7b3] pb-16 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="overflow-hidden rounded-[28px] border border-[#eadfce] bg-white/80 p-4 shadow-[0_24px_70px_rgba(84,56,28,0.1)] md:p-6">
+              <div className="flex flex-col gap-4 lg:flex-row">
+                <div className="order-2 flex gap-3 overflow-x-auto lg:order-1 lg:w-[88px] lg:flex-col lg:overflow-visible">
+                  {productImages.map((img) => (
+                    <button
+                      key={img}
+                      type="button"
+                      onClick={() => handleCurrentView(img)}
+                      className={`shrink-0 overflow-hidden rounded-xl border bg-[#f8efe4] p-1.5 transition-colors duration-200 ${
+                        img === activeImage
+                          ? "border-[#a86728]"
+                          : "border-[#e9dbc8]"
+                      }`}
+                    >
+                      <Image
+                        src={img}
+                        alt="Product thumbnail"
+                        width={74}
+                        height={96}
+                        className="h-[96px] w-[74px] object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
 
-          <div className="w-[47%] flex flex-col">
-            <div className="w-full flex flex-col">
-              <p className="font-montserrat font-semibold text-xs text-[#4f4f4f] mb-[0.4rem]">
-                SISI KEMI
-              </p>
-              <h3 className="font-montserrat font-semibold text-xs sm:text-lg text-[#4f4f4f] m-0 p-0 ">
-                {fetchedProduct && fetchedProduct?.product_name
-                  ? fetchedProduct?.product_name?.toUpperCase()
-                  : ""}
-              </h3>
-              <h3 className="font-montserrat font-medium text-xs sm:text-lg text-[#4f4f4f] my-[0.4rem] p-0 ">
-                {fetchedProduct && fetchedProduct?.price
-                  ? `₦ ${Number(fetchedProduct?.price).toLocaleString()}`
-                  : ""}
-              </h3>
+                <div className="order-1 flex-1 lg:order-2">
+                  <div className="overflow-hidden rounded-[22px] bg-[#f8efe4]">
+                    <Image
+                      src={activeImage}
+                      alt={fetchedProduct?.product_name ?? "Product image"}
+                      width={740}
+                      height={980}
+                      className="h-[440px] w-full object-cover md:h-[620px]"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="w-full flex flex-col">
-              <div className="w-[7.875rem] border-[0.4px] border-[#828282] rounded pt-[10px] px-[12px] pb-[5px] flex justify-between my-[0.5rem] ml-auto">
-                <TbHanger color="#4F4F4F" size={20} />
-                <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-center pb-[0.5rem]">
+            <div className="rounded-[28px] border border-[#eadfce] bg-white/85 p-5 shadow-[0_24px_70px_rgba(84,56,28,0.1)] md:p-7 lg:p-8">
+              <div className="mb-6 flex items-start justify-between gap-4 border-b border-[#eadfce] pb-5">
+                <div>
+                  <p className="inline-flex items-center gap-2 font-montserrat text-[11px] font-semibold uppercase tracking-[0.22em] text-[#a86728]">
+                    <BsStars className="text-xs" />
+                    Sisi Kemi
+                  </p>
+                  <h1 className="mt-2 font-montserrat text-2xl font-semibold uppercase leading-tight text-[#2f2924] md:text-[2rem]">
+                    {fetchedProduct?.product_name ?? ""}
+                  </h1>
+                  <p className="mt-2 font-montserrat text-xl font-medium text-[#4f4f4f]">
+                    {fetchedProduct?.price
+                      ? `₦ ${Number(fetchedProduct?.price).toLocaleString()}`
+                      : ""}
+                  </p>
+                </div>
+
+                <div className="rounded-full border border-[#d8c7b3] bg-[#fffaf4] px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#6f675f]">
+                  {fetchedProduct?.quantity
+                    ? `${fetchedProduct.quantity} in stock`
+                    : "Sold out"}
+                </div>
+              </div>
+
+              <div className="mb-6 flex justify-end">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#d8c7b3] bg-[#fffaf4] px-4 py-2.5 text-sm font-medium text-[#3f3933] transition-colors duration-200 hover:bg-white"
+                >
+                  <TbHanger size={18} />
                   Size Guide
-                </span>
+                </button>
               </div>
-            </div>
 
-            <div className="w-full flex flex-col">
-              <div className="w-full flex flex-col my-[0.45rem]">
-                <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
-                  Size
-                </span>
+              <div className="space-y-5">
+                <div>
+                  <p className="mb-2 font-montserrat text-sm font-semibold uppercase tracking-[0.14em] text-[#3f3933]">
+                    Size
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {fetchedProduct?.size?.length
+                      ? fetchedProduct.size.map((size, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setSelectedSizeIndex(idx)}
+                            className={`min-w-[56px] rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                              selectedSizeIndex === idx
+                                ? "border-[#a86728] bg-[#a86728] text-white"
+                                : "border-[#c9b7a3] bg-[#fffaf4] text-[#4f4f4f]"
+                            }`}
+                          >
+                            {size}
+                          </button>
+                        ))
+                      : null}
+                  </div>
+                </div>
 
-                <div className="w-[60%] flex">
-                  {fetchedProduct && fetchedProduct?.size?.length
-                    ? fetchedProduct?.size.map((size, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => setSelectedSizeId(idx)}
-                          className={`py-[14px] w-[3rem] border-[0.4px] mr-2 border-[#828282] rounded font-montserrat font-medium text-sm text-center cursor-pointer ${
-                            selectedSizeId === idx
-                              ? "bg-[#828282] text-[#F2F2F2]"
-                              : "text-[#4f4f4f]"
-                          }`}
-                        >
-                          {size}
-                        </div>
-                      ))
-                    : null}
+                <div>
+                  <p className="mb-2 font-montserrat text-sm font-semibold uppercase tracking-[0.14em] text-[#3f3933]">
+                    Color
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {fetchedProduct?.color?.length
+                      ? fetchedProduct.color.map((colr, idx) => (
+                          <button
+                            key={idx}
+                            type="button"
+                            onClick={() => setSelectedColorIndex(idx)}
+                            className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-200 ${
+                              selectedColorIndex === idx
+                                ? "border-[#a86728] bg-[#a86728] text-white"
+                                : "border-[#c9b7a3] bg-[#fffaf4] text-[#4f4f4f]"
+                            }`}
+                          >
+                            {colr}
+                          </button>
+                        ))
+                      : null}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="mb-2 font-montserrat text-sm font-semibold uppercase tracking-[0.14em] text-[#3f3933]">
+                    Quantity
+                  </p>
+                  <div className="inline-flex items-center gap-4 rounded-full border border-[#c9b7a3] bg-[#fffaf4] px-4 py-2 text-[#4f4f4f]">
+                    <AiOutlineMinus
+                      onClick={() => decrement(setQuantity)}
+                      className="cursor-pointer"
+                    />
+                    <span className="min-w-5 text-center text-sm font-semibold">
+                      {quantity}
+                    </span>
+                    <AiOutlinePlus
+                      onClick={() =>
+                        fetchedProduct?.quantity &&
+                        increment(setQuantity, fetchedProduct.quantity)
+                      }
+                      className="cursor-pointer"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="w-full flex flex-col">
-              <div className="w-full flex flex-col my-[0.45rem]">
-                <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
-                  Color
-                </span>
-
-                <div className="w-[70%] flex">
-                  {fetchedProduct && fetchedProduct?.color?.length
-                    ? fetchedProduct?.color?.map((colr, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => setSelectedColorId(idx)}
-                          className={`py-[14px] w-[5.375rem] mr-2 border-[0.4px] border-[#828282] rounded font-montserrat font-medium text-sm text-center cursor-pointer ${
-                            selectedColorId === idx
-                              ? "bg-[#828282] text-[#F2F2F2]"
-                              : "text-[#4f4f4f]"
-                          }`}
-                        >
-                          {colr}
-                        </div>
-                      ))
-                    : null}
-                </div>
+              <div className="mt-8">
+                {!isAddedToCart ? (
+                  <Button
+                    className="h-12 w-full rounded-full bg-[#2f2924] font-montserrat text-xs font-semibold uppercase tracking-[0.2em] text-white transition-colors duration-200 hover:bg-[#463d35]"
+                    type="button"
+                    onClick={() => (!token ? handleAddToCart() : handleCart())}
+                  >
+                    Add To Cart
+                  </Button>
+                ) : (
+                  <Button
+                    className="h-12 w-full rounded-full bg-[#2f2924] font-montserrat text-xs font-semibold uppercase tracking-[0.2em] text-white transition-colors duration-200 hover:bg-[#463d35]"
+                    type="button"
+                    onClick={() => handleRemoveFromCart()}
+                  >
+                    Remove From Cart
+                  </Button>
+                )}
               </div>
-            </div>
 
-            <div className="w-full flex flex-col">
-              <div className="w-full flex flex-col my-[0.45rem]">
-                <span className="font-montserrat font-medium text-sm text-[#363435] w-[50%] sm:w-full text-left pb-[0.5rem]">
-                  Quantity
-                </span>
-                <div className="py-[12px] px-[20px] gap-[10px] w-[107px] border-[0.4px] border-[#828282] rounded box-border font-montserrat font-medium text-sm text-[#4f4f4f] flex justify-between">
-                  <AiOutlineMinus
-                    onClick={() => decrement(setQuantity)}
-                    color="#4F4F4F"
-                    className="cursor-pointer mt-1"
-                  />
-                  {quantity}
-                  <AiOutlinePlus
-                    onClick={() =>
-                      fetchedProduct?.quantity &&
-                      increment(setQuantity, fetchedProduct?.quantity)
-                    }
-                    color="#4F4F4F"
-                    className="cursor-pointer mt-1"
-                  />
-                </div>
+              <div className="mt-8 rounded-[20px] border border-[#eadfce] bg-[#fffaf4] p-5">
+                <h3 className="font-montserrat text-sm font-semibold uppercase tracking-[0.16em] text-[#333333]">
+                  Description
+                </h3>
+                <p className="mt-3 font-montserrat text-sm leading-7 text-[#4f4f4f] md:text-base">
+                  {fetchedProduct?.product_description ?? ""}
+                </p>
               </div>
-            </div>
 
-            <div className="w-full flex flex-col">
-              {!isAddedToCart ? (
-                <Button
-                  className="w-[8px] sm:w-full h-[43px] px-[24px] py-[8px] border-0 rounded font-semibold text-xs text-[#F2F2F2] font-montserrat bg-[#363435] outline-0 cursor-pointer my-[1rem] mx-auto"
-                  type="submit"
-                  onClick={() => (!token ? handleAddToCart() : handleCart())}
-                >
-                  ADD TO CART
-                </Button>
-              ) : (
-                <Button
-                  className="w-[8px] sm:w-full h-[43px] px-[24px] py-[8px] border-0 rounded font-semibold text-xs text-[#F2F2F2] font-montserrat bg-[#363435] outline-0 cursor-pointer my-[1rem] mx-auto"
-                  type="submit"
-                  onClick={() => handleRemoveFromCart()}
-                >
-                  REMOVE FROM CART
-                </Button>
-              )}
-            </div>
-
-            <div className="w-full flex flex-col">
-              <h3 className="font-montserrat font-semibold text-sm sm:text-base text-[#333333] mb-[0.5rem] p-0 ">
-                Description
-              </h3>
-              <h3 className="font-montserrat font-normal text-sm sm:text-base text-[#4f4f4f] mb-[0.5rem] p-0 ">
-                {fetchedProduct && fetchedProduct?.product_description
-                  ? fetchedProduct?.product_description
-                  : ""}
-              </h3>
-            </div>
-
-            <div className="mt-[1.5rem] w-full flex justify-between box-border rounded pt-[10px] px-[16px] border-[0.8px] border-[#c4c4c4]">
-              <h3 className="font-montserrat font-normal text-sm sm:text-base text-[#4f4f4f] mb-[0.5rem] p-0 ">
-                MORE INFORMATION
-              </h3>
-
-              <BsChevronRight color="#4F4F4F" />
+              <button
+                type="button"
+                className="mt-4 flex w-full items-center justify-between rounded-full border border-[#d8c7b3] bg-white px-5 py-3 text-left font-montserrat text-sm font-medium uppercase tracking-[0.14em] text-[#4f4f4f] transition-colors duration-200 hover:bg-[#fffaf4]"
+              >
+                <span>More Information</span>
+                <BsChevronRight />
+              </button>
             </div>
           </div>
-        </div>
+        </section>
       )}
 
       <RecentlyViewed title="YOU MAY ALSO LIKE" />

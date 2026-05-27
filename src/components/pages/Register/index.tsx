@@ -1,27 +1,25 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
-import { Checkbox, IconButton, InputAdornment } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import PasswordChecklist from "react-password-checklist";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
+import { BsStars } from "react-icons/bs";
+import { FiArrowUpRight } from "react-icons/fi";
 
 const Register = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const label = { inputProps: { "aria-label": "Checkbox demo" } };
   const [pwd, setPwd] = useState("");
   const [confirmPwd, setConfirmPwd] = useState("");
+  const [agreeToUpdates, setAgreeToUpdates] = useState(false);
   const [visibility, setVisibility] = useState(false);
   const [visibilityConfirm, setVisibilityConfirm] = useState(false);
-  // const [passwordValid, setPaswordValid] = useState(false);
   const [formValues, setFormValues] = useState({
     username: "",
     first_name: "",
@@ -30,35 +28,15 @@ const Register = () => {
     password: "",
     phone_number: "",
   });
-  const [errorFields, setErrorFields] = useState({
-    username: false,
-    first_name: false,
-    last_name: false,
-    email: false,
-    password: false,
-    phone_number: false,
-  });
-
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const { register } = useUserStore((state: any) => ({
     register: state.register,
   }));
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
-  const InputType = visibility ? "text" : "password";
-  const InputTypeConfirm = visibilityConfirm ? "text" : "password";
-
-  const viewer = () => {
-    setVisibility(!visibility);
-  };
-
-  const viewerConfirm = () => {
-    setVisibilityConfirm(!visibilityConfirm);
-  };
-
   // Handle change code ========================================================================================================================
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -73,19 +51,28 @@ const Register = () => {
       ...formValues,
       [name]: newValue,
     });
-
-    if (value.trim() !== "") {
-      setErrorFields({
-        ...errorFields,
-        [name]: false,
-      });
-    }
   };
+
+  const isFormValid =
+    formValues.first_name.trim() &&
+    formValues.last_name.trim() &&
+    formValues.email.trim() &&
+    formValues.phone_number.trim() &&
+    formValues.username.trim() &&
+    pwd.trim() &&
+    confirmPwd.trim();
 
   const handleSubmit = () => {
     try {
-      // if (!passwordValid) return;
-      if (pwd !== confirmPwd) return;
+      if (!isFormValid) {
+        toast.error("Please complete all required fields");
+        return;
+      }
+
+      if (pwd !== confirmPwd) {
+        toast.error("Passwords do not match");
+        return;
+      }
 
       const toastId = toast.loading("Creating account");
 
@@ -109,318 +96,299 @@ const Register = () => {
   };
 
   return (
-    <div className="hidden md:block md:w-full pb-12 flex flex-col">
-      <div className="w-full flex justify-between pt-6 px-[2rem] fixed z-50">
-        <Link href="/">
-          <div className="">
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_14%_16%,rgba(231,177,111,0.24),transparent_32%),radial-gradient(circle_at_90%_12%,rgba(111,170,202,0.2),transparent_30%),linear-gradient(160deg,#fffaf4_0%,#ffffff_52%,#f4f8ff_100%)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute -left-16 bottom-10 h-52 w-52 rounded-full bg-[#f5e7d4]/65 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 top-1/3 h-56 w-56 rounded-full bg-[#d8ebf8]/70 blur-3xl" />
+
+      <div className="relative z-10 grid w-full max-w-[1160px] overflow-hidden rounded-[30px] border border-[#e7dbcf] bg-white/90 shadow-[0_30px_80px_rgba(49,35,22,0.12)] backdrop-blur-sm lg:grid-cols-[1fr_1.14fr]">
+        <section className="hidden flex-col justify-between bg-[linear-gradient(160deg,#2f2924_0%,#3b332c_58%,#2f2924_100%)] p-10 text-white lg:flex">
+          <Link href="/" className="w-fit">
             <Image
               src="/assets/main_logo.svg"
-              alt="logo"
-              width={70}
-              height={40}
+              alt="Sisikemi logo"
+              width={78}
+              height={46}
+              className="brightness-[5.28]"
             />
-          </div>
-        </Link>
-      </div>
+          </Link>
 
-      <div className="w-full flex justify-center">
-        <div className="flex flex-col w-[640px] bg-[#ffffff] py-6 relative top-[7rem] mb-[10rem] px-12 shadow-2xl rounded">
-          <div className="flex flex-col justify-center items-center">
-            <p className="font-montserrat font-semibold text-lg text-[#333333]">
-              REGISTER
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#c2ab8f]/45 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#ecdac4]">
+              <BsStars className="text-xs" />
+              New Account
+            </div>
+            <h1 className="font-montserrat text-4xl font-semibold uppercase leading-[1.1] tracking-[0.06em] text-[#fbf3ea]">
+              Start your
+              <br />
+              style journey.
+            </h1>
+            <p className="mt-5 max-w-md font-montserrat text-sm leading-7 text-[#d6c3af]">
+              Create your Sisikemi profile to unlock curated picks, effortless
+              checkout, and personalized styling updates.
             </p>
-            <p className="font-montserrat font-medium text-xs text-[#333333] mt-2">
-              Please fill in the information below
-            </p>
           </div>
-          <div className="flex flex-col w-full mt-8">
-            <div className="flex flex-col w-full">
-              <Box
-                component="form"
-                sx={{
-                  "& .MuiTextField-root": {
-                    width: "100%",
-                  },
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="First Name"
-                  variant="outlined"
-                  color="success"
-                  size="small"
-                  name="first_name"
-                  onChange={handleChange}
-                  className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm font-montserrat rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                  )}
-                />
-              </Box>
-            </div>
 
-            <div className="flex flex-col w-full mt-6">
-              <Box
-                component="form"
-                sx={{ "& .MuiTextField-root": { width: "100%" } }}
-                noValidate
-                autoComplete="off"
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="Last Name"
-                  variant="outlined"
-                  size="small"
-                  color="success"
-                  name="last_name"
-                  onChange={handleChange}
-                  className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                  )}
-                />
-              </Box>
-            </div>
+          <p className="font-montserrat text-xs uppercase tracking-[0.22em] text-[#b79d80]">
+            Crafted For Timeless Statements.
+          </p>
+        </section>
 
-            <div className="flex flex-col w-full mt-6">
-              <Box
-                component="form"
-                sx={{ "& .MuiTextField-root": { width: "100%" } }}
-                noValidate
-                autoComplete="off"
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="Email Address"
-                  variant="outlined"
-                  size="small"
-                  color="success"
-                  name="email"
-                  onChange={handleChange}
-                  className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                  )}
-                />
-              </Box>
-            </div>
+        <section className="p-6 sm:p-8 md:p-10 lg:p-12">
+          <div className="mb-8 flex items-center justify-between lg:hidden">
+            <Link href="/" className="w-fit">
+              <Image
+                src="/assets/main_logo.svg"
+                alt="Sisikemi logo"
+                width={76}
+                height={44}
+              />
+            </Link>
+            <span className="rounded-full border border-[#dec8b1] bg-[#fff8ef] px-3 py-1.5 font-montserrat text-[10px] font-semibold uppercase tracking-[0.2em] text-[#a86728]">
+              Register
+            </span>
+          </div>
 
-            <div className="flex flex-col w-full mt-6">
-              <Box
-                component="form"
-                sx={{ "& .MuiTextField-root": { width: "100%" } }}
-                noValidate
-                autoComplete="off"
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="Phone Number"
-                  variant="outlined"
-                  size="small"
-                  color="success"
-                  name="phone_number"
-                  type="tel"
-                  // onChange={handleChange}
-                  onChange={(e) => {
-                    let value = e.target.value;
-                    // remove non-digits
-                    value = value.replace(/\D/g, "");
-                    // cut to 13 digits
-                    if (value.length > 13) value = value.slice(0, 13);
+          <div className="mx-auto w-full max-w-[520px]">
+            <h2 className="font-montserrat text-3xl font-semibold uppercase tracking-[0.06em] text-[#2f2924]">
+              Create Account
+            </h2>
+            <p className="mt-3 font-montserrat text-sm leading-7 text-[#63584a]">
+              Please fill in your details below.
+            </p>
 
-                    e.target.value = value; // enforce back into the input
-                    handleChange(e);
-                  }}
-                  slotProps={{
-                    input: {
-                      inputProps: {
-                        maxLength: 13,
-                        inputMode: "numeric",
-                        pattern: "[0-9]*",
-                      },
-                    },
-                  }}
-                  className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                  )}
-                />
-              </Box>
-            </div>
-
-            <div className="flex flex-col w-full mt-6">
-              <Box
-                component="form"
-                sx={{
-                  "& > :not(style)": { width: "100%" },
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="Username"
-                  variant="outlined"
-                  size="small"
-                  color="success"
-                  name="username"
-                  onChange={handleChange}
-                  className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                  )}
-                />
-              </Box>
-            </div>
-
-            <div className="flex flex-col w-full mt-6">
-              <Box
-                component="form"
-                sx={{
-                  "& > :not(style)": { width: "100%" },
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="Password"
-                  variant="outlined"
-                  size="small"
-                  color="success"
-                  type={InputType}
-                  value={pwd}
-                  onChange={(e) => {
-                    const limit = 30;
-                    setPwd(e.target.value.slice(0, limit));
-                  }}
-                  className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                  )}
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={viewer} edge="end">
-                            {visibility ? (
-                              <EyeOff color="#4b5563" size={20} />
-                            ) : (
-                              <Eye color="#4b5563" size={20} />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-              </Box>
-            </div>
-
-            <div className="flex flex-col w-full mt-6">
-              <Box
-                component="form"
-                sx={{
-                  "& > :not(style)": { width: "100%", border: "none" },
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <TextField
-                  id="outlined-basic"
-                  label="Password"
-                  variant="outlined"
-                  size="small"
-                  color="success"
-                  type={InputTypeConfirm}
-                  value={confirmPwd}
-                  onChange={(e) => {
-                    const limit = 30;
-                    setConfirmPwd(e.target.value.slice(0, limit));
-                  }}
-                  className={twMerge(
-                    "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                  )}
-                  slotProps={{
-                    input: {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={viewerConfirm} edge="end">
-                            {visibilityConfirm ? (
-                              <EyeOff color="#4b5563" size={20} />
-                            ) : (
-                              <Eye color="#4b5563" size={20} />
-                            )}
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    },
-                  }}
-                />
-              </Box>
-              <div className="w-full flex m-0 p-0">
-                <Checkbox
-                  {...label}
-                  className="relative -left-3 text-[#828282]"
-                />
-                <p className="font-lato font-normal text-sm text-[#4f4f4f] mt-3 -ml-4">
-                  I agree to recieve updates and new releases to my email
-                  address used above
-                </p>
-              </div>
-            </div>
-
-            {pwd ? (
-              <div className="px-2 pt-1">
-                <PasswordChecklist
-                  className="text-[11px] text-[#363435] font-semibold checked:h-2"
-                  rules={[
-                    "minLength",
-                    "specialChar",
-                    "number",
-                    "capital",
-                    "match",
-                  ]}
-                  minLength={8}
-                  value={pwd}
-                  valueAgain={confirmPwd}
-                  // onChange={(isValid) => {
-                  //   isValid ? setPaswordValid(true) : setPaswordValid(false);
-                  // }}
-                  messages={{
-                    minLength: "The password has more than 8 characters.",
-                    specialChar: "The password has special characters.",
-                    number: "The password has a number.",
-                    capital: "The password has an uppercase letter.",
-                    match: "The passwords match.",
-                  }}
-                  iconSize={10}
-                  validColor={"#8DAA6A"}
-                />
-              </div>
-            ) : (
-              ""
-            )}
-
-            <div className="flex flex-col justify-center items-center">
-              {isPending ? (
-                <div className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4 cursor-pointer">
-                  loading....
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+              className="mt-8 space-y-4"
+            >
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="first_name"
+                    className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                  >
+                    First Name
+                  </label>
+                  <input
+                    id="first_name"
+                    name="first_name"
+                    type="text"
+                    value={formValues.first_name}
+                    onChange={handleChange}
+                    className="h-12 w-full rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-4 font-montserrat text-sm text-[#2f2924] outline-none transition focus:border-[#a86728] focus:ring-2 focus:ring-[#e7d3bc]"
+                    required
+                  />
                 </div>
-              ) : (
-                <div
-                  onClick={() => handleSubmit()}
-                  className="flex flex-col w-full p-3 cursor-pointer items-center ml-[5%] font-semibold text-sm rounded mt-8 bg-[#363435] mb-4 cursor-pointer"
+
+                <div>
+                  <label
+                    htmlFor="last_name"
+                    className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                  >
+                    Last Name
+                  </label>
+                  <input
+                    id="last_name"
+                    name="last_name"
+                    type="text"
+                    value={formValues.last_name}
+                    onChange={handleChange}
+                    className="h-12 w-full rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-4 font-montserrat text-sm text-[#2f2924] outline-none transition focus:border-[#a86728] focus:ring-2 focus:ring-[#e7d3bc]"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
                 >
-                  CREATE MY ACCOUNT
-                </div>
-              )}
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formValues.email}
+                  onChange={handleChange}
+                  className="h-12 w-full rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-4 font-montserrat text-sm text-[#2f2924] outline-none transition focus:border-[#a86728] focus:ring-2 focus:ring-[#e7d3bc]"
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
 
-              <p
-                onClick={() => router.push("/login")}
-                className="font-montserrat text-base font-medium text-[#4f4f4f] cursor-pointer"
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="phone_number"
+                    className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    id="phone_number"
+                    name="phone_number"
+                    type="tel"
+                    value={formValues.phone_number}
+                    onChange={handleChange}
+                    maxLength={13}
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    className="h-12 w-full rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-4 font-montserrat text-sm text-[#2f2924] outline-none transition focus:border-[#a86728] focus:ring-2 focus:ring-[#e7d3bc]"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                  >
+                    Username
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    value={formValues.username}
+                    onChange={handleChange}
+                    className="h-12 w-full rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-4 font-montserrat text-sm text-[#2f2924] outline-none transition focus:border-[#a86728] focus:ring-2 focus:ring-[#e7d3bc]"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                >
+                  Password
+                </label>
+                <div className="flex h-12 items-center rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-3">
+                  <input
+                    id="password"
+                    type={visibility ? "text" : "password"}
+                    value={pwd}
+                    onChange={(e) => setPwd(e.target.value.slice(0, 30))}
+                    className="h-full w-full bg-transparent pr-2 font-montserrat text-sm text-[#2f2924] outline-none"
+                    placeholder="Create a strong password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setVisibility((prev) => !prev)}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#5f5447] transition hover:bg-white"
+                    aria-label={visibility ? "Hide password" : "Show password"}
+                  >
+                    {visibility ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirm_password"
+                  className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                >
+                  Confirm Password
+                </label>
+                <div className="flex h-12 items-center rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-3">
+                  <input
+                    id="confirm_password"
+                    type={visibilityConfirm ? "text" : "password"}
+                    value={confirmPwd}
+                    onChange={(e) => setConfirmPwd(e.target.value.slice(0, 30))}
+                    className="h-full w-full bg-transparent pr-2 font-montserrat text-sm text-[#2f2924] outline-none"
+                    placeholder="Re-enter your password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setVisibilityConfirm((prev) => !prev)}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#5f5447] transition hover:bg-white"
+                    aria-label={
+                      visibilityConfirm
+                        ? "Hide confirm password"
+                        : "Show confirm password"
+                    }
+                  >
+                    {visibilityConfirm ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {pwd ? (
+                <div className="rounded-2xl border border-[#e9dccf] bg-[#fffcf8] p-4">
+                  <PasswordChecklist
+                    className="space-y-1 font-montserrat text-[11px] font-medium text-[#5f5447]"
+                    rules={[
+                      "minLength",
+                      "specialChar",
+                      "number",
+                      "capital",
+                      "match",
+                    ]}
+                    minLength={8}
+                    value={pwd}
+                    valueAgain={confirmPwd}
+                    messages={{
+                      minLength: "The password has more than 8 characters.",
+                      specialChar: "The password has special characters.",
+                      number: "The password has a number.",
+                      capital: "The password has an uppercase letter.",
+                      match: "The passwords match.",
+                    }}
+                    iconSize={11}
+                    validColor="#8DAA6A"
+                    invalidColor="#8a7f70"
+                  />
+                </div>
+              ) : null}
+
+              <label className="inline-flex cursor-pointer items-start gap-2">
+                <input
+                  type="checkbox"
+                  checked={agreeToUpdates}
+                  onChange={(e) => setAgreeToUpdates(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-[#c9b49b] text-[#a86728] focus:ring-[#d7bfa4]"
+                />
+                <span className="font-montserrat text-sm leading-6 text-[#5f5447]">
+                  I agree to receive updates and new releases through the email
+                  address provided above.
+                </span>
+              </label>
+
+              <Button
+                type="submit"
+                loading={isPending}
+                disabled={!isFormValid}
+                className="h-12 w-full rounded-full bg-[#2f2924] font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#1f1a16]"
               >
-                LOG IN
-              </p>
-            </div>
+                Create My Account
+              </Button>
+
+              <button
+                type="button"
+                onClick={() => router.push("/login")}
+                className="group inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#d8c7b3] bg-white px-5 py-3 font-montserrat text-[11px] font-semibold uppercase tracking-[0.18em] text-[#3c332b] transition hover:border-[#bfa486] hover:bg-[#fff8ef]"
+              >
+                Log In Instead
+                <FiArrowUpRight
+                  size={14}
+                  className="transition group-hover:translate-x-0.5"
+                />
+              </button>
+            </form>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );

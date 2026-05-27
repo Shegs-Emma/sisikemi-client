@@ -3,15 +3,12 @@
 import React, { useEffect, useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { twMerge } from "tailwind-merge";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { useUserStore } from "@/store/userStore";
 import ReactPasswordChecklist from "react-password-checklist";
-import ResetPasswordWeb from "./ResetPasswordWeb";
-import ResetPasswordMobile from "./ResetPasswordMobile";
+import { BsStars } from "react-icons/bs";
+import { Button } from "@/components/ui/button";
 
 const ResetPassword = () => {
   const router = useRouter();
@@ -22,9 +19,6 @@ const ResetPassword = () => {
   const [visibilityConfirm, setVisibilityConfirm] = useState(false);
   const [email, setEmail] = useState<string | null>("");
   const [code, setCode] = useState<string | null>("");
-
-  const newPasswordInputType = visibilityNew ? "text" : "password";
-  const confirmPasswordInputType = visibilityConfirm ? "text" : "password";
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -67,190 +61,179 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="w-full fixed z-50 flex flex-col">
-      <div className="w-full flex justify-between py-[1rem] px-[2rem]">
-        <Link href="/">
-          <div className="">
+    <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_14%_16%,rgba(231,177,111,0.24),transparent_32%),radial-gradient(circle_at_90%_12%,rgba(111,170,202,0.2),transparent_30%),linear-gradient(160deg,#fffaf4_0%,#ffffff_52%,#f4f8ff_100%)] px-4 py-8 sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute -left-16 bottom-10 h-52 w-52 rounded-full bg-[#f5e7d4]/65 blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 top-1/3 h-56 w-56 rounded-full bg-[#d8ebf8]/70 blur-3xl" />
+
+      <div className="relative z-10 grid w-full max-w-[1120px] overflow-hidden rounded-[30px] border border-[#e7dbcf] bg-white/90 shadow-[0_30px_80px_rgba(49,35,22,0.12)] backdrop-blur-sm lg:grid-cols-[1fr_1.06fr]">
+        <section className="hidden flex-col justify-between bg-[linear-gradient(160deg,#2f2924_0%,#3b332c_58%,#2f2924_100%)] p-10 text-white lg:flex">
+          <Link href="/" className="w-fit">
             <Image
               src="/assets/main_logo.svg"
-              alt="logo"
-              width={70}
-              height={40}
+              alt="Sisikemi logo"
+              width={78}
+              height={46}
+              className="brightness-[1.28]"
             />
-          </div>
-        </Link>
-      </div>
+          </Link>
 
-      <ResetPasswordWeb
-        onSubmit={onSubmit}
-        newPasswordInputType={newPasswordInputType}
-        setNewPwd={setNewPwd}
-        newPwd={newPwd}
-        visibilityNew={visibilityNew}
-        viewerNew={viewerNew}
-        confirmPasswordInputType={confirmPasswordInputType}
-        confirmPwd={confirmPwd}
-        setConfirmPwd={setConfirmPwd}
-        viewerConfirm={viewerConfirm}
-        visibilityConfirm={visibilityConfirm}
-        isPending={isPending}
-      />
-
-      <ResetPasswordMobile
-        onSubmit={onSubmit}
-        newPasswordInputType={newPasswordInputType}
-        setNewPwd={setNewPwd}
-        newPwd={newPwd}
-        visibilityNew={visibilityNew}
-        viewerNew={viewerNew}
-        confirmPasswordInputType={confirmPasswordInputType}
-        confirmPwd={confirmPwd}
-        setConfirmPwd={setConfirmPwd}
-        viewerConfirm={viewerConfirm}
-        visibilityConfirm={visibilityConfirm}
-        isPending={isPending}
-      />
-
-      {/* <div className="flex flex-col w-[640px] bg-[#ffffff] py-6 px-12 shadow-2xl ml-[30%] mt-12 rounded">
-        <div className="flex flex-col justify-center items-center">
-          <p className="font-montserrat font-semibold text-lg text-[#333333]">
-            RESET YOUR PASSWORD
-          </p>
-          <p className="font-montserrat font-medium text-xs text-[#333333] mt-2">
-            Please input and confirm your new password
-          </p>
-        </div>
-        <div className="flex flex-col w-full mt-8">
-          <div className="flex flex-col w-full mt-8">
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { width: "100%" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <TextField
-                id="outlined-basic"
-                label="New Password"
-                variant="outlined"
-                size="small"
-                color="success"
-                type={NewPasswordInputType}
-                value={newPwd}
-                onChange={(e) => {
-                  const limit = 30;
-
-                  // 👇️ only take first N characters
-                  setNewPwd(e.target.value.slice(0, limit));
-                }}
-                className={twMerge(
-                  "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                )}
-              />
-            </Box>
-            <button
-              type="button"
-              onClick={viewerNew}
-              className="transform -translate-y-1/2 mt-5 mx-2 absolute right-[20rem]"
-            >
-              {visibilityNew ? (
-                <EyeOff color="#4b5563" size={20} />
-              ) : (
-                <Eye color="#4b5563" size={20} />
-              )}
-            </button>
-          </div>
-
-          <div className="flex flex-col w-full mt-8">
-            <Box
-              component="form"
-              sx={{
-                "& > :not(style)": { width: "100%" },
-              }}
-              noValidate
-              autoComplete="off"
-            >
-              <TextField
-                id="outlined-basic"
-                label="Confirm Password"
-                variant="outlined"
-                size="small"
-                color="success"
-                type={ConfirmPasswordInputType}
-                value={confirmPwd}
-                onChange={(e) => {
-                  const limit = 30;
-
-                  // 👇️ only take first N characters
-                  setConfirmPwd(e.target.value.slice(0, limit));
-                }}
-                className={twMerge(
-                  "placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-[80%] text-[#363435]"
-                )}
-              />
-            </Box>
-            <button
-              type="button"
-              onClick={viewerConfirm}
-              className="transform -translate-y-1/2 mt-5 mx-2 absolute right-[20rem]"
-            >
-              {visibilityConfirm ? (
-                <EyeOff color="#4b5563" size={20} />
-              ) : (
-                <Eye color="#4b5563" size={20} />
-              )}
-            </button>
-          </div>
-
-          {newPwd ? (
-            <div className="px-2 pt-1">
-              <ReactPasswordChecklist
-                className="text-[11px] text-[#363435] font-semibold checked:h-2"
-                rules={[
-                  "minLength",
-                  "specialChar",
-                  "number",
-                  "capital",
-                  "match",
-                ]}
-                minLength={8}
-                value={newPwd}
-                valueAgain={confirmPwd}
-                // onChange={(isValid) => {
-                //   isValid ? setPaswordValid(true) : setPaswordValid(false);
-                // }}
-                messages={{
-                  minLength: "The password has more than 8 characters.",
-                  specialChar: "The password has special characters.",
-                  number: "The password has a number.",
-                  capital: "The password has an uppercase letter.",
-                  match: "The passwords match.",
-                }}
-                iconSize={10}
-                validColor={"#8DAA6A"}
-              />
+          <div>
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#c2ab8f]/45 bg-white/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#ecdac4]">
+              <BsStars className="text-xs" />
+              Password Reset
             </div>
-          ) : (
-            ""
-          )}
-
-          <div className="flex flex-col justify-center items-center">
-            {isPending ? (
-              <div className="flex flex-col w-full p-3 cursor-pointer items-center font-semibold text-sm rounded mt-8 bg-[#363435] mb-4">
-                Loading...
-              </div>
-            ) : (
-              <div
-                onClick={() => onSubmit()}
-                className="flex flex-col w-full p-3 cursor-pointer items-center font-semibold text-sm rounded mt-8 bg-[#363435] mb-4"
-              >
-                SUBMIT
-              </div>
-            )}
+            <h1 className="font-montserrat text-4xl font-semibold uppercase leading-[1.1] tracking-[0.06em] text-[#fbf3ea]">
+              Set a new
+              <br />
+              secure password.
+            </h1>
+            <p className="mt-5 max-w-md font-montserrat text-sm leading-7 text-[#d6c3af]">
+              Your new password should be strong and memorable. Confirm it to
+              complete account recovery.
+            </p>
           </div>
-        </div>
-      </div> */}
+
+          <p className="font-montserrat text-xs uppercase tracking-[0.22em] text-[#b79d80]">
+            Security First
+          </p>
+        </section>
+
+        <section className="p-6 sm:p-8 md:p-10 lg:p-12">
+          <div className="mb-8 flex items-center justify-between lg:hidden">
+            <Link href="/" className="w-fit">
+              <Image
+                src="/assets/main_logo.svg"
+                alt="Sisikemi logo"
+                width={76}
+                height={44}
+              />
+            </Link>
+            <span className="rounded-full border border-[#dec8b1] bg-[#fff8ef] px-3 py-1.5 font-montserrat text-[10px] font-semibold uppercase tracking-[0.2em] text-[#a86728]">
+              Reset Password
+            </span>
+          </div>
+
+          <div className="mx-auto w-full max-w-[460px]">
+            <h2 className="font-montserrat text-3xl font-semibold uppercase tracking-[0.06em] text-[#2f2924]">
+              Create New Password
+            </h2>
+            <p className="mt-3 font-montserrat text-sm leading-7 text-[#63584a]">
+              Please enter and confirm your new password.
+            </p>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                onSubmit();
+              }}
+              className="mt-8 space-y-5"
+            >
+              <div>
+                <label
+                  htmlFor="new-password"
+                  className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                >
+                  New Password
+                </label>
+                <div className="flex h-12 items-center rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-3">
+                  <input
+                    id="new-password"
+                    type={visibilityNew ? "text" : "password"}
+                    value={newPwd}
+                    onChange={(e) => setNewPwd(e.target.value.slice(0, 30))}
+                    className="h-full w-full bg-transparent pr-2 font-montserrat text-sm text-[#2f2924] outline-none"
+                    placeholder="Enter new password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    onClick={viewerNew}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#5f5447] transition hover:bg-white"
+                    aria-label={
+                      visibilityNew ? "Hide password" : "Show password"
+                    }
+                  >
+                    {visibilityNew ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirm-password"
+                  className="mb-2 block font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7f6a53]"
+                >
+                  Confirm Password
+                </label>
+                <div className="flex h-12 items-center rounded-2xl border border-[#dbcab7] bg-[#fffaf4] px-3">
+                  <input
+                    id="confirm-password"
+                    type={visibilityConfirm ? "text" : "password"}
+                    value={confirmPwd}
+                    onChange={(e) => setConfirmPwd(e.target.value.slice(0, 30))}
+                    className="h-full w-full bg-transparent pr-2 font-montserrat text-sm text-[#2f2924] outline-none"
+                    placeholder="Confirm new password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    onClick={viewerConfirm}
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#5f5447] transition hover:bg-white"
+                    aria-label={
+                      visibilityConfirm ? "Hide password" : "Show password"
+                    }
+                  >
+                    {visibilityConfirm ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {newPwd ? (
+                <div className="rounded-2xl border border-[#e9dccf] bg-[#fffcf8] p-4">
+                  <ReactPasswordChecklist
+                    className="space-y-1 font-montserrat text-[11px] font-medium text-[#5f5447]"
+                    rules={[
+                      "minLength",
+                      "specialChar",
+                      "number",
+                      "capital",
+                      "match",
+                    ]}
+                    minLength={8}
+                    value={newPwd}
+                    valueAgain={confirmPwd}
+                    messages={{
+                      minLength: "The password has more than 8 characters.",
+                      specialChar: "The password has special characters.",
+                      number: "The password has a number.",
+                      capital: "The password has an uppercase letter.",
+                      match: "The passwords match.",
+                    }}
+                    iconSize={11}
+                    validColor="#8DAA6A"
+                    invalidColor="#8a7f70"
+                  />
+                </div>
+              ) : null}
+
+              <Button
+                type="submit"
+                loading={isPending}
+                disabled={!newPwd.trim() || !confirmPwd.trim()}
+                className="h-12 w-full rounded-full bg-[#2f2924] font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#1f1a16]"
+              >
+                Save New Password
+              </Button>
+            </form>
+          </div>
+        </section>
+      </div>
     </div>
   );
 };
