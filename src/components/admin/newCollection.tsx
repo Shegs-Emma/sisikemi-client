@@ -46,7 +46,7 @@ const NewCollection = () => {
     const mappedFiles = acceptedFiles.map((file: any) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-      })
+      }),
     );
 
     setThumbnailFile(mappedFiles);
@@ -56,7 +56,7 @@ const NewCollection = () => {
     const mappedFiles = acceptedFiles.map((file: any) =>
       Object.assign(file, {
         preview: URL.createObjectURL(file),
-      })
+      }),
     );
 
     setHeaderFile(mappedFiles);
@@ -113,7 +113,7 @@ const NewCollection = () => {
     (state: any) => ({
       createMediaCloudinary: state.createMediaCloudinary,
     }),
-    shallow
+    shallow,
   );
 
   const { createCollection, fetchCollections } = useCollectionStore(
@@ -121,7 +121,7 @@ const NewCollection = () => {
       createCollection: state.createCollection,
       fetchCollections: state.fetchCollections,
     }),
-    shallow
+    shallow,
   );
 
   /* eslint-enable @typescript-eslint/no-explicit-any */
@@ -155,7 +155,7 @@ const NewCollection = () => {
   // Handle submission code to Cloudinary ===========================================================================================================================
   const handleFileUploadCloudinary = async (
     selectedFile: string,
-    filename: string
+    filename: string,
   ): Promise<MediaUploadResponseInterface | void> => {
     try {
       try {
@@ -200,7 +200,7 @@ const NewCollection = () => {
           if (thumbnailFileBase64 && thumbnail_image_name) {
             await handleFileUploadCloudinary(
               thumbnailFileBase64,
-              thumbnail_image_name
+              thumbnail_image_name,
             )
               .then((res) => {
                 if (res?.url) {
@@ -213,7 +213,7 @@ const NewCollection = () => {
           if (headerFileBase64 && header_image_name) {
             await handleFileUploadCloudinary(
               headerFileBase64,
-              header_image_name
+              header_image_name,
             )
               .then((res) => {
                 if (res?.url) {
@@ -280,7 +280,7 @@ const NewCollection = () => {
             <Label
               htmlFor="collection_name"
               className={twMerge(
-                "font-lato font-medium text-sm text-[#363435]"
+                "font-lato font-medium text-sm text-[#363435]",
               )}
             >
               Collection name
@@ -291,7 +291,7 @@ const NewCollection = () => {
               onChange={handleChange}
               value={formValues?.collection_name}
               className={twMerge(
-                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
+                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]",
               )}
               //   isError={errorFields.firstName}
             />
@@ -301,7 +301,7 @@ const NewCollection = () => {
             <Label
               htmlFor="collection_description"
               className={twMerge(
-                "font-lato font-medium text-sm text-[#363435]"
+                "font-lato font-medium text-sm text-[#363435]",
               )}
             >
               Description Text/Paragraph
@@ -311,7 +311,7 @@ const NewCollection = () => {
               onChange={(e) => setDescription(e.target.value)}
               value={description}
               className={twMerge(
-                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]"
+                "mt-2 placeholder:text-[#363435] placeholder:text-sm rounded-lg border-[0.6px] border-[#bdbdbd] w-full sm:w-[80%] p-2 text-[#363435]",
               )}
               // isError={errorFields.collection_description}
             ></textarea>

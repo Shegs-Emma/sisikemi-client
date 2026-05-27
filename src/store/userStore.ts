@@ -29,7 +29,7 @@ export const useUserStore = createWithEqualityFn(
         login: async (
           data: LoginUserResponseInterface,
           router: AppRouterInstance,
-          isAdmin: boolean
+          isAdmin: boolean,
         ) => {
           set({ loading: true });
           try {
@@ -44,7 +44,7 @@ export const useUserStore = createWithEqualityFn(
             toast.success("Login successful! 🎉");
             let userRoute = "";
 
-            userRoute = isAdmin ? `/admin/product` : "/new-in";
+            userRoute = isAdmin ? `/admin/product` : "/experience";
             router.push(userRoute);
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,7 +66,7 @@ export const useUserStore = createWithEqualityFn(
         },
         register: async (
           data: RegisterInterface,
-          router: AppRouterInstance
+          router: AppRouterInstance,
         ) => {
           set({ loading: true });
           try {
@@ -98,7 +98,7 @@ export const useUserStore = createWithEqualityFn(
         },
         verifyEmail: async (
           data: EmailVerifyInterface,
-          router: AppRouterInstance
+          router: AppRouterInstance,
         ) => {
           set({ loading: true });
           try {
@@ -130,7 +130,7 @@ export const useUserStore = createWithEqualityFn(
         },
         forgotPassword: async (
           data: ForgotPasswordInterface,
-          router: AppRouterInstance
+          router: AppRouterInstance,
         ) => {
           set({ loading: true });
           try {
@@ -158,7 +158,7 @@ export const useUserStore = createWithEqualityFn(
         },
         verifyCode: async (
           data: VerifyCodeInterface,
-          router: AppRouterInstance
+          router: AppRouterInstance,
         ) => {
           set({ loading: true });
           try {
@@ -186,7 +186,7 @@ export const useUserStore = createWithEqualityFn(
         },
         resetPassword: async (
           data: ResetPasswordInterface,
-          router: AppRouterInstance
+          router: AppRouterInstance,
         ) => {
           set({ loading: true });
           try {
@@ -217,7 +217,7 @@ export const useUserStore = createWithEqualityFn(
       {
         name: "user-storage", // Unique name for the storage
         getStorage: () => localStorage, // Define storage, default is localStorage
-      }
-    )
-  )
+      },
+    ),
+  ),
 );

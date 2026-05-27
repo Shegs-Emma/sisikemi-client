@@ -2,250 +2,290 @@ import Slider from "@/components/reusebles/slider";
 import SliderMobile from "@/components/reusebles/sliderMobile";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
+import { BsStars } from "react-icons/bs";
+import { FiArrowUpRight } from "react-icons/fi";
 
 const Landing = () => {
+  const featuredLooks = [
+    {
+      title: "Sculpted Evening",
+      subtitle: "For entrances that stay memorable.",
+      image: "/images/section1.svg",
+      link: "/new-in",
+    },
+    {
+      title: "Tailored Softness",
+      subtitle: "Balanced structure with movement.",
+      image: "/images/section1.svg",
+      link: "/shop",
+    },
+    {
+      title: "Statement Layers",
+      subtitle: "Textured silhouettes for modern occasions.",
+      image: "/images/section1.svg",
+      link: "/collections",
+    },
+    {
+      title: "Signature Form",
+      subtitle: "Made to elevate your presence.",
+      image: "/images/section1.svg",
+      link: "/rtw",
+    },
+  ];
+
+  const collections = [
+    {
+      name: "Ceremony Edit",
+      image: "/images/section2.svg",
+      href: "/bridal",
+    },
+    {
+      name: "Event Dressing",
+      image: "/images/section2.svg",
+      href: "/collections",
+    },
+    {
+      name: "Weekend Glam",
+      image: "/images/section2.svg",
+      href: "/sale",
+    },
+  ];
+
   return (
-    <div className="w-full flex flex-col p-0 md:pt-[7rem]">
-      <div className="hidden md:block md:w-full">
+    <div className="flex w-full flex-col bg-[linear-gradient(180deg,#fffdf9_0%,#fff8f1_36%,#ffffff_100%)] pt-[6.25rem] md:pt-[9.75rem]">
+      <div className="hidden w-full md:block">
         <Slider />
       </div>
 
-      <div className="block mt-[6rem] md:hidden w-full">
+      <div className="mt-[5.25rem] block w-full md:hidden">
         <SliderMobile />
       </div>
 
-      <div className="w-full flex flex-col">
-        <div className="flex justify-between w-[45%] md:w-[20%] mx-auto mt-[4rem] mb-[5rem]">
-          <div className="pb-[0.2rem] border-b-[1.5px] border-b-[#4f4f4f]">
-            <h3 className="font-montserrat font-semibold text-xs md:text-lg text-[#4f4f4f] p-0 m-0 ">
-              SECTION 1
-            </h3>
-          </div>
+      <section className="px-4 pb-8 pt-8 md:px-8 md:pt-10 lg:px-12 xl:px-16">
+        <div className="mx-auto max-w-[1380px] overflow-hidden rounded-[32px] border border-[#eadfce] bg-[radial-gradient(circle_at_top_left,rgba(239,211,120,0.26),transparent_30%),linear-gradient(136deg,#fffaf4_0%,#ffffff_58%,#f8efe4_100%)] shadow-[0_28px_78px_rgba(84,56,28,0.11)]">
+          <div className="grid gap-8 px-6 py-8 md:px-8 md:py-10 lg:grid-cols-[1.35fr_0.65fr] lg:items-end lg:px-12 lg:py-12">
+            <div className="max-w-2xl">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#dcc6a9] bg-white/75 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#a86728]">
+                <BsStars className="text-xs" />
+                The Landing Edit
+              </div>
+              <h1 className="font-montserrat text-[2rem] font-semibold uppercase leading-[1.06] tracking-[0.08em] text-[#2f2924] md:text-[2.7rem] xl:text-[3.25rem]">
+                Design-led fashion for women who move the room.
+              </h1>
+              <p className="mt-4 max-w-xl font-montserrat text-sm leading-7 text-[#6b6258] md:text-base">
+                Explore elevated pieces curated for celebrations, ceremonies,
+                and every moment that deserves a stronger silhouette.
+              </p>
 
-          <div className="pb-[0.2rem]">
-            <h3 className="font-montserrat font-semibold text-xs md:text-lg text-[#4f4f4f] p-0 m-0 ">
-              SECTION 2
-            </h3>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-x-4 gap-y-14 px-6 m-auto md:m-0">
-          <Image
-            src="/images/section1.svg"
-            alt="section_img"
-            width={280}
-            height={406}
-            className=""
-          />
-          <Image
-            src="/images/section1.svg"
-            alt="section_img_1"
-            width={280}
-            height={406}
-            className=""
-          />
-          <Image
-            src="/images/section1.svg"
-            alt="section_img"
-            width={280}
-            height={406}
-            className=""
-          />
-          <Image
-            src="/images/section1.svg"
-            alt="section_img"
-            width={280}
-            height={406}
-            className=""
-          />
-        </div>
-      </div>
-
-      <div className="w-full flex flex-col">
-        <div className="flex justify-between w-[70%] md:w-[20%] mx-auto mt-[4rem] mb-[5rem]">
-          <div className="bg-[#363435] p-[1rem] mx-auto md:mx-0 mt-[2rem]">
-            <h3 className="font-montserrat font-medium text-sm md:text-base text-[#F2F2F2] p-0 m-0 ">
-              VIEW ALL PRODUCTS
-            </h3>
-          </div>
-        </div>
-
-        <div className="md:grid md:grid-cols-3 md:gap-[10px] md:py-0 md:pr-[1.5rem] md:pl-[2.5rem] md:mt-[5rem] hidden">
-          <div className="w-[95%]">
-            <Image
-              src="/images/section2.svg"
-              alt="section_img"
-              width={420}
-              height={580}
-              className="ml-[15%] md:ml-0"
-            />
-            <div className="relative flex flex-col -top-[20rem] md:-top-[17rem] -left-[2rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
-              <Button
-                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
-                variant="yellow"
-                type="submit"
-              >
-                VIEW COLLECTION
-              </Button>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link
+                  href="/new-in"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#2f2924] px-5 py-3 font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#1f1a16]"
+                >
+                  Shop New In
+                  <FiArrowUpRight size={14} />
+                </Link>
+                <Link
+                  href="/collections"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#d8c7b3] bg-white px-5 py-3 font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#3c332b] transition hover:border-[#bfa486] hover:bg-[#fff8ef]"
+                >
+                  View Collections
+                </Link>
+              </div>
             </div>
-          </div>
 
-          <div className="w-[95%]">
-            <Image
-              src="/images/section2.svg"
-              alt="section_img"
-              width={420}
-              height={580}
-              className="ml-[15%] md:ml-0"
-            />
-            <div className="relative flex flex-col -top-[20rem] md:-top-[17rem] -left-[2rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
-              <Button
-                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
-                variant="yellow"
-                type="submit"
-              >
-                VIEW COLLECTION
-              </Button>
-            </div>
-          </div>
-
-          <div className="w-[95%]">
-            <Image
-              src="/images/section2.svg"
-              alt="section_img"
-              width={420}
-              height={580}
-              className="ml-[15%] md:ml-0"
-            />
-            <div className="relative flex flex-col -top-[20rem] md:-top-[17rem] -left-[2rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
-              <Button
-                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
-                variant="yellow"
-                type="submit"
-              >
-                VIEW COLLECTION
-              </Button>
+            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+              <article className="rounded-[22px] border border-white/70 bg-white/80 p-5 shadow-[0_14px_34px_rgba(70,45,20,0.08)]">
+                <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.22em] text-[#a86728]">
+                  New In
+                </p>
+                <p className="mt-2 font-montserrat text-3xl font-semibold text-[#2f2924]">
+                  24
+                </p>
+              </article>
+              <article className="rounded-[22px] border border-white/70 bg-[#2f2924] p-5 shadow-[0_14px_34px_rgba(70,45,20,0.12)]">
+                <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.22em] text-[#d8c3aa]">
+                  Spotlight
+                </p>
+                <p className="mt-2 font-montserrat text-sm leading-6 text-[#f5ede3]">
+                  Occasion-ready pieces with modern tailoring.
+                </p>
+              </article>
+              <article className="rounded-[22px] border border-white/70 bg-white/80 p-5 shadow-[0_14px_34px_rgba(70,45,20,0.08)]">
+                <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.22em] text-[#a86728]">
+                  Bridal
+                </p>
+                <p className="mt-2 font-montserrat text-sm leading-6 text-[#6b6258]">
+                  Bespoke-ready looks for your special day.
+                </p>
+              </article>
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[10px] py-0 pr-[1.5rem] md:pl-[2.5rem] mt-[5rem] md:hidden">
-          <div className="w-[95%]">
-            <Image
-              src="/images/section2.svg"
-              alt="section_img"
-              width={280}
-              height={406}
-              className="ml-[15%] md:ml-0"
-            />
-            <div className="relative flex flex-col -top-[12rem] md:-top-[17rem] -left-[.5rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
-              <Button
-                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
-                variant="yellow"
-                type="submit"
-              >
-                VIEW COLLECTION
-              </Button>
-            </div>
-          </div>
-
-          <div className="w-[95%]">
-            <Image
-              src="/images/section2.svg"
-              alt="section_img"
-              width={280}
-              height={406}
-              className="ml-[15%] md:ml-0"
-            />
-            <div className="relative flex flex-col -top-[12rem] md:-top-[17rem] -left-[.5rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
-              <Button
-                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
-                variant="yellow"
-                type="submit"
-              >
-                VIEW COLLECTION
-              </Button>
-            </div>
-          </div>
-
-          <div className="w-[95%]">
-            <Image
-              src="/images/section2.svg"
-              alt="section_img"
-              width={280}
-              height={406}
-              className="ml-[15%] md:ml-0"
-            />
-            <div className="relative flex flex-col -top-[12rem] md:-top-[17rem] -left-[.5rem] md:-left-[5rem] z-[10] h-[5em] my-0 mr-auto ml-[10%] md:ml-[40%]">
-              <Button
-                className="w-[157px] h-[43px] px-[8px] py-[14px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer my-0 mx-auto"
-                variant="yellow"
-                type="submit"
-              >
-                VIEW COLLECTION
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="w-full h-[640px] bg-[#a86728] flex flex-col">
-        <div className="flex flex-col w-[90%] md:w-[50%] mx-auto mt-[15%] mb-0">
-          <h3 className="font-montserrat font-medium text-sm md:text-base text-[#ffffff] text-center p-0 m-0 ">
-            10% OFF YOUR FIRST PURCHASE
-          </h3>
-
-          <h1 className="font-montserrat font-semibold text-center text-2xl text-[#F2F2F2] md:text-lg my-[2rem] mx-0">
-            SIGN UP
-          </h1>
-
-          <h3 className="font-montserrat font-medium text-sm md:text-base text-[#E0E0E0] text-center p-0 m-0 ">
-            DISCOVER EXCLUSIVE NEW COLLECTIONS
-          </h3>
-
-          <div className="flex flex-col md:flex-row mx-0 mt-[4rem] mb-[2rem]">
-            <input
-              autoComplete="off"
-              placeholder="Enter your email"
-              className="flex box-border items-start py-[18.5px] px-[16px] gap-[10px] w-full md:w-[70%] h-[54px] border-[0.8px] border-[#e0e0e0] rounded bg-transparent text-[#ffffff] focus:outline-none placeholder-white placeholder-opacity-50"
-            />
-
-            <Button
-              className="font-montserrat w-[100%] md:w-[171px] h-[54px] px-[32px] py-[17px] border-0 rounded font-semibold text-xs text-[#333333] font-montserrat bg-[#f2f2f2] outline-0 cursor-pointer mt-[1rem] md:my-0 mx-0 md:mx-auto"
-              variant="yellow"
-              type="submit"
+      <section className="px-4 pb-8 md:px-8 lg:px-12 xl:px-16">
+        <div className="mx-auto max-w-[1380px]">
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <h2 className="font-montserrat text-xl font-semibold uppercase tracking-[0.06em] text-[#2f2924] md:text-2xl">
+              Featured Looks
+            </h2>
+            <Link
+              href="/all-products"
+              className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a6b4d] transition hover:text-[#a86728]"
             >
-              SUBSCRIBE
-            </Button>
+              View All Products
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-5 xl:gap-6">
+            {featuredLooks.map((item) => (
+              <article
+                key={item.title}
+                className="group overflow-hidden rounded-[24px] border border-[#eee3d6] bg-white p-3 shadow-[0_18px_40px_rgba(84,56,28,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_26px_60px_rgba(84,56,28,0.14)] md:p-4"
+              >
+                <div className="relative overflow-hidden rounded-[18px] bg-[#f8efe4]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    width={320}
+                    height={460}
+                    className="h-[250px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03] md:h-[320px]"
+                  />
+                </div>
+
+                <h3 className="mt-4 font-montserrat text-sm font-semibold uppercase tracking-[0.05em] text-[#2f2924] md:text-base">
+                  {item.title}
+                </h3>
+                <p className="mt-2 font-montserrat text-xs leading-6 text-[#6b6258] md:text-sm">
+                  {item.subtitle}
+                </p>
+
+                <Link
+                  href={item.link}
+                  className="mt-4 inline-flex items-center gap-1 font-montserrat text-[11px] font-semibold uppercase tracking-[0.16em] text-[#8a6b4d] transition group-hover:translate-x-1"
+                >
+                  Explore
+                  <FiArrowUpRight size={13} />
+                </Link>
+              </article>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="w-full flex flex-col md:flex-row border-b-[0.5px] border-b-[#4f4f4f]">
-        <div className="w-full md:w-[50%] order-0">
-          <div className="flex flex-col mx-auto mt-[20%] md:mt-[40%] mb-[4rem] md:mb-0 w-[90%] md:w-[80%] text-center md:text-left">
-            <h3 className="font-montserrat font-medium text-xs md:text-lg text-[#4f4f4f] p-0 m-0 ">
-              DESIGNED FOR EVERY WOMAN: ALL WOMEN
-            </h3>
-            <h2 className="font-montserrat font-semibold text-base md:text-xl text-[#363435] my-[2rem] mx-0">
+      <section className="px-4 pb-12 md:px-8 lg:px-12 xl:px-16">
+        <div className="mx-auto max-w-[1380px]">
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <h2 className="font-montserrat text-xl font-semibold uppercase tracking-[0.06em] text-[#2f2924] md:text-2xl">
+              Collection Stories
+            </h2>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3 md:gap-5 xl:gap-6">
+            {collections.map((collection) => (
+              <article
+                key={collection.name}
+                className="group relative overflow-hidden rounded-[24px] border border-[#e7d9ca]"
+              >
+                <Image
+                  src={collection.image}
+                  alt={collection.name}
+                  width={420}
+                  height={580}
+                  className="h-[420px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1e1914]/70 via-[#1e1914]/15 to-transparent" />
+
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className="font-montserrat text-lg font-semibold uppercase tracking-[0.05em] text-[#f8f2ea]">
+                    {collection.name}
+                  </h3>
+                  <Link href={collection.href}>
+                    <Button
+                      className="mt-3 h-11 rounded-full bg-white px-5 font-montserrat text-[11px] font-semibold uppercase tracking-[0.18em] text-[#2f2924]"
+                      variant="yellow"
+                      type="button"
+                    >
+                      View Collection
+                    </Button>
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 pb-10 md:px-8 lg:px-12 xl:px-16">
+        <div className="mx-auto max-w-[1380px] rounded-[30px] border border-[#c58a53] bg-[linear-gradient(145deg,#a86728_0%,#c1793a_52%,#9d5f25_100%)] px-6 py-10 shadow-[0_26px_72px_rgba(94,47,9,0.35)] md:px-10">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.24em] text-[#fff0de]">
+              10% Off Your First Purchase
+            </p>
+            <h2 className="mt-3 font-montserrat text-3xl font-semibold uppercase tracking-[0.06em] text-white md:text-4xl">
+              Join the Sisikemi list
+            </h2>
+            <p className="mt-4 font-montserrat text-sm leading-7 text-[#fbead8] md:text-base">
+              Be first to access exclusive drops, private previews, and
+              style-led campaign edits.
+            </p>
+
+            <div className="mx-auto mt-7 flex max-w-[640px] flex-col gap-3 sm:flex-row">
+              <input
+                autoComplete="off"
+                placeholder="Enter your email"
+                className="h-12 w-full rounded-full border border-[#f0cda9] bg-white/10 px-4 font-montserrat text-sm text-white placeholder:text-[#f9dfc6] focus:outline-none focus:ring-2 focus:ring-[#f3c99c]"
+              />
+
+              <Button
+                className="h-12 rounded-full bg-white px-6 font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#7b471c] transition hover:bg-[#fff0df]"
+                variant="yellow"
+                type="button"
+              >
+                Subscribe
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 pb-14 md:px-8 lg:px-12 xl:px-16">
+        <div className="mx-auto grid max-w-[1380px] overflow-hidden rounded-[30px] border border-[#e9ddcf] bg-white shadow-[0_20px_58px_rgba(84,56,28,0.08)] md:grid-cols-2">
+          <div className="order-2 p-6 md:order-1 md:p-10 lg:p-12">
+            <p className="font-montserrat text-[11px] font-semibold uppercase tracking-[0.22em] text-[#a86728]">
+              Designed For Every Woman
+            </p>
+            <h2 className="mt-4 font-montserrat text-3xl font-semibold uppercase tracking-[0.06em] text-[#2f2924] md:text-4xl">
               #SISIKEMI
             </h2>
-            <span className="font-montserrat font-medium text-sm text-[#363435] border-b-[1px] border-b-[#363435] w-[50%] md:w-[31%] text-center pb-[0.5rem] mx-auto md:mx-0 mt-[1rem]">
-              VIEW ALL PRODUCTS
-            </span>
+            <p className="mt-4 max-w-md font-montserrat text-sm leading-7 text-[#65594b] md:text-base">
+              A fashion language built on confidence, character, and silhouettes
+              that speak before you do.
+            </p>
+
+            <Link
+              href="/all-products"
+              className="mt-7 inline-flex items-center gap-2 rounded-full border border-[#d8c7b3] bg-[#fff8ef] px-5 py-3 font-montserrat text-[11px] font-semibold uppercase tracking-[0.2em] text-[#3c332b] transition hover:border-[#bfa486] hover:bg-[#ffeed9]"
+            >
+              View All Products
+              <FiArrowUpRight size={14} />
+            </Link>
+          </div>
+
+          <div className="order-1 md:order-2">
+            <Image
+              src="/images/layer.svg"
+              alt="Sisikemi lookbook layer"
+              width={720}
+              height={720}
+              className="h-full min-h-[320px] w-full object-cover"
+            />
           </div>
         </div>
-        <div className="w-full md:w-[50%] order-1">
-          <Image
-            src="/images/layer.svg"
-            alt="layer_img"
-            width={720}
-            height={720}
-            className=""
-          />
-        </div>
-      </div>
+      </section>
     </div>
   );
 };
